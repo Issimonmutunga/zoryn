@@ -1,12 +1,14 @@
 """
-Canonical Living Earth Graph.
+Living Earth Graph.
 
-This class represents the current interpretation of the Event Store.
+The Living Earth Graph is the current interpretation of the
+Event Store.
 
-It contains no persistence logic.
+Its responsibility is to coordinate graph evolution.
 
-Its sole responsibility is maintaining the current graph state
-as immutable events are applied.
+Graph mutations are delegated to the GraphMutator.
+
+Event interpretation is delegated to the ProjectionEngine.
 """
 
 from __future__ import annotations
@@ -14,34 +16,52 @@ from __future__ import annotations
 from collections.abc import Iterable
 from uuid import UUID
 
-from zoryn.core.entity import Entity
-from zoryn.core.relationship import Relationship
+from zoryn.core.event import Event
 
+from .edge import Edge
 from .graph_engine import GraphEngine
+from .graph_mutator import GraphMutator
+from .node import Node
+from .projection_engine import ProjectionEngine
 
 
 class LivingEarthGraph(GraphEngine):
     """
     In-memory Living Earth Graph.
-
-    This implementation is intentionally minimal.
-
-    Future implementations may replace the internal storage without
-    changing the public interface.
     """
 
     def __init__(self) -> None:
-        self.reset()
+        self._nodes: dict[UUID, Node] = {}
+        self._edges: dict[UUID, Edge] = {}
 
-    def apply(self, event) -> None:
+        self._mutator = GraphMutator(
+            self._nodes,
+            self._edges,
+        )
+
+        self._projection_engine = ProjectionEngine()
+
+    @property
+    def mutator(self) -> GraphMutator:
         """
-        Apply a single event.
-
-        Event handling will be introduced as the engine evolves.
+        Return the graph mutator.
         """
-        return None
+        return self._mutator
 
-    def apply_many(self, events: Iterable) -> None:
+    @property
+    def projection_engine(self) -> ProjectionEngine:
+        """
+        Return the projection engine.
+        """
+        return self._projection_engine
+
+    def apply(self, event: Event) -> None:
+        """
+        Apply an immutable event.
+        """
+        self._projection_engine.project(event)
+
+    def apply_many(self, events: Iterable[Event]) -> None:
         """
         Apply multiple events.
         """
@@ -50,12 +70,12 @@ class LivingEarthGraph(GraphEngine):
 
     def reset(self) -> None:
         """
-        Reset the graph to an empty state.
+        Reset the graph.
         """
-        self._entities: dict[UUID, Entity] = {}
-        self._relationships: dict[UUID, Relationship] = {}
+        self._nodes.clear()
+        self._edges.clear()
 
-    def rebuild(self, events: Iterable) -> None:
+    def rebuild(self, events: Iterable[Event]) -> None:
         """
         Rebuild the graph from an event stream.
         """
@@ -63,15 +83,15 @@ class LivingEarthGraph(GraphEngine):
         self.apply_many(events)
 
     @property
-    def entities(self) -> dict[UUID, Entity]:
+    def nodes(self) -> dict[UUID, Node]:
         """
-        Return all entities.
+        Return graph nodes.
         """
-        return self._entities
+        return self._nodes
 
     @property
-    def relationships(self) -> dict[UUID, Relationship]:
+    def edges(self) -> dict[UUID, Edge]:
         """
-        Return all relationships.
+        Return graph edges.
         """
-        return self._relationships
+        return self._edges
