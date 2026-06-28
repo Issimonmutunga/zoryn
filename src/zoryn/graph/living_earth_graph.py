@@ -14,13 +14,15 @@ Event interpretation is delegated to the ProjectionEngine.
 from __future__ import annotations
 
 from collections.abc import Iterable
-from uuid import UUID
+from datetime import UTC, datetime
+from uuid import UUID, uuid4
 
 from zoryn.core.event import Event
 
 from .edge import Edge
 from .graph_engine import GraphEngine
 from .graph_mutator import GraphMutator
+from .graph_snapshot import GraphSnapshot
 from .node import Node
 from .projection_engine import ProjectionEngine
 
@@ -33,6 +35,8 @@ class LivingEarthGraph(GraphEngine):
     def __init__(self) -> None:
         self._nodes: dict[UUID, Node] = {}
         self._edges: dict[UUID, Edge] = {}
+
+        self._version = 0
 
         self._mutator = GraphMutator(
             self._nodes,
@@ -60,6 +64,7 @@ class LivingEarthGraph(GraphEngine):
         Apply an immutable event.
         """
         self._projection_engine.project(event)
+        self._version += 1
 
     def apply_many(self, events: Iterable[Event]) -> None:
         """
@@ -74,6 +79,7 @@ class LivingEarthGraph(GraphEngine):
         """
         self._nodes.clear()
         self._edges.clear()
+        self._version = 0
 
     def rebuild(self, events: Iterable[Event]) -> None:
         """
@@ -81,6 +87,18 @@ class LivingEarthGraph(GraphEngine):
         """
         self.reset()
         self.apply_many(events)
+
+    def snapshot(self) -> GraphSnapshot:
+        """
+        Create an immutable snapshot of the graph.
+        """
+        return GraphSnapshot(
+            version=self._version,
+            timestamp=datetime.now(UTC),
+            nodes=tuple(self._nodes.values()),
+            edges=tuple(self._edges.values()),
+            id=uuid4(),
+        )
 
     @property
     def nodes(self) -> dict[UUID, Node]:
