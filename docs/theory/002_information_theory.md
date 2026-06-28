@@ -1,5 +1,5 @@
-Information Theory
-Purpose
+# Information Theory
+## Purpose
 
 This document defines the concept of information within Zoryn.
 
@@ -9,7 +9,7 @@ Not every observation contributes equal information.
 
 Learning occurs only when information changes the current understanding of a system.
 
-Philosophy
+## Philosophy
 
 The Earth continuously generates observations.
 
@@ -19,7 +19,7 @@ Knowledge grows when observations reduce uncertainty.
 
 Information therefore represents the scientific value of an observation.
 
-Definition
+## Definition
 
 Information is the measurable reduction in uncertainty about a system resulting from new evidence.
 
@@ -27,7 +27,7 @@ Information is not the observation itself.
 
 Information is the change in understanding produced by the observation.
 
-Scientific Perspective
+## Scientific Perspective
 
 Two identical observations do not necessarily contribute the same information.
 
@@ -37,75 +37,75 @@ If an observation contradicts existing understanding, it may contribute substant
 
 Information therefore depends upon current knowledge.
 
-Information Hierarchy
+## Information Hierarchy
 
-Reality
+                  Reality
 
-↓
+                    ↓
 
-Observation
+                Observation
 
-↓
+                    ↓
 
-Fact
+                   Fact
 
-↓
+                    ↓
 
-Information
+                Information
 
-↓
+                    ↓
 
-Evidence
+                 Evidence
 
-↓
+                    ↓
 
-Understanding
+               Understanding
 
-↓
+                    ↓
 
-Theory
+                  Theory
 
 Information transforms observations into scientific progress.
 
-Sources of Information
+## Sources of Information
 
 Information may arise from
 
-New observations
+- New observations
 
-Unexpected observations
+- Unexpected observations
 
-Repeated observations
+- Repeated observations
 
-Independent observations
+- Independent observations
 
-Contradictory observations
+- Contradictory observations
 
-Novel interactions
+- Novel interactions
 
 Each contributes differently.
 
-Information Value
+## Information Value
 
 The value of information depends upon
 
-Novelty
+- Novelty
 
-Reliability
+- Reliability
 
-Precision
+- Precision
 
-Coverage
+- Coverage
 
-Timeliness
+- Timeliness
 
-Independence
+- Independence
 
-Scientific relevance
+- Scientific relevance
 
 These properties evolve through time.
 
-Information and Evidence
+## Information and Evidence
 
 Information contributes to evidence.
 
@@ -115,7 +115,7 @@ Explanations contribute to theories.
 
 Information therefore initiates the scientific learning cycle.
 
-Information and Uncertainty
+## Information and Uncertainty
 
 Information reduces uncertainty.
 
@@ -127,7 +127,7 @@ Some observations increase uncertainty by revealing limitations in existing theo
 
 Both outcomes are scientifically valuable.
 
-Information and Discovery
+## Information and Discovery
 
 Unexpected information often precedes scientific discovery.
 
@@ -141,7 +141,7 @@ or new theories.
 
 Information therefore drives discovery.
 
-Information Preservation
+## Information Preservation
 
 Information is never discarded.
 
@@ -153,23 +153,23 @@ old observations may acquire new meaning.
 
 Knowledge therefore accumulates through reinterpretation as well as observation.
 
-Design Principles
-Information reduces uncertainty.
-Information depends on current knowledge.
-Novel observations often contribute more information.
-Contradictory information is valuable.
-Information initiates learning.
-Information accumulates through evidence.
-Historical information remains valuable.
-Scientific understanding grows through information.
-Scientific Basis
+## Design Principles
+1. Information reduces uncertainty.
+2. Information depends on current knowledge.
+3. Novel observations often contribute more information.
+4. Contradictory information is valuable.
+5. Information initiates learning.
+6. Information accumulates through evidence.
+7. Historical information remains valuable.
+8. Scientific understanding grows through information.
+9. Scientific Basis
 
 This document is informed by ideas from
 
-Claude Shannon — Information Theory
-Edwin Jaynes — Probability Theory as Extended Logic
-Judea Pearl — Causal Inference
-Karl Popper — Scientific Discovery
-Herbert Simon — Learning and Problem Solving
+- Claude Shannon — Information Theory
+- Edwin Jaynes — Probability Theory as Extended Logic
+- Judea Pearl — Causal Inference
+- Karl Popper — Scientific Discovery
+- Herbert Simon — Learning and Problem Solving
 
 Zoryn extends these ideas by defining information in terms of continual scientific understanding within Dynamic Process Networks.
