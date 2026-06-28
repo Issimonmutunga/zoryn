@@ -1,12 +1,17 @@
 """
 Default evolution engine.
 
-Coordinates graph evolution using immutable events.
+Coordinates one complete evolution cycle.
 
-This implementation establishes the execution pipeline.
-
-More sophisticated evolution strategies can be introduced later
-without changing the public interface.
+Event
+    ↓
+Graph
+    ↓
+Snapshot
+    ↓
+Memory
+    ↓
+Reasoning
 """
 
 from __future__ import annotations
@@ -14,6 +19,7 @@ from __future__ import annotations
 from zoryn.core.event import Event
 from zoryn.graph.living_earth_graph import LivingEarthGraph
 from zoryn.memory.memory_manager import MemoryManager
+from zoryn.reasoning.reasoning_engine import ReasoningEngine
 
 from .evolution_engine import EvolutionEngine
 
@@ -23,6 +29,12 @@ class DefaultEvolutionEngine(EvolutionEngine):
     Default implementation of the evolution engine.
     """
 
+    def __init__(
+        self,
+        reasoning: ReasoningEngine,
+    ) -> None:
+        self._reasoning = reasoning
+
     def evolve(
         self,
         graph: LivingEarthGraph,
@@ -30,17 +42,7 @@ class DefaultEvolutionEngine(EvolutionEngine):
         event: Event,
     ) -> None:
         """
-        Execute one evolution step.
-
-        Current pipeline
-
-        Event
-            ↓
-        Graph Projection
-            ↓
-        Snapshot Creation
-            ↓
-        Working Memory
+        Execute one complete evolution cycle.
         """
 
         graph.apply(event)
@@ -48,3 +50,8 @@ class DefaultEvolutionEngine(EvolutionEngine):
         snapshot = graph.snapshot()
 
         memory.working.remember(snapshot)
+
+        self._reasoning.reason(
+            snapshot=snapshot,
+            memory=memory,
+        )
