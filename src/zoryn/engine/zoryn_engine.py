@@ -3,11 +3,10 @@ Zoryn Engine.
 
 The Zoryn Engine is the public entry point to the framework.
 
-It coordinates the Event Store, Living Earth Graph, Memory,
-Evolution and Reasoning.
+Its responsibility is limited to coordinating high-level
+execution.
 
-Clients interact with this class rather than individual
-subsystems.
+Detailed orchestration is delegated to the Evolution Engine.
 """
 
 from __future__ import annotations
@@ -22,7 +21,7 @@ from zoryn.storage.event_store import EventStore
 
 class ZorynEngine:
     """
-    Coordinates the execution of the Zoryn framework.
+    Public interface to the Zoryn framework.
     """
 
     def __init__(
@@ -34,15 +33,24 @@ class ZorynEngine:
         self._graph = LivingEarthGraph()
         self._memory = MemoryManager()
 
-        self._evolution = DefaultEvolutionEngine()
-        self._reasoning = DefaultReasoningEngine()
+        reasoning = DefaultReasoningEngine()
+
+        self._evolution = DefaultEvolutionEngine(
+            reasoning=reasoning,
+        )
 
     @property
     def graph(self) -> LivingEarthGraph:
+        """
+        Return the Living Earth Graph.
+        """
         return self._graph
 
     @property
     def memory(self) -> MemoryManager:
+        """
+        Return the memory manager.
+        """
         return self._memory
 
     def ingest(self, event: Event) -> None:
@@ -57,16 +65,9 @@ class ZorynEngine:
             event=event,
         )
 
-        snapshot = self._graph.snapshot()
-
-        self._reasoning.reason(
-            snapshot=snapshot,
-            memory=self._memory,
-        )
-
     def replay(self) -> None:
         """
-        Replay the complete Event Store.
+        Replay all recorded events.
         """
         self._graph.reset()
         self._memory.clear()
@@ -77,10 +78,3 @@ class ZorynEngine:
                 memory=self._memory,
                 event=event,
             )
-
-        snapshot = self._graph.snapshot()
-
-        self._reasoning.reason(
-            snapshot=snapshot,
-            memory=self._memory,
-        )
