@@ -75,23 +75,23 @@ Subsystems may themselves contain additional systems.
 
 Examples
 
-Earth System
+                                Earth System
 
-↓
+                                    ↓
 
-Climate System
+                              Climate System
 
-↓
+                                    ↓
 
-Hydrological System
+                            Hydrological System
 
-↓
+                                    ↓
 
-Catchment
+                                 Catchment
 
-↓
+                                    ↓
 
-River Reach
+                                River Reach
 
 Hierarchy is recursive.
 
