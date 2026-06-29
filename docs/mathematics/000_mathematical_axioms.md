@@ -2,192 +2,176 @@
 
 ## Purpose
 
-This document defines the fundamental mathematical axioms of Zoryn.
+This document defines the mathematical assumptions underlying the Zoryn framework.
 
-Every mathematical result, operator and algorithm within Zoryn shall be derivable from these axioms.
+Every mathematical definition, theorem, operator and algorithm shall be derivable from these axioms.
 
-The axioms are assumed true.
-
-They are not proved.
+The axioms define the permissible mathematical universe of Zoryn.
 
 ---
 
-# Axiom 1 — Reality Exists
+# Primitive Objects
 
-An objective reality exists independently of observation.
+The framework assumes the existence of the following primitive mathematical objects.
 
-Scientific understanding attempts to approximate this reality.
+S — Systems
 
-Reality itself is never modified by the model.
+P — Processes
 
----
+I — Interactions
 
-# Axiom 2 — Systems Exist
+F — Facts
 
-Reality consists of interacting systems.
+E — Evidence
 
-Systems exist whether or not they are observed.
+C — Confidence
 
-Systems may exist across multiple spatial and temporal scales.
+Θ — Theories
 
----
+T — Time
 
-# Axiom 3 — Systems Evolve
+Primitive objects are assumed to exist.
 
-Every system evolves through time.
-
-Static systems are special cases of dynamic systems.
-
-Time is irreversible.
+Their scientific meaning is defined elsewhere.
 
 ---
 
-# Axiom 4 — Processes Generate Change
+# Axiom 1 — Existence
 
-State transitions occur through processes.
+Every primitive object belongs to a well-defined mathematical set.
 
-Processes explain change.
-
-Without processes there is no evolution.
+No object exists outside its defining set.
 
 ---
 
-# Axiom 5 — Observations Are Partial
+# Axiom 2 — Time
 
-Observations never completely describe reality.
+Time forms a totally ordered set.
 
-Every observation is incomplete.
+Every observation possesses exactly one knowledge time.
 
-Scientific uncertainty therefore always exists.
-
----
-
-# Axiom 6 — Facts Are Immutable
-
-Validated facts never change.
-
-Corrections generate new facts.
-
-History is preserved.
+Every fact possesses exactly one event time.
 
 ---
 
-# Axiom 7 — Evidence Evolves
+# Axiom 3 — Facts
 
-Evidence accumulates continuously.
+Facts are immutable.
 
-New facts modify evidence.
+Once created,
 
-Historical evidence remains recoverable.
-
----
-
-# Axiom 8 — Confidence Emerges From Evidence
-
-Confidence is not assigned.
-
-Confidence emerges from accumulated evidence.
-
-Confidence therefore evolves continuously.
+a fact remains unchanged forever.
 
 ---
 
-# Axiom 9 — Scientific Understanding Is Approximate
+# Axiom 4 — Evidence
 
-Scientific understanding is always an approximation.
+Evidence evolves only through the addition of new facts.
 
-No theory completely explains reality.
-
-Every theory remains revisable.
+Existing evidence is never modified.
 
 ---
 
-# Axiom 10 — Learning Never Terminates
+# Axiom 5 — Confidence
 
-Every new fact possesses the potential to improve scientific understanding.
+Confidence is a function of evidence.
 
-Scientific discovery therefore continues indefinitely.
-
----
-
-# Axiom 11 — Relations Carry Meaning
-
-Scientific objects derive meaning through their relationships.
-
-Relations evolve through evidence.
-
-Meaning therefore evolves.
+Confidence possesses no independent dynamics.
 
 ---
 
-# Axiom 12 — Computation Preserves Scientific Integrity
+# Axiom 6 — Processes
 
-Algorithms may improve understanding.
+Processes generate state transitions.
 
-Algorithms must never alter historical truth.
+Processes never generate facts directly.
 
-Scientific integrity is invariant.
-
----
-
-# Consequences
-
-From these axioms it follows that
-
-facts remain immutable,
-
-evidence evolves,
-
-confidence evolves,
-
-theories evolve,
-
-forecasts evolve,
-
-understanding evolves.
-
-History remains reproducible.
+Facts observe process outcomes.
 
 ---
 
-# Design Principles
+# Axiom 7 — Relations
 
-Every mathematical result within Zoryn must be compatible with these axioms.
+Relations connect primitive objects.
 
-If an algorithm violates an axiom,
+Relations may evolve.
 
-the algorithm is incorrect.
-
-The axioms take precedence over implementation.
+Objects remain identifiable.
 
 ---
 
-# Scientific Basis
+# Axiom 8 — Conservation of Provenance
 
-These axioms are informed by
+Every derived mathematical quantity possesses a complete derivation from originating facts.
 
-Scientific Realism
-
-Systems Theory
-
-Information Theory
-
-Measurement Theory
-
-Philosophy of Science
-
-while establishing the mathematical foundations of continual scientific learning.
+Scientific provenance is conserved.
 
 ---
 
-# Open Questions
+# Axiom 9 — Reproducibility
 
-* Are these axioms complete?
-* Are any axioms redundant?
-* Can additional axioms be derived rather than assumed?
+Given identical facts,
+
+all deterministic operators produce identical results.
 
 ---
 
-# Zoryn Contribution
+# Axiom 10 — Monotonic Knowledge
 
-These axioms establish a formal mathematical foundation for continual computational scientific discovery, ensuring that every future theorem, operator and algorithm remains consistent with the scientific principles underlying Zoryn.
+Scientific understanding may improve,
+
+remain unchanged,
+
+or become more uncertain.
+
+Historical facts never disappear.
+
+---
+
+# Mathematical Consequences
+
+These axioms imply
+
+immutable history,
+
+continuous learning,
+
+traceable reasoning,
+
+bounded confidence,
+
+reproducible computation.
+
+---
+
+# Consistency Rule
+
+Every future theorem,
+
+operator,
+
+algorithm,
+
+and implementation
+
+must satisfy these axioms.
+
+Any contradiction invalidates the mathematics rather than the axioms.
+
+---
+
+# Future Work
+
+Subsequent mathematical documents will introduce
+
+Definitions
+
+Lemmas
+
+Theorems
+
+Operators
+
+Algorithms
+
+derived solely from these axioms.
