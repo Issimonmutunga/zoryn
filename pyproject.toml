@@ -5,57 +5,31 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "zoryn"
 version = "0.1.0"
-description = "A self-evolving Living Earth Graph for continual environmental intelligence."
+description = "A continually learning Early Warning System for Earth systems."
 readme = "README.md"
 requires-python = ">=3.11"
 license = { text = "MIT" }
+
 authors = [
     { name = "Simon Mutunga" }
 ]
 
 dependencies = [
-    "numpy",
-    "pandas",
-    "polars",
-    "pyarrow",
-    "duckdb",
-    "h3",
-    "networkx",
+    "pandas>=2.2",
+    "pyarrow>=15",
     "pydantic>=2",
-    "pyyaml",
-    "orjson",
-    "rich",
-    "typer",
-    "loguru"
+    "pyyaml>=6",
+    "rich>=13"
 ]
 
 [project.optional-dependencies]
-
 dev = [
-    "pytest",
+    "pytest>=8",
     "pytest-cov",
     "ruff",
     "mypy",
     "pre-commit"
 ]
-
-ml = [
-    "torch",
-    "torch-geometric"
-]
-
-api = [
-    "fastapi",
-    "uvicorn"
-]
-
-docs = [
-    "mkdocs",
-    "mkdocs-material"
-]
-
-[project.scripts]
-zoryn = "zoryn.cli.main:app"
 
 [tool.setuptools]
 package-dir = { "" = "src" }
@@ -68,6 +42,7 @@ testpaths = ["tests"]
 
 [tool.ruff]
 line-length = 100
+target-version = "py311"
 
 [tool.mypy]
 python_version = "3.11"
