@@ -200,19 +200,19 @@ Scientific disagreement therefore remains measurable.
 
 Every arriving fact initiates
 
-Evidence Update
+     Evidence Update
 
-↓
+           ↓
 
-Confidence Update
+    Confidence Update
 
-↓
+           ↓
 
-Theory Update
+      Theory Update
 
-↓
+           ↓
 
-Forecast Update
+     Forecast Update
 
 Confidence therefore propagates scientific learning.
 
