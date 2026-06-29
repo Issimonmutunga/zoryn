@@ -2,16 +2,13 @@
 Observation loading utilities for Zoryn.
 
 This module provides the public entry point for reading observation
-datasets from disk. Supported formats are intentionally minimal:
-CSV and Parquet.
+datasets from disk. Supported formats are CSV and Parquet.
 
-The loader performs three steps:
+The loader is responsible for:
 
-1. Read the dataset.
-2. Validate it against the canonical observation schema.
-3. Return the validated DataFrame.
-
-No cleaning, interpolation or feature engineering occurs here.
+1. Reading observations.
+2. Normalizing them to the canonical schema.
+3. Validating them.
 """
 
 from __future__ import annotations
@@ -25,27 +22,22 @@ from .validators import validate_observations
 SUPPORTED_EXTENSIONS = {".csv", ".parquet"}
 
 
+def _normalize(df: pd.DataFrame) -> pd.DataFrame:
+    """Normalize observations to the canonical schema."""
+
+    if "timestamp" in df.columns:
+        df["timestamp"] = pd.to_datetime(df["timestamp"], errors="raise")
+
+    for column in ("variable", "source", "quality"):
+        if column in df.columns:
+            df[column] = df[column].astype("string")
+
+    return df
+
+
 def load_observations(path: str | Path) -> pd.DataFrame:
     """
     Load and validate an observation dataset.
-
-    Parameters
-    ----------
-    path
-        Path to a CSV or Parquet file.
-
-    Returns
-    -------
-    pandas.DataFrame
-        Validated observation table.
-
-    Raises
-    ------
-    FileNotFoundError
-        If the file does not exist.
-
-    ValueError
-        If the file type is unsupported or validation fails.
     """
     path = Path(path)
 
@@ -63,11 +55,9 @@ def load_observations(path: str | Path) -> pd.DataFrame:
     if suffix == ".csv":
         df = pd.read_csv(path)
 
-    elif suffix == ".parquet":
+    else:
         df = pd.read_parquet(path)
 
-    else:
-        # Defensive safeguard.
-        raise RuntimeError("Unexpected file type.")
+    df = _normalize(df)
 
     return validate_observations(df)
