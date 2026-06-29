@@ -4,9 +4,12 @@ Validation utilities for Zoryn observation datasets.
 
 from __future__ import annotations
 
-from typing import Iterable
-
 import pandas as pd
+from pandas.api.types import (
+    is_datetime64_dtype,
+    is_float_dtype,
+    is_string_dtype,
+)
 
 from .schema import field_types, required_fields
 
@@ -38,16 +41,28 @@ def validate_dtypes(df: pd.DataFrame) -> None:
         if column not in df.columns:
             continue
 
-        actual = str(df[column].dtype)
+        series = df[column]
 
-        # Allow pandas string/object interchangeably
-        if dtype == "string" and actual in ("object", "string"):
+        if dtype.startswith("datetime64"):
+            if not is_datetime64_dtype(series):
+                raise TypeError(
+                    f"Column '{column}' must be a datetime64 type."
+                )
             continue
 
-        if actual != dtype:
-            raise TypeError(
-                f"Column '{column}' has dtype '{actual}', expected '{dtype}'."
-            )
+        if dtype == "float64":
+            if not is_float_dtype(series):
+                raise TypeError(
+                    f"Column '{column}' must be a floating-point type."
+                )
+            continue
+
+        if dtype == "string":
+            if not (is_string_dtype(series) or series.dtype == object):
+                raise TypeError(
+                    f"Column '{column}' must be a string type."
+                )
+            continue
 
 
 def validate_observations(df: pd.DataFrame) -> pd.DataFrame:
