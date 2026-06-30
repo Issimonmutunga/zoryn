@@ -1,0 +1,30 @@
+# Core
+numpy
+pandas
+polars
+pyarrow
+
+# Geospatial
+geopandas
+shapely
+pyproj
+fiona
+rasterio
+
+# H3
+h3
+
+# Earth Engine
+earthengine-api
+geemap
+
+# Notebook
+jupyterlab
+ipykernel
+ipywidgets
+
+# Utilities
+tqdm
+orjson
+pyyaml
+rich
