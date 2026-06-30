@@ -4,8 +4,6 @@ Knowledge discovery for Zoryn.
 
 from __future__ import annotations
 
-from collections import defaultdict
-
 from .relationship import Relationship
 from .signature import Signature
 
@@ -14,7 +12,7 @@ class KnowledgeDiscovery:
     """
     Baseline knowledge discovery.
 
-    Discovers consecutive signature transitions occurring
+    Discovers transitions between consecutive signatures
     within the same spatial node.
     """
 
@@ -24,10 +22,10 @@ class KnowledgeDiscovery:
     ) -> list[Relationship]:
         relationships: list[Relationship] = []
 
-        grouped: dict[str, list[Signature]] = defaultdict(list)
+        grouped: dict[str, list[Signature]] = {}
 
         for signature in signatures:
-            grouped[signature.node_id].append(signature)
+            grouped.setdefault(signature.node_id, []).append(signature)
 
         for node_signatures in grouped.values():
             node_signatures.sort(key=lambda s: s.timestamp)
@@ -35,8 +33,8 @@ class KnowledgeDiscovery:
             for current, nxt in zip(node_signatures, node_signatures[1:]):
                 relationships.append(
                     Relationship(
-                        source_signature=current.name,
-                        target_signature=nxt.name,
+                        source_signature=self._signature_name(current),
+                        target_signature=self._signature_name(nxt),
                         lead_time=1,
                         lead_time_unit="step",
                         conditions={
@@ -46,3 +44,13 @@ class KnowledgeDiscovery:
                 )
 
         return relationships
+
+    @staticmethod
+    def _signature_name(signature: Signature) -> str:
+        """
+        Produce a deterministic identifier for a signature.
+
+        This is a placeholder until learned signatures
+        replace deterministic ones.
+        """
+        return "|".join(sorted(signature.variables.keys()))
