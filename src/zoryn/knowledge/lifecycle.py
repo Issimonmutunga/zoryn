@@ -5,6 +5,7 @@ Knowledge lifecycle for Zoryn.
 from __future__ import annotations
 
 from .discovery import KnowledgeDiscovery
+from .relationship import Relationship
 from .store import KnowledgeStore
 from .unit import KnowledgeUnit
 from .validation import KnowledgeValidator
@@ -20,7 +21,7 @@ class KnowledgeLifecycle:
         self.validation = KnowledgeValidator()
         self.store = KnowledgeStore()
 
-    def discover(self, relationship: str) -> KnowledgeUnit:
+    def discover(self, relationship: Relationship) -> KnowledgeUnit:
         """
         Discover and store a candidate knowledge unit.
         """
