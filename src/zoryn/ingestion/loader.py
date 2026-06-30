@@ -1,14 +1,5 @@
 """
-Observation loading utilities for Zoryn.
-
-This module provides the public entry point for reading observation
-datasets from disk. Supported formats are CSV and Parquet.
-
-The loader is responsible for:
-
-1. Reading observations.
-2. Normalizing them to the canonical schema.
-3. Validating them.
+Observation loader for Zoryn.
 """
 
 from __future__ import annotations
@@ -17,47 +8,42 @@ from pathlib import Path
 
 import pandas as pd
 
-from .validators import validate_observations
-
-SUPPORTED_EXTENSIONS = {".csv", ".parquet"}
+from .schema import Observation
 
 
-def _normalize(df: pd.DataFrame) -> pd.DataFrame:
-    """Normalize observations to the canonical schema."""
-
-    if "timestamp" in df.columns:
-        df["timestamp"] = pd.to_datetime(df["timestamp"], errors="raise")
-
-    for column in ("variable", "source", "quality"):
-        if column in df.columns:
-            df[column] = df[column].astype("string")
-
-    return df
-
-
-def load_observations(path: str | Path) -> pd.DataFrame:
+def load_observations(path: str | Path) -> list[Observation]:
     """
-    Load and validate an observation dataset.
+    Load observations from a CSV file.
+
+    Expected columns:
+
+    timestamp
+    node_id
+    variable
+    value
+    source
     """
-    path = Path(path)
 
-    if not path.exists():
-        raise FileNotFoundError(path)
+    df = pd.read_csv(path)
 
-    suffix = path.suffix.lower()
+    observations: list[Observation] = []
 
-    if suffix not in SUPPORTED_EXTENSIONS:
-        raise ValueError(
-            f"Unsupported file format '{suffix}'. "
-            f"Supported formats: {sorted(SUPPORTED_EXTENSIONS)}."
+    for row in df.itertuples(index=False):
+        observations.append(
+            Observation(
+                timestamp=str(row.timestamp),
+                node_id=str(row.node_id),
+                variable=str(row.variable),
+                value=float(row.value),
+                source=str(row.source),
+            )
         )
 
-    if suffix == ".csv":
-        df = pd.read_csv(path)
+    observations.sort(
+        key=lambda observation: (
+            observation.node_id,
+            observation.timestamp,
+        )
+    )
 
-    else:
-        df = pd.read_parquet(path)
-
-    df = _normalize(df)
-
-    return validate_observations(df)
+    return observations
