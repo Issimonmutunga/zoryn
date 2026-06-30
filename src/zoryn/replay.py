@@ -4,10 +4,13 @@ Historical replay engine for Zoryn.
 
 from __future__ import annotations
 
+from collections import defaultdict
+
 from zoryn.ingestion.schema import Observation
 from zoryn.knowledge.builder import SignatureBuilder
 from zoryn.knowledge.discovery import KnowledgeDiscovery
 from zoryn.knowledge.engine import KnowledgeEngine
+from zoryn.validation import ValidationEngine
 
 
 class ReplayEngine:
@@ -19,22 +22,46 @@ class ReplayEngine:
         self.builder = SignatureBuilder()
         self.discovery = KnowledgeDiscovery()
         self.knowledge = KnowledgeEngine()
+        self.validation = ValidationEngine()
 
     def run(
         self,
         observations: list[Observation],
     ):
         """
-        Execute one historical replay.
-
-        Returns the current knowledge units generated
-        from the supplied observations.
+        Execute a chronological replay.
         """
 
         signatures = self.builder.build(observations)
 
-        relationships = self.discovery.discover(signatures)
+        grouped: dict[str, list] = defaultdict(list)
 
-        knowledge = self.knowledge.learn(relationships)
+        for signature in signatures:
+            grouped[signature.node_id].append(signature)
 
-        return knowledge
+        validated = []
+
+        for node_signatures in grouped.values():
+            node_signatures.sort(key=lambda s: s.timestamp)
+
+            for current, future in zip(
+                node_signatures,
+                node_signatures[1:],
+            ):
+                relationships = self.discovery.discover(
+                    [current, future]
+                )
+
+                knowledge = self.knowledge.learn(
+                    relationships
+                )
+
+                validated.extend(
+                    self.validation.validate(
+                        knowledge,
+                        current,
+                        future,
+                    )
+                )
+
+        return validated
