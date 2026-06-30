@@ -4,6 +4,7 @@ Knowledge discovery for Zoryn.
 
 from __future__ import annotations
 
+from .relationship import Relationship
 from .unit import KnowledgeUnit
 
 
@@ -12,12 +13,13 @@ class KnowledgeDiscovery:
     Discovers candidate knowledge from observations.
     """
 
-    def discover(self, relationship: str) -> KnowledgeUnit:
+    def discover(self, relationship: Relationship) -> KnowledgeUnit:
         """
-        Create a candidate knowledge unit.
+        Convert a discovered relationship into a candidate
+        knowledge unit.
 
-        The discovery algorithm will replace this placeholder
-        in subsequent iterations.
+        The relationship discovery algorithm will be implemented
+        in later iterations.
         """
         return KnowledgeUnit(
             relationship=relationship,
