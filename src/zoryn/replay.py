@@ -7,6 +7,7 @@ from __future__ import annotations
 from zoryn.ingestion.schema import Observation
 from zoryn.knowledge.builder import SignatureBuilder
 from zoryn.knowledge.discovery import KnowledgeDiscovery
+from zoryn.knowledge.engine import KnowledgeEngine
 
 
 class ReplayEngine:
@@ -17,17 +18,23 @@ class ReplayEngine:
     def __init__(self) -> None:
         self.builder = SignatureBuilder()
         self.discovery = KnowledgeDiscovery()
+        self.knowledge = KnowledgeEngine()
 
     def run(
         self,
         observations: list[Observation],
     ):
         """
-        Execute one replay over historical observations.
+        Execute one historical replay.
+
+        Returns the current knowledge units generated
+        from the supplied observations.
         """
 
         signatures = self.builder.build(observations)
 
         relationships = self.discovery.discover(signatures)
 
-        return relationships
+        knowledge = self.knowledge.learn(relationships)
+
+        return knowledge
