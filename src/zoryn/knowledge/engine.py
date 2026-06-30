@@ -22,30 +22,59 @@ class KnowledgeEngine:
         relationships: list[Relationship],
     ) -> list[KnowledgeUnit]:
         """
-        Learn from discovered relationships.
-
-        Existing relationships are reused.
-        New relationships become candidate knowledge.
+        Ensure every discovered relationship exists in the
+        knowledge base.
         """
 
-        learned: list[KnowledgeUnit] = []
+        units: list[KnowledgeUnit] = []
 
         for relationship in relationships:
-            existing = self._find(relationship)
+            unit = self._find(relationship)
 
-            if existing is None:
-                existing = self.lifecycle.discover(relationship)
+            if unit is None:
+                unit = self.lifecycle.discover(relationship)
 
-            learned.append(existing)
+            units.append(unit)
 
-        return learned
+        return units
+
+    def confirm(
+        self,
+        unit: KnowledgeUnit,
+    ) -> KnowledgeUnit:
+        """
+        Persist a confirmed knowledge unit.
+        """
+
+        updated = self.lifecycle.confirm(unit)
+
+        return updated
+
+    def contradict(
+        self,
+        unit: KnowledgeUnit,
+    ) -> KnowledgeUnit:
+        """
+        Persist a contradicted knowledge unit.
+        """
+
+        updated = self.lifecycle.contradict(unit)
+
+        return updated
+
+    def all(self) -> list[KnowledgeUnit]:
+        """
+        Return the current knowledge base.
+        """
+
+        return self.lifecycle.store.all()
 
     def _find(
         self,
         relationship: Relationship,
     ) -> KnowledgeUnit | None:
         """
-        Find an existing knowledge unit for a relationship.
+        Find an existing knowledge unit.
         """
 
         for unit in self.lifecycle.store.all():
