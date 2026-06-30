@@ -9,6 +9,8 @@ from datetime import datetime
 from enum import Enum
 from uuid import uuid4
 
+from .relationship import Relationship
+
 
 class KnowledgeStatus(str, Enum):
     """
@@ -24,10 +26,13 @@ class KnowledgeStatus(str, Enum):
 @dataclass(slots=True, frozen=True)
 class KnowledgeUnit:
     """
-    A single validated relationship discovered from observations.
+    A living unit of knowledge.
+
+    The relationship is immutable.
+    Confidence evolves through validation.
     """
 
-    relationship: str
+    relationship: Relationship
 
     confidence: float = 0.0
 
