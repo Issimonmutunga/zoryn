@@ -1,25 +1,30 @@
 """
-Zoryn entry point.
+Zoryn pilot entry point.
 """
 
 from __future__ import annotations
 
-from zoryn import Zoryn
+from pathlib import Path
+
+from zoryn.ingestion.loader import load_observations
+from zoryn.replay import ReplayEngine
 
 
-def main() -> int:
+def run(observation_file: str | Path):
     """
-    Start the Zoryn application.
+    Execute a historical replay.
     """
-    app = Zoryn()
 
-    print("Zoryn")
-    print("Continually Learning Early Warning System")
-    print(f"Events: {len(app.events)}")
-    print(f"Hypotheses: {len(app.hypotheses)}")
+    observations = load_observations(observation_file)
 
-    return 0
+    engine = ReplayEngine()
+
+    knowledge = engine.run(observations)
+
+    return knowledge
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    raise SystemExit(
+        "Import run() or integrate with the CLI when available."
+    )
