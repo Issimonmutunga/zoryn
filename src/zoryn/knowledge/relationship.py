@@ -1,28 +1,39 @@
 """
-Relationship definition for Zoryn.
+Runtime representation of a relationship between two Signatures.
 """
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
-from typing import Any
+from dataclasses import dataclass
+from typing import Mapping
+
+from .signature import Signature
 
 
-@dataclass(slots=True, frozen=True)
+@dataclass(frozen=True, slots=True)
 class Relationship:
     """
-    A discovered relationship between two signatures.
-
-    Validation, confidence, and lifecycle are handled separately
-    by the knowledge unit.
+    Represents the transition between two Signatures.
     """
 
-    source_signature: str
+    previous: Signature
+    current: Signature
+    changes: Mapping[str, float]
 
-    target_signature: str
+    def has_change(self, variable: str) -> bool:
+        """Return True if a variable changed."""
+        return variable in self.changes
 
-    lead_time: int
+    def change(self, variable: str, default: float | None = None):
+        """Return the computed change for a variable."""
+        return self.changes.get(variable, default)
 
-    lead_time_unit: str
+    def variables(self):
+        """Return variables that changed."""
+        return self.changes.keys()
 
-    conditions: dict[str, Any] = field(default_factory=dict)
+    def __len__(self) -> int:
+        return len(self.changes)
+
+    def __contains__(self, variable: str) -> bool:
+        return variable in self.changes
