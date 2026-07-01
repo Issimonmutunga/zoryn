@@ -1,37 +1,54 @@
 """
-Signature comparison for Zoryn.
+Utilities for comparing two Signatures.
 """
 
 from __future__ import annotations
 
+from .relationship import Relationship
 from .signature import Signature
 
 
 class SignatureComparator:
     """
-    Compares two signatures.
-
-    The initial implementation measures overlap in observed
-    canonical variables. Future implementations will compare
-    values, temporal trends and learned patterns.
+    Compares two Signatures and produces a Relationship.
     """
 
-    def similarity(
-        self,
-        first: Signature,
-        second: Signature,
-    ) -> float:
-        first_keys = set(first.variables)
-        second_keys = set(second.variables)
+    @staticmethod
+    def compare(
+        previous: Signature,
+        current: Signature,
+    ) -> Relationship:
+        """
+        Compare two Signatures.
 
-        if not first_keys and not second_keys:
-            return 1.0
+        Returns
+        -------
+        Relationship
+            Runtime relationship describing the transition.
+        """
 
-        union = first_keys | second_keys
+        if previous.h3_id != current.h3_id:
+            raise ValueError(
+                "Signatures must belong to the same H3 cell."
+            )
 
-        if not union:
-            return 0.0
+        changes: dict[str, float] = {}
 
-        intersection = first_keys & second_keys
+        variables = (
+            set(previous.keys())
+            & set(current.keys())
+        )
 
-        return len(intersection) / len(union)
+        for variable in sorted(variables):
+
+            old = previous.get(variable)
+            new = current.get(variable)
+
+            if old != new:
+                changes[variable] = new - old
+
+        return Relationship(
+            previous=previous,
+            current=current,
+            changes=changes,
+        )
