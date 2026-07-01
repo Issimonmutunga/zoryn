@@ -22,7 +22,6 @@ class KnowledgeEngine:
         builder: SignatureBuilder,
     ) -> None:
 
-        self._builder = builder
         self._replay = ReplayEngine(builder)
         self._discoverer = KnowledgeDiscoverer()
 
@@ -32,27 +31,26 @@ class KnowledgeEngine:
 
     def run(self) -> None:
         """
-        Execute one replay over all signatures.
+        Replay every H3 history independently.
         """
 
-        previous = None
+        for _, history in self._replay.histories():
 
-        for current in self._replay:
+            previous = None
 
-            if (
-                previous is not None
-                and previous.h3_id == current.h3_id
-            ):
+            for current in history:
 
-                relationship = (
-                    SignatureComparator.compare(
-                        previous,
-                        current,
+                if previous is not None:
+
+                    relationship = (
+                        SignatureComparator.compare(
+                            previous,
+                            current,
+                        )
                     )
-                )
 
-                self._discoverer.consume(
-                    [relationship]
-                )
+                    self._discoverer.consume(
+                        [relationship]
+                    )
 
-            previous = current
+                previous = current
