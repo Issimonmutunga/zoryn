@@ -1,56 +1,43 @@
 """
-Knowledge discovery for Zoryn.
+Immutable representation of a discovered environmental pattern.
 """
 
 from __future__ import annotations
 
-from .relationship import Relationship
-from .signature import Signature
+from dataclasses import dataclass
+from typing import Mapping
 
 
-class KnowledgeDiscovery:
+@dataclass(frozen=True, slots=True)
+class Discovery:
     """
-    Baseline knowledge discovery.
+    A discovered environmental pattern.
 
-    Discovers transitions between consecutive signatures
-    within the same spatial node.
+    Parameters
+    ----------
+    name
+        Canonical discovery name.
+
+    evidence
+        Supporting evidence.
+
+    confidence
+        Confidence score in [0, 1].
+
+    metadata
+        Additional information describing the discovery.
     """
 
-    def discover(
+    name: str
+    evidence: int
+    confidence: float
+    metadata: Mapping[str, object]
+
+    def is_confident(
         self,
-        signatures: list[Signature],
-    ) -> list[Relationship]:
-        relationships: list[Relationship] = []
-
-        grouped: dict[str, list[Signature]] = {}
-
-        for signature in signatures:
-            grouped.setdefault(signature.node_id, []).append(signature)
-
-        for node_signatures in grouped.values():
-            node_signatures.sort(key=lambda s: s.timestamp)
-
-            for current, nxt in zip(node_signatures, node_signatures[1:]):
-                relationships.append(
-                    Relationship(
-                        source_signature=self._signature_name(current),
-                        target_signature=self._signature_name(nxt),
-                        lead_time=1,
-                        lead_time_unit="step",
-                        conditions={
-                            "node_id": current.node_id,
-                        },
-                    )
-                )
-
-        return relationships
-
-    @staticmethod
-    def _signature_name(signature: Signature) -> str:
+        threshold: float = 0.8,
+    ) -> bool:
         """
-        Produce a deterministic identifier for a signature.
-
-        This is a placeholder until learned signatures
-        replace deterministic ones.
+        Return True if the confidence exceeds the threshold.
         """
-        return "|".join(sorted(signature.variables.keys()))
+        return self.confidence >= threshold
