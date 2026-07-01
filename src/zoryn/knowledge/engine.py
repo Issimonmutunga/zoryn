@@ -9,6 +9,7 @@ from __future__ import annotations
 from .builder import SignatureBuilder
 from .comparator import SignatureComparator
 from .discoverer import KnowledgeDiscoverer
+from .store import ObservationStore
 from zoryn.replay import ReplayEngine
 
 
@@ -19,10 +20,12 @@ class KnowledgeEngine:
 
     def __init__(
         self,
-        builder: SignatureBuilder,
+        store: ObservationStore,
         comparator: SignatureComparator | None = None,
         discoverer: KnowledgeDiscoverer | None = None,
     ) -> None:
+
+        builder = SignatureBuilder(store)
 
         self._replay = ReplayEngine(builder)
 
@@ -43,6 +46,9 @@ class KnowledgeEngine:
         return self._discoverer
 
     def run(self) -> None:
+        """
+        Replay every H3 history independently.
+        """
 
         for _, history in self._replay.histories():
 
@@ -52,11 +58,9 @@ class KnowledgeEngine:
 
                 if previous is not None:
 
-                    relationship = (
-                        self._comparator.compare(
-                            previous,
-                            current,
-                        )
+                    relationship = self._comparator.compare(
+                        previous,
+                        current,
                     )
 
                     self._discoverer.consume(
