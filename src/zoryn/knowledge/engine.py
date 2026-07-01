@@ -1,7 +1,8 @@
 """
 Knowledge engine.
 
-Coordinates replay, comparison and discovery.
+Coordinates replay, comparison, evidence construction
+and knowledge discovery.
 """
 
 from __future__ import annotations
@@ -9,6 +10,7 @@ from __future__ import annotations
 from .builder import SignatureBuilder
 from .comparator import SignatureComparator
 from .discoverer import KnowledgeDiscoverer
+from .evidence_builder import EvidenceBuilder
 from .store import ObservationStore
 from zoryn.replay import ReplayEngine
 
@@ -22,6 +24,7 @@ class KnowledgeEngine:
         self,
         store: ObservationStore,
         comparator: SignatureComparator | None = None,
+        evidence_builder: EvidenceBuilder | None = None,
         discoverer: KnowledgeDiscoverer | None = None,
     ) -> None:
 
@@ -33,6 +36,12 @@ class KnowledgeEngine:
             comparator
             if comparator is not None
             else SignatureComparator()
+        )
+
+        self._evidence_builder = (
+            evidence_builder
+            if evidence_builder is not None
+            else EvidenceBuilder()
         )
 
         self._discoverer = (
@@ -58,13 +67,21 @@ class KnowledgeEngine:
 
                 if previous is not None:
 
-                    relationship = self._comparator.compare(
-                        previous,
-                        current,
+                    relationship = (
+                        self._comparator.compare(
+                            previous,
+                            current,
+                        )
+                    )
+
+                    evidence = (
+                        self._evidence_builder.build(
+                            relationship
+                        )
                     )
 
                     self._discoverer.consume(
-                        [relationship]
+                        evidence
                     )
 
                 previous = current
