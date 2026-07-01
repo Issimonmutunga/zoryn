@@ -1,42 +1,135 @@
 """
-Signature builder for Zoryn.
+Builds immutable Signature objects from canonical observations.
 """
 
 from __future__ import annotations
 
-from collections import defaultdict
+from collections.abc import Iterator
 
-from zoryn.ingestion.schema import Observation
+import polars as pl
 
 from .signature import Signature
 
 
 class SignatureBuilder:
     """
-    Builds one signature per (node, timestamp).
+    Builds Signature objects from canonical observations.
+
+    Expected schema:
+
+        timestamp
+        h3_id
+        variable
+        value
+        source
     """
+
+    REQUIRED_COLUMNS = (
+        "timestamp",
+        "h3_id",
+        "variable",
+        "value",
+        "source",
+    )
+
+    def __init__(self, observations: pl.LazyFrame):
+
+        self._observations = observations
+
+        schema = tuple(
+            observations.collect_schema().names()
+        )
+
+        if schema != self.REQUIRED_COLUMNS:
+            raise ValueError(
+                f"Expected schema {self.REQUIRED_COLUMNS}, "
+                f"received {schema}."
+            )
 
     def build(
         self,
-        observations: list[Observation],
-    ) -> list[Signature]:
-        signatures: dict[tuple[str, str], Signature] = {}
+        timestamp: str,
+        h3_id: str,
+    ) -> Signature:
+        """
+        Build one Signature.
+        """
 
-        for observation in observations:
-            key = (
-                observation.node_id,
-                observation.timestamp,
+        df = (
+            self._observations
+            .filter(
+                (pl.col("timestamp") == timestamp)
+                &
+                (pl.col("h3_id") == h3_id)
+            )
+            .collect()
+        )
+
+        if df.is_empty():
+            raise ValueError(
+                f"No observations found for "
+                f"{timestamp=} {h3_id=}."
             )
 
-            if key not in signatures:
-                signatures[key] = Signature(
-                    node_id=observation.node_id,
-                    timestamp=observation.timestamp,
-                )
+        if (
+            df.group_by("variable")
+            .len()
+            .filter(pl.col("len") > 1)
+            .height
+            > 0
+        ):
+            raise ValueError(
+                "Duplicate variables detected."
+            )
 
-            signatures[key].add(observation)
-
-        return sorted(
-            signatures.values(),
-            key=lambda s: (s.node_id, s.timestamp),
+        variables = dict(
+            zip(
+                df["variable"],
+                df["value"],
+            )
         )
+
+        return Signature(
+            timestamp=timestamp,
+            h3_id=h3_id,
+            variables=variables,
+        )
+
+    def iter_signatures(
+        self,
+    ) -> Iterator[Signature]:
+        """
+        Iterate through every signature.
+        """
+
+        grouped = (
+            self._observations
+            .group_by(
+                [
+                    "timestamp",
+                    "h3_id",
+                ]
+            )
+            .agg(
+                [
+                    pl.col("variable"),
+                    pl.col("value"),
+                ]
+            )
+            .collect()
+        )
+
+        for row in grouped.iter_rows(named=True):
+
+            variables = dict(
+                zip(
+                    row["variable"],
+                    row["value"],
+                )
+            )
+
+            yield Signature(
+                timestamp=row["timestamp"],
+                h3_id=row["h3_id"],
+                variables=variables,
+            )
