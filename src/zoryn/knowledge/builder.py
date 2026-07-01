@@ -133,3 +133,52 @@ class SignatureBuilder:
                 h3_id=row["h3_id"],
                 variables=variables,
             )
+    def iter_histories(
+        self,
+    ) -> Iterator[tuple[str, Iterator[Signature]]]:
+        """
+        Iterate through the temporal history of each H3 cell.
+
+        Yields
+        ------
+        (h3_id, iterator of Signatures)
+        """
+
+        grouped = (
+            self._observations
+            .sort(
+                [
+                    "h3_id",
+                    "timestamp",
+                ]
+            )
+            .group_by("h3_id")
+        )
+
+        for h3_id, frame in grouped:
+
+            signatures = []
+
+            temporal_groups = (
+                frame
+                .group_by("timestamp")
+            )
+
+            for timestamp, observations in temporal_groups:
+
+                variables = dict(
+                    zip(
+                        observations["variable"],
+                        observations["value"],
+                    )
+                )
+
+                signatures.append(
+                    Signature(
+                        timestamp=timestamp,
+                        h3_id=h3_id,
+                        variables=variables,
+                    )
+                )
+
+            yield h3_id, iter(signatures)
