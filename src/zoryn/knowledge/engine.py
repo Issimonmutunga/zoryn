@@ -1,84 +1,58 @@
 """
-Knowledge engine for Zoryn.
+Knowledge engine.
+
+Coordinates replay, comparison and discovery.
 """
 
 from __future__ import annotations
 
-from .lifecycle import KnowledgeLifecycle
-from .relationship import Relationship
-from .unit import KnowledgeUnit
+from .builder import SignatureBuilder
+from .comparator import SignatureComparator
+from .discoverer import KnowledgeDiscoverer
+from zoryn.replay import ReplayEngine
 
 
 class KnowledgeEngine:
     """
-    Maintains the evolving knowledge base.
+    High-level knowledge discovery engine.
     """
 
-    def __init__(self) -> None:
-        self.lifecycle = KnowledgeLifecycle()
-
-    def learn(
+    def __init__(
         self,
-        relationships: list[Relationship],
-    ) -> list[KnowledgeUnit]:
+        builder: SignatureBuilder,
+    ) -> None:
+
+        self._builder = builder
+        self._replay = ReplayEngine(builder)
+        self._discoverer = KnowledgeDiscoverer()
+
+    @property
+    def discoverer(self) -> KnowledgeDiscoverer:
+        return self._discoverer
+
+    def run(self) -> None:
         """
-        Ensure every discovered relationship exists in the
-        knowledge base.
-        """
-
-        units: list[KnowledgeUnit] = []
-
-        for relationship in relationships:
-            unit = self._find(relationship)
-
-            if unit is None:
-                unit = self.lifecycle.discover(relationship)
-
-            units.append(unit)
-
-        return units
-
-    def confirm(
-        self,
-        unit: KnowledgeUnit,
-    ) -> KnowledgeUnit:
-        """
-        Persist a confirmed knowledge unit.
+        Execute one replay over all signatures.
         """
 
-        updated = self.lifecycle.confirm(unit)
+        previous = None
 
-        return updated
+        for current in self._replay:
 
-    def contradict(
-        self,
-        unit: KnowledgeUnit,
-    ) -> KnowledgeUnit:
-        """
-        Persist a contradicted knowledge unit.
-        """
+            if (
+                previous is not None
+                and previous.h3_id == current.h3_id
+            ):
 
-        updated = self.lifecycle.contradict(unit)
+                relationship = (
+                    SignatureComparator.compare(
+                        previous,
+                        current,
+                    )
+                )
 
-        return updated
+                self._discoverer.consume(
+                    [relationship]
+                )
 
-    def all(self) -> list[KnowledgeUnit]:
-        """
-        Return the current knowledge base.
-        """
-
-        return self.lifecycle.store.all()
-
-    def _find(
-        self,
-        relationship: Relationship,
-    ) -> KnowledgeUnit | None:
-        """
-        Find an existing knowledge unit.
-        """
-
-        for unit in self.lifecycle.store.all():
-            if unit.relationship == relationship:
-                return unit
-
-        return None
+            previous = current
