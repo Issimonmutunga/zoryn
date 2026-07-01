@@ -13,16 +13,17 @@ from zoryn.vocabulary.resolver import resolve
 class Observation:
     """
     Canonical observation used throughout Zoryn.
-
-    All dataset-specific variable names are resolved to the
-    canonical Zoryn vocabulary during construction.
     """
 
     timestamp: str
-    node_id: str
+    h3_id: str
     variable: str
     value: float
     source: str
 
     def __post_init__(self) -> None:
-        object.__setattr__(self, "variable", resolve(self.variable))
+        object.__setattr__(
+            self,
+            "variable",
+            resolve(self.variable),
+        )
