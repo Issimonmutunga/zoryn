@@ -20,19 +20,29 @@ class KnowledgeEngine:
     def __init__(
         self,
         builder: SignatureBuilder,
+        comparator: SignatureComparator | None = None,
+        discoverer: KnowledgeDiscoverer | None = None,
     ) -> None:
 
         self._replay = ReplayEngine(builder)
-        self._discoverer = KnowledgeDiscoverer()
+
+        self._comparator = (
+            comparator
+            if comparator is not None
+            else SignatureComparator()
+        )
+
+        self._discoverer = (
+            discoverer
+            if discoverer is not None
+            else KnowledgeDiscoverer()
+        )
 
     @property
     def discoverer(self) -> KnowledgeDiscoverer:
         return self._discoverer
 
     def run(self) -> None:
-        """
-        Replay every H3 history independently.
-        """
 
         for _, history in self._replay.histories():
 
@@ -43,7 +53,7 @@ class KnowledgeEngine:
                 if previous is not None:
 
                     relationship = (
-                        SignatureComparator.compare(
+                        self._comparator.compare(
                             previous,
                             current,
                         )
