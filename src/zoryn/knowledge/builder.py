@@ -9,60 +9,34 @@ from collections.abc import Iterator
 import polars as pl
 
 from .signature import Signature
+from .store import ObservationStore
 
 
 class SignatureBuilder:
     """
-    Builds Signature objects from canonical observations.
-
-    Expected schema:
-
-        timestamp
-        h3_id
-        variable
-        value
-        source
+    Builds Signature objects from an ObservationStore.
     """
 
-    REQUIRED_COLUMNS = (
-        "timestamp",
-        "h3_id",
-        "variable",
-        "value",
-        "source",
-    )
+    def __init__(
+        self,
+        store: ObservationStore,
+    ) -> None:
 
-    def __init__(self, observations: pl.LazyFrame):
-
-        self._observations = observations
-
-        schema = tuple(
-            observations.collect_schema().names()
-        )
-
-        if schema != self.REQUIRED_COLUMNS:
-            raise ValueError(
-                f"Expected schema {self.REQUIRED_COLUMNS}, "
-                f"received {schema}."
-            )
+        self._store = store
 
     def build(
         self,
+        *,
         timestamp: str,
         h3_id: str,
     ) -> Signature:
         """
-        Build one Signature.
+        Build a Signature for one H3 cell at one timestamp.
         """
 
-        df = (
-            self._observations
-            .filter(
-                (pl.col("timestamp") == timestamp)
-                &
-                (pl.col("h3_id") == h3_id)
-            )
-            .collect()
+        df = self._store.query(
+            timestamp=timestamp,
+            h3_id=h3_id,
         )
 
         if df.is_empty():
@@ -71,13 +45,13 @@ class SignatureBuilder:
                 f"{timestamp=} {h3_id=}."
             )
 
-        if (
+        duplicates = (
             df.group_by("variable")
             .len()
             .filter(pl.col("len") > 1)
-            .height
-            > 0
-        ):
+        )
+
+        if duplicates.height > 0:
             raise ValueError(
                 "Duplicate variables detected."
             )
@@ -95,90 +69,55 @@ class SignatureBuilder:
             variables=variables,
         )
 
-    def iter_signatures(
+    def iter_histories(
         self,
+    ) -> Iterator[
+        tuple[str, Iterator[Signature]]
+    ]:
+        """
+        Iterate through the temporal history of every H3 cell.
+
+        Yields
+        ------
+        (h3_id, iterator of Signature)
+        """
+
+        for (
+            h3_id,
+            observations,
+        ) in self._store.histories():
+
+            yield (
+                h3_id,
+                self._build_history(
+                    h3_id,
+                    observations,
+                ),
+            )
+
+    def _build_history(
+        self,
+        h3_id: str,
+        observations: pl.DataFrame,
     ) -> Iterator[Signature]:
         """
-        Iterate through every signature.
+        Lazily build one H3 history.
         """
 
-        grouped = (
-            self._observations
-            .group_by(
-                [
-                    "timestamp",
-                    "h3_id",
-                ]
-            )
-            .agg(
-                [
-                    pl.col("variable"),
-                    pl.col("value"),
-                ]
-            )
-            .collect()
-        )
-
-        for row in grouped.iter_rows(named=True):
+        for frame in observations.partition_by(
+            "timestamp",
+            maintain_order=True,
+        ):
 
             variables = dict(
                 zip(
-                    row["variable"],
-                    row["value"],
+                    frame["variable"],
+                    frame["value"],
                 )
             )
 
             yield Signature(
-                timestamp=row["timestamp"],
-                h3_id=row["h3_id"],
+                timestamp=frame["timestamp"][0],
+                h3_id=h3_id,
                 variables=variables,
             )
-    def iter_histories(
-        self,
-    ) -> Iterator[tuple[str, Iterator[Signature]]]:
-        """
-        Iterate through the temporal history of each H3 cell.
-
-        Yields
-        ------
-        (h3_id, iterator of Signatures)
-        """
-
-        grouped = (
-            self._observations
-            .sort(
-                [
-                    "h3_id",
-                    "timestamp",
-                ]
-            )
-            .group_by("h3_id")
-        )
-
-        for h3_id, frame in grouped:
-
-            signatures = []
-
-            temporal_groups = (
-                frame
-                .group_by("timestamp")
-            )
-
-            for timestamp, observations in temporal_groups:
-
-                variables = dict(
-                    zip(
-                        observations["variable"],
-                        observations["value"],
-                    )
-                )
-
-                signatures.append(
-                    Signature(
-                        timestamp=timestamp,
-                        h3_id=h3_id,
-                        variables=variables,
-                    )
-                )
-
-            yield h3_id, iter(signatures)
