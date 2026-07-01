@@ -6,42 +6,53 @@ from __future__ import annotations
 
 from pathlib import Path
 
-import pandas as pd
+import polars as pl
 
 from .schema import Observation
 
 
-def load_observations(path: str | Path) -> list[Observation]:
+REQUIRED_COLUMNS = (
+    "timestamp",
+    "h3_id",
+    "variable",
+    "value",
+    "source",
+)
+
+
+def load_observations(
+    path: str | Path,
+) -> list[Observation]:
     """
-    Load observations from a CSV file.
-
-    Expected columns:
-
-    timestamp
-    node_id
-    variable
-    value
-    source
+    Load canonical observations.
     """
 
-    df = pd.read_csv(path)
+    df = pl.read_csv(path)
 
-    observations: list[Observation] = []
+    missing = (
+        set(REQUIRED_COLUMNS)
+        - set(df.columns)
+    )
 
-    for row in df.itertuples(index=False):
-        observations.append(
-            Observation(
-                timestamp=str(row.timestamp),
-                node_id=str(row.node_id),
-                variable=str(row.variable),
-                value=float(row.value),
-                source=str(row.source),
-            )
+    if missing:
+        raise ValueError(
+            f"Missing columns: {sorted(missing)}"
         )
+
+    observations = [
+        Observation(
+            timestamp=row["timestamp"],
+            h3_id=row["h3_id"],
+            variable=row["variable"],
+            value=float(row["value"]),
+            source=row["source"],
+        )
+        for row in df.iter_rows(named=True)
+    ]
 
     observations.sort(
         key=lambda observation: (
-            observation.node_id,
+            observation.h3_id,
             observation.timestamp,
         )
     )
