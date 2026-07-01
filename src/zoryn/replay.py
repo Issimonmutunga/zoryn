@@ -1,11 +1,7 @@
 """
 Replay engine.
 
-The ReplayEngine iterates through environmental Signatures in
-chronological order and exposes them to downstream reasoning
-components.
-
-It performs no learning itself.
+Replays environmental histories independently for each H3 cell.
 """
 
 from __future__ import annotations
@@ -17,30 +13,47 @@ from zoryn.knowledge import Signature, SignatureBuilder
 
 class ReplayEngine:
     """
-    Sequentially replays environmental signatures.
+    Sequentially replays environmental histories.
     """
 
-    def __init__(self, builder: SignatureBuilder):
+    def __init__(
+        self,
+        builder: SignatureBuilder,
+    ) -> None:
+
         self._builder = builder
 
-    def __iter__(self) -> Iterator[Signature]:
+    def histories(
+        self,
+    ) -> Iterator[tuple[str, Iterator[Signature]]]:
         """
-        Iterate through every Signature.
+        Iterate over every H3 history.
         """
-        yield from self._builder.iter_signatures()
+
+        yield from self._builder.iter_histories()
 
     def replay(
         self,
-        callback: Callable[[Signature], None] | None = None,
+        callback: Callable[
+            [str, Signature],
+            None,
+        ]
+        | None = None,
     ) -> None:
         """
-        Replay every Signature.
+        Replay every history.
 
-        If a callback is supplied, it is invoked once per
-        Signature.
+        The callback receives:
+
+            (h3_id, signature)
         """
 
-        for signature in self:
+        for h3_id, history in self.histories():
 
-            if callback is not None:
-                callback(signature)
+            for signature in history:
+
+                if callback is not None:
+                    callback(
+                        h3_id,
+                        signature,
+                    )
