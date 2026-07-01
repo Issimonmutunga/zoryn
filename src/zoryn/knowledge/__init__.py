@@ -1,12 +1,11 @@
 """
-Knowledge package.
+Knowledge subsystem.
 """
 
-from .store import KnowledgeStore
-from .unit import KnowledgeStatus, KnowledgeUnit
+from .builder import SignatureBuilder
+from .signature import Signature
 
 __all__ = [
-    "KnowledgeStatus",
-    "KnowledgeStore",
-    "KnowledgeUnit",
+    "Signature",
+    "SignatureBuilder",
 ]
