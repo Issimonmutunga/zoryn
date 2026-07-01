@@ -1,69 +1,46 @@
 """
-Historical replay engine for Zoryn.
+Replay engine.
+
+The ReplayEngine iterates through environmental Signatures in
+chronological order and exposes them to downstream reasoning
+components.
+
+It performs no learning itself.
 """
 
 from __future__ import annotations
 
-from collections import defaultdict
+from collections.abc import Callable, Iterator
 
-from zoryn.ingestion.schema import Observation
-from zoryn.knowledge.builder import SignatureBuilder
-from zoryn.knowledge.discovery import KnowledgeDiscovery
-from zoryn.knowledge.engine import KnowledgeEngine
-from zoryn.knowledge.signature import Signature
+from zoryn.knowledge import Signature, SignatureBuilder
 
 
 class ReplayEngine:
     """
-    Replays historical observations chronologically.
+    Sequentially replays environmental signatures.
     """
 
-    def __init__(self) -> None:
-        self.builder = SignatureBuilder()
-        self.discovery = KnowledgeDiscovery()
-        self.knowledge = KnowledgeEngine()
+    def __init__(self, builder: SignatureBuilder):
+        self._builder = builder
 
-    def run(
+    def __iter__(self) -> Iterator[Signature]:
+        """
+        Iterate through every Signature.
+        """
+        yield from self._builder.iter_signatures()
+
+    def replay(
         self,
-        observations: list[Observation],
-    ):
+        callback: Callable[[Signature], None] | None = None,
+    ) -> None:
         """
-        Execute a chronological replay.
+        Replay every Signature.
+
+        If a callback is supplied, it is invoked once per
+        Signature.
         """
 
-        signatures = self.builder.build(observations)
+        for signature in self:
 
-        grouped: dict[str, list[Signature]] = defaultdict(list)
-
-        for signature in signatures:
-            grouped[signature.node_id].append(signature)
-
-        for node_signatures in grouped.values():
-            node_signatures.sort(key=lambda s: s.timestamp)
-
-            for current, future in zip(
-                node_signatures,
-                node_signatures[1:],
-            ):
-                relationships = self.discovery.discover(
-                    [current, future]
-                )
-
-                units = self.knowledge.learn(
-                    relationships
-                )
-
-                future_state = "|".join(
-                    sorted(future.variables.keys())
-                )
-
-                for unit in units:
-                    if (
-                        unit.relationship.target_signature
-                        == future_state
-                    ):
-                        self.knowledge.confirm(unit)
-                    else:
-                        self.knowledge.contradict(unit)
-
-        return self.knowledge.all()
+            if callback is not None:
+                callback(signature)
