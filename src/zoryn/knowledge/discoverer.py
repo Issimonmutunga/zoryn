@@ -7,54 +7,53 @@ from __future__ import annotations
 from collections import Counter
 from collections.abc import Iterable
 
-from .relationship import Relationship
+from .evidence import Evidence
 
 
 class KnowledgeDiscoverer:
     """
-    Discovers recurring environmental changes from Relationships.
+    Discovers recurring evidence.
 
-    This is intentionally simple in the first implementation.
-    It discovers frequencies only; causality and validation
-    are handled by later components.
+    This first implementation accumulates evidence frequencies.
+    Future versions will discover hypotheses rather than counts.
     """
 
     def __init__(self) -> None:
+
         self._counter: Counter[str] = Counter()
 
     def consume(
         self,
-        relationships: Iterable[Relationship],
+        evidence: Iterable[Evidence],
     ) -> None:
         """
-        Consume a stream of Relationships.
+        Consume a stream of Evidence.
         """
 
-        for relationship in relationships:
+        for item in evidence:
 
-            for variable in relationship.variables():
-                self._counter[variable] += 1
+            self._counter[item.variable] += 1
 
     def frequency(
         self,
         variable: str,
     ) -> int:
         """
-        Return how many times a variable changed.
+        Return accumulated evidence count.
         """
 
         return self._counter[variable]
 
     def summary(self) -> dict[str, int]:
         """
-        Return discovered frequencies.
+        Return discovery summary.
         """
 
         return dict(self._counter)
 
     def reset(self) -> None:
         """
-        Clear all discovered statistics.
+        Reset accumulated discoveries.
         """
 
         self._counter.clear()
