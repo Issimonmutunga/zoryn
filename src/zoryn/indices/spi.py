@@ -18,19 +18,6 @@ def compute_spi(
 ) -> np.ndarray:
     """
     Compute SPI for a rainfall time series.
-
-    Parameters
-    ----------
-    rainfall
-        Monthly rainfall (mm).
-
-    scale
-        Accumulation period (e.g. 3, 6, 12).
-
-    Returns
-    -------
-    np.ndarray
-        SPI values.
     """
 
     rainfall = np.asarray(
@@ -63,13 +50,23 @@ def compute_spi(
     if valid.sum() < 10:
         return spi
 
+    valid_values = accumulated[valid]
+
+    # Constant series -> SPI = 0
+    if np.allclose(
+        valid_values,
+        valid_values[0],
+    ):
+        spi[valid] = 0.0
+        return spi
+
     shape, loc, scale_param = gamma.fit(
-        accumulated[valid],
+        valid_values,
         floc=0,
     )
 
     probability = gamma.cdf(
-        accumulated[valid],
+        valid_values,
         a=shape,
         loc=loc,
         scale=scale_param,
