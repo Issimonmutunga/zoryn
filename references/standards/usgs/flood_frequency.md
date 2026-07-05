@@ -173,19 +173,19 @@ Flood warnings should be generated using multiple supporting indicators.
 
 Examples
 
-Persistent rainfall
+         Persistent rainfall
 
-+
+                +
 
-High antecedent wetness
+      High antecedent wetness
 
-+
+                +
 
-Steep terrain
+           Steep terrain
 
-↓
+                ↓
 
-Elevated flood hazard
+       Elevated flood hazard
 
 ---
 

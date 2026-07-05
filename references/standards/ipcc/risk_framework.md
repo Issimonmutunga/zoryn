@@ -245,15 +245,15 @@ Examples
 Warnings should ultimately be generated from
 
 ```
-Hazard
+                           Hazard
 
-+
+                             +
 
-Exposure
+                           Exposure
+ 
+                             +
 
-+
-
-Vulnerability
+                         Vulnerability
 ```
 
 rather than hazard alone.

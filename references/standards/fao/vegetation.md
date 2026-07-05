@@ -100,31 +100,31 @@ Derived indices
 Typical sequence
 
 ```
-Normal Rainfall
+              Normal Rainfall
 
-     ↓
+                    ↓
 
-Reduced Rainfall
+              Reduced Rainfall
 
-     ↓
+                   ↓
 
-Lower Soil Moisture
+            Lower Soil Moisture
 
-     ↓
+                   ↓
 
-Reduced Vegetation Growth
+           Reduced Vegetation Growth
 
-     ↓ 
+                   ↓ 
 
-Vegetation Stress
+            Vegetation Stress
 
-     ↓
+                   ↓
 
-Crop Stress
+              Crop Stress
 
-     ↓
+                   ↓
 
-Agricultural Drought
+          Agricultural Drought
 ```
 
 ---

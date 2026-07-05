@@ -203,19 +203,19 @@ Hazards should be
 
 Every warning should be explainable from
 
-Observation
+            Observation
 
-↓
+                ↓
 
-Evidence
+             Evidence
 
-↓
+                ↓
+ 
+             Pattern
 
-Pattern
+               ↓
 
-↓
-
-Scientific Standard
+         Scientific Standard
 
 ---
 
