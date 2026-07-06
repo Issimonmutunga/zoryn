@@ -14,26 +14,10 @@ from .pattern_rule import PatternRule
 
 class ConsecutiveChangeRule(PatternRule):
     """
-    Discovers consecutive runs of identical change direction.
+    Discover consecutive runs of identical change direction.
 
-    Example
-
-        increase
-        increase
-        increase
-
-    →
-
-        persistent_increase
-
-    and
-
-        decrease
-        decrease
-
-    →
-
-        persistent_decrease
+    A run is emitted as a Pattern once its length reaches
+    the configured minimum.
     """
 
     def __init__(
@@ -68,9 +52,9 @@ class ConsecutiveChangeRule(PatternRule):
             list[Evidence],
         ] = defaultdict(list)
 
-        # --------------------------------------------------
-        # Group by H3 and variable
-        # --------------------------------------------------
+        # --------------------------------------------
+        # Group evidence by H3 and variable
+        # --------------------------------------------
 
         for item in evidence:
 
@@ -83,9 +67,9 @@ class ConsecutiveChangeRule(PatternRule):
 
         patterns: list[Pattern] = []
 
-        # --------------------------------------------------
-        # Process each history independently
-        # --------------------------------------------------
+        # --------------------------------------------
+        # Process one history at a time
+        # --------------------------------------------
 
         for (
             h3_id,
@@ -98,10 +82,7 @@ class ConsecutiveChangeRule(PatternRule):
 
             run: list[Evidence] = []
 
-            previous_direction = None
-                        # ----------------------------------------------
-            # Walk chronological evidence
-            # ----------------------------------------------
+            current_direction = None
 
             for item in history:
 
@@ -109,20 +90,19 @@ class ConsecutiveChangeRule(PatternRule):
                     item.comparison.direction
                 )
 
-                if previous_direction is None:
+                if current_direction is None:
 
-                    run.append(item)
-                    previous_direction = direction
-                    continue
-
-                if direction == previous_direction:
-
+                    current_direction = direction
                     run.append(item)
                     continue
 
-                # ------------------------------------------
+                if direction == current_direction:
+
+                    run.append(item)
+                    continue
+                                # ----------------------------------------
                 # Direction changed
-                # ------------------------------------------
+                # ----------------------------------------
 
                 if (
                     len(run)
@@ -132,14 +112,16 @@ class ConsecutiveChangeRule(PatternRule):
                     patterns.append(
                         Pattern(
                             name=(
-                                f"persistent_{previous_direction}"
+                                f"persistent_{current_direction}"
                             ),
                             evidence=tuple(run),
+                            frequency=len(run),
+                            confidence=1.0,
                             metadata={
                                 "h3_id": h3_id,
                                 "variable": variable,
                                 "direction": (
-                                    previous_direction
+                                    current_direction
                                 ),
                                 "length": len(run),
                                 "start": (
@@ -153,11 +135,11 @@ class ConsecutiveChangeRule(PatternRule):
                     )
 
                 run = [item]
-                previous_direction = direction
+                current_direction = direction
 
-            # ----------------------------------------------
+            # --------------------------------------------
             # Flush final run
-            # ----------------------------------------------
+            # --------------------------------------------
 
             if (
                 len(run)
@@ -167,14 +149,16 @@ class ConsecutiveChangeRule(PatternRule):
                 patterns.append(
                     Pattern(
                         name=(
-                            f"persistent_{previous_direction}"
+                            f"persistent_{current_direction}"
                         ),
                         evidence=tuple(run),
+                        frequency=len(run),
+                        confidence=1.0,
                         metadata={
                             "h3_id": h3_id,
                             "variable": variable,
                             "direction": (
-                                previous_direction
+                                current_direction
                             ),
                             "length": len(run),
                             "start": (
