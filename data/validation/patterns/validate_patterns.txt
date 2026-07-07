@@ -1,0 +1,30 @@
+======================================================================
+PATTERN VALIDATION
+======================================================================
+Histories          : 42,316
+Relationships      : 11,636,900
+Evidence           : 11,527,603
+Patterns           : 1,732,885
+======================================================================
+TOP 20 PATTERNS
+======================================================================
+persistent_Direction.INCREASEprecipitation_amount          2002-07 -> 2002-12   length=6
+persistent_Direction.INCREASEprecipitation_amount          2002-07 -> 2002-12   length=6
+persistent_Direction.INCREASEprecipitation_amount          2002-07 -> 2002-12   length=6
+persistent_Direction.INCREASEprecipitation_amount          2002-07 -> 2002-12   length=6
+persistent_Direction.INCREASEprecipitation_amount          2002-07 -> 2002-12   length=6
+persistent_Direction.INCREASEprecipitation_amount          2002-07 -> 2002-12   length=6
+persistent_Direction.INCREASEprecipitation_amount          2002-07 -> 2002-12   length=6
+persistent_Direction.INCREASEprecipitation_amount          2002-07 -> 2002-12   length=6
+persistent_Direction.INCREASEprecipitation_amount          2002-07 -> 2002-12   length=6
+persistent_Direction.INCREASEprecipitation_amount          2002-07 -> 2002-12   length=6
+persistent_Direction.INCREASEprecipitation_amount          2002-07 -> 2002-12   length=6
+persistent_Direction.INCREASEprecipitation_amount          2002-07 -> 2002-12   length=6
+persistent_Direction.INCREASEprecipitation_amount          2002-07 -> 2002-12   length=6
+persistent_Direction.INCREASEprecipitation_amount          2002-07 -> 2002-12   length=6
+persistent_Direction.INCREASEprecipitation_amount          2002-07 -> 2002-12   length=6
+persistent_Direction.INCREASEprecipitation_amount          2002-07 -> 2002-12   length=6
+persistent_Direction.INCREASEprecipitation_amount          2002-07 -> 2002-12   length=6
+persistent_Direction.INCREASEprecipitation_amount          2002-07 -> 2002-12   length=6
+persistent_Direction.INCREASEprecipitation_amount          2002-07 -> 2002-12   length=6
+persistent_Direction.INCREASEprecipitation_amount          2002-07 -> 2002-12   length=6

@@ -112,7 +112,7 @@ class ConsecutiveChangeRule(PatternRule):
                     patterns.append(
                         Pattern(
                             name=(
-                                f"persistent_{current_direction}"
+                                f"persistent_{current_direction.value}"
                             ),
                             evidence=tuple(run),
                             frequency=len(run),
