@@ -7,6 +7,7 @@ from __future__ import annotations
 from .comparison import (
     ComparisonResult,
     ComparisonStrategy,
+    Direction,
 )
 
 
@@ -25,9 +26,24 @@ class NumericComparisonStrategy(
 
         delta = current - previous
 
-        if previous == 0:
-            percent_change = None
+        if delta > 0.0:
+
+            direction = Direction.INCREASE
+
+        elif delta < 0.0:
+
+            direction = Direction.DECREASE
+
         else:
+
+            direction = Direction.NONE
+
+        if previous == 0.0:
+
+            percent_change = None
+
+        else:
+
             percent_change = (
                 delta / previous
             ) * 100.0
@@ -35,6 +51,7 @@ class NumericComparisonStrategy(
         return ComparisonResult(
             changed=(delta != 0.0),
             value=delta,
+            direction=direction,
             metadata={
                 "previous": previous,
                 "current": current,
