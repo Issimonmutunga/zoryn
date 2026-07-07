@@ -1,5 +1,5 @@
 """
-Validate consecutive pattern discovery.
+Validate generic pattern discovery.
 """
 
 from __future__ import annotations
@@ -13,10 +13,11 @@ from zoryn.knowledge import (
     EvidenceBuilder,
     EvidenceStore,
     ObservationStore,
-    ReplayEngine,
     SignatureBuilder,
     SignatureComparator,
 )
+
+from zoryn.replay import ReplayEngine
 
 
 def main() -> None:
@@ -32,13 +33,17 @@ def main() -> None:
         )
     )
 
-    store = ObservationStore(observations)
+    store = ObservationStore(
+        observations
+    )
 
     histories = sum(
         1 for _ in store.histories()
     )
 
-    print(f"Histories : {histories:,}")
+    print(
+        f"Histories : {histories:,}"
+    )
 
     print("=" * 70)
     print("BUILDING EVIDENCE")
@@ -52,10 +57,9 @@ def main() -> None:
 
     evidence_builder = EvidenceBuilder()
 
-    evidence_store = EvidenceStore()
+    evidence: list = []
 
     relationships = 0
-    evidence_count = 0
 
     for index, (_, history) in enumerate(
         replay.histories(),
@@ -78,17 +82,11 @@ def main() -> None:
 
             relationships += 1
 
-            for evidence in (
+            evidence.extend(
                 evidence_builder.build(
                     relationship
                 )
-            ):
-
-                evidence_store.add(
-                    evidence
-                )
-
-                evidence_count += 1
+            )
 
             previous = signature
 
@@ -97,8 +95,13 @@ def main() -> None:
             print(
                 f"{index:,}/{histories:,} histories | "
                 f"{relationships:,} relationships | "
-                f"{evidence_count:,} evidence"
+                f"{len(evidence):,} evidence"
             )
+
+    evidence_store = EvidenceStore(
+        evidence
+    )
+
     print("=" * 70)
     print("DISCOVERING PATTERNS")
     print("=" * 70)
@@ -106,9 +109,8 @@ def main() -> None:
     rule = ConsecutiveChangeRule()
 
     patterns = rule.discover(
-        evidence_store.evidence
+        evidence_store
     )
-
     print("=" * 70)
     print("WRITING REPORT")
     print("=" * 70)
@@ -122,7 +124,10 @@ def main() -> None:
         exist_ok=True,
     )
 
-    report = output_dir / "validate_patterns.txt"
+    report = (
+        output_dir
+        / "validate_patterns.txt"
+    )
 
     with report.open(
         "w",
@@ -142,7 +147,7 @@ def main() -> None:
         )
 
         f.write(
-            f"Evidence           : {evidence_count:,}\n"
+            f"Evidence           : {len(evidence_store):,}\n"
         )
 
         f.write(
@@ -150,11 +155,7 @@ def main() -> None:
         )
 
         f.write("=" * 70 + "\n")
-
-        f.write(
-            "Top 20 Patterns\n"
-        )
-
+        f.write("TOP 20 PATTERNS\n")
         f.write("=" * 70 + "\n")
 
         for pattern in sorted(
@@ -184,7 +185,7 @@ def main() -> None:
     )
 
     print(
-        f"Evidence      : {evidence_count:,}"
+        f"Evidence      : {len(evidence_store):,}"
     )
 
     print(
@@ -195,7 +196,9 @@ def main() -> None:
 
     print("Report written to:")
 
-    print(report.resolve())
+    print(
+        report.resolve()
+    )
 
     print("=" * 70)
     print("VALIDATION PASSED")
