@@ -58,9 +58,10 @@ class Zoryn:
         """
         Execute the complete reasoning pipeline.
 
-        Returns
-        -------
-        list[Discovery]
+        Yields
+        ------
+        Discovery
+            Discoveries produced by the reasoning engine.
         """
 
         return self._engine.run()
