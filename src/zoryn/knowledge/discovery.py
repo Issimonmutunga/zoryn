@@ -1,5 +1,8 @@
 """
-Immutable representation of a discovered environmental pattern.
+Immutable environmental discovery.
+
+A Discovery represents the final interpreted
+environmental conclusion produced by Zoryn.
 """
 
 from __future__ import annotations
@@ -7,37 +10,117 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Mapping
 
+from .hypothesis import Hypothesis
 
-@dataclass(frozen=True, slots=True)
+
+@dataclass(
+    frozen=True,
+    slots=True,
+)
 class Discovery:
     """
-    A discovered environmental pattern.
-
-    Parameters
-    ----------
-    name
-        Canonical discovery name.
-
-    evidence
-        Supporting evidence.
-
-    confidence
-        Confidence score in [0, 1].
-
-    metadata
-        Additional information describing the discovery.
+    Final environmental discovery.
     """
 
     name: str
-    evidence: int
-    confidence: float
-    metadata: Mapping[str, object]
 
-    def is_confident(
+    hypothesis: Hypothesis
+
+    confidence: float
+
+    metadata: Mapping[
+        str,
+        object,
+    ]
+
+    @property
+    def h3_id(
         self,
-        threshold: float = 0.8,
+    ) -> str:
+
+        return self.metadata[
+            "h3_id"
+        ]
+
+    @property
+    def start(
+        self,
+    ) -> str:
+
+        return self.hypothesis.start
+
+    @property
+    def end(
+        self,
+    ) -> str:
+
+        return self.hypothesis.end
+
+    @property
+    def variables(
+        self,
+    ) -> tuple[str, ...]:
+
+        return self.hypothesis.variables
+
+    @property
+    def patterns(
+        self,
+    ):
+
+        return self.hypothesis.patterns
+    
+    @property
+    def evidence(
+        self,
+    ):
+        """
+        All supporting evidence.
+        """
+
+        evidence = []
+
+        for pattern in self.patterns:
+
+            evidence.extend(
+                pattern.evidence
+            )
+
+        return tuple(
+            evidence
+        )
+
+    def supports(
+        self,
+        variable: str,
     ) -> bool:
         """
-        Return True if the confidence exceeds the threshold.
+        Return True if the discovery is
+        supported by the given variable.
         """
-        return self.confidence >= threshold
+
+        return (
+            self.hypothesis.supports(
+                variable
+            )
+        )
+
+    def __len__(
+        self,
+    ) -> int:
+        """
+        Number of supporting patterns.
+        """
+
+        return len(
+            self.patterns
+        )
+
+    def __iter__(
+        self,
+    ):
+        """
+        Iterate over supporting patterns.
+        """
+
+        yield from self.patterns
