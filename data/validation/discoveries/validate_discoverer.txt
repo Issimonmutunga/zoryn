@@ -1,0 +1,32 @@
+======================================================================
+DISCOVERY VALIDATION
+======================================================================
+Histories          : 42,316
+Relationships      : 11,636,900
+Evidence           : 11,527,603
+Patterns           : 808,707
+Hypotheses         : 42,316
+Discoveries        : 42,316
+======================================================================
+TOP 20 DISCOVERIES
+======================================================================
+Developing Meteorological Drought       2004-12 -> 2024-08   confidence=1.00
+Developing Meteorological Drought       2004-12 -> 2024-08   confidence=1.00
+Developing Meteorological Drought       2004-12 -> 2024-08   confidence=1.00
+Developing Meteorological Drought       2004-12 -> 2024-08   confidence=1.00
+Developing Meteorological Drought       2004-12 -> 2024-08   confidence=1.00
+Developing Meteorological Drought       2004-12 -> 2024-08   confidence=1.00
+Developing Meteorological Drought       2004-12 -> 2024-08   confidence=1.00
+Developing Meteorological Drought       2004-12 -> 2024-08   confidence=1.00
+Developing Meteorological Drought       2004-12 -> 2024-08   confidence=1.00
+Developing Meteorological Drought       2004-12 -> 2024-08   confidence=1.00
+Developing Meteorological Drought       2004-12 -> 2024-08   confidence=1.00
+Developing Meteorological Drought       2004-12 -> 2024-08   confidence=1.00
+Developing Meteorological Drought       2004-12 -> 2024-08   confidence=1.00
+Developing Meteorological Drought       2004-12 -> 2024-08   confidence=1.00
+Developing Meteorological Drought       2004-12 -> 2024-08   confidence=1.00
+Developing Meteorological Drought       2004-12 -> 2024-08   confidence=1.00
+Developing Meteorological Drought       2004-12 -> 2024-08   confidence=1.00
+Developing Meteorological Drought       2004-12 -> 2024-08   confidence=1.00
+Developing Meteorological Drought       2004-12 -> 2024-08   confidence=1.00
+Developing Meteorological Drought       2004-12 -> 2024-08   confidence=1.00

@@ -1,0 +1,30 @@
+======================================================================
+DROUGHT PATTERN VALIDATION
+======================================================================
+Histories          : 42,316
+Relationships      : 11,636,900
+Evidence           : 11,527,603
+Drought Patterns   : 808,707
+======================================================================
+TOP 20 PATTERNS
+======================================================================
+2015-05 -> 2015-09   length=5   precipitation_amount
+2015-05 -> 2015-09   length=5   precipitation_amount
+2015-05 -> 2015-09   length=5   precipitation_amount
+2015-05 -> 2015-09   length=5   precipitation_amount
+2015-05 -> 2015-09   length=5   precipitation_amount
+2015-05 -> 2015-09   length=5   precipitation_amount
+2015-05 -> 2015-09   length=5   precipitation_amount
+2015-05 -> 2015-09   length=5   precipitation_amount
+2015-05 -> 2015-09   length=5   precipitation_amount
+2015-05 -> 2015-09   length=5   precipitation_amount
+2015-05 -> 2015-09   length=5   precipitation_amount
+2015-05 -> 2015-09   length=5   precipitation_amount
+2015-05 -> 2015-09   length=5   precipitation_amount
+2015-05 -> 2015-09   length=5   precipitation_amount
+2015-05 -> 2015-09   length=5   precipitation_amount
+2015-05 -> 2015-09   length=5   precipitation_amount
+2015-05 -> 2015-09   length=5   precipitation_amount
+2015-05 -> 2015-09   length=5   precipitation_amount
+2015-05 -> 2015-09   length=5   precipitation_amount
+2015-05 -> 2015-09   length=5   precipitation_amount
