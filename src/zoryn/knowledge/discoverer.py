@@ -1,59 +1,56 @@
 """
-Knowledge discovery primitives.
+Discovery generation engine.
 """
 
 from __future__ import annotations
 
-from collections import Counter
 from collections.abc import Iterable
 
-from .evidence import Evidence
+from .discovery import Discovery
+from .hypothesis import Hypothesis
 
 
-class KnowledgeDiscoverer:
+class Discoverer:
     """
-    Discovers recurring evidence.
-
-    This first implementation accumulates evidence frequencies.
-    Future versions will discover hypotheses rather than counts.
+    Converts hypotheses into environmental discoveries.
     """
 
-    def __init__(self) -> None:
-
-        self._counter: Counter[str] = Counter()
-
-    def consume(
+    def build(
         self,
-        evidence: Iterable[Evidence],
-    ) -> None:
-        """
-        Consume a stream of Evidence.
-        """
+        hypotheses: Iterable[
+            Hypothesis
+        ],
+    ) -> list[Discovery]:
 
-        for item in evidence:
+        discoveries: list[
+            Discovery
+        ] = []
 
-            self._counter[item.variable] += 1
+        for hypothesis in hypotheses:
 
-    def frequency(
-        self,
-        variable: str,
-    ) -> int:
-        """
-        Return accumulated evidence count.
-        """
+            discoveries.append(
+                Discovery(
+                    name=hypothesis.name,
+                    hypothesis=hypothesis,
+                    confidence=hypothesis.confidence,
+                    metadata={
+                        "h3_id": (
+                            hypothesis.metadata[
+                                "h3_id"
+                            ]
+                        ),
+                        "source":
+                            "Zoryn",
+                        "version":
+                            "0.1.0",
+                    },
+                )
+            )
 
-        return self._counter[variable]
-
-    def summary(self) -> dict[str, int]:
-        """
-        Return discovery summary.
-        """
-
-        return dict(self._counter)
-
-    def reset(self) -> None:
-        """
-        Reset accumulated discoveries.
-        """
-
-        self._counter.clear()
+        return sorted(
+            discoveries,
+            key=lambda discovery: (
+                discovery.h3_id,
+                discovery.name,
+            ),
+        )
