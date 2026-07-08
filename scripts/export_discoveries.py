@@ -8,7 +8,7 @@ from pathlib import Path
 
 import polars as pl
 
-from zoryn.api import Zoryn
+from zoryn.rest import Zoryn
 
 
 def main() -> None:

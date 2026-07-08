@@ -4,7 +4,7 @@ Zoryn
 A continually learning environmental reasoning system.
 """
 
-from .api import Zoryn
+from .rest import Zoryn
 from .knowledge import Signature, SignatureBuilder
 from .version import __version__
 

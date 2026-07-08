@@ -7,7 +7,7 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
-from .api import Zoryn
+from .rest import Zoryn
 
 
 def parse_args() -> argparse.Namespace:
