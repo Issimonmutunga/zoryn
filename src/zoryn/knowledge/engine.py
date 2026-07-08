@@ -95,12 +95,10 @@ class KnowledgeEngine:
         """
         Execute the complete reasoning pipeline.
 
-        Returns
-        -------
-        list[Discovery]
+        Yields
+        ------
+        Discovery
         """
-
-        discoveries = []
 
         for _, history in self._replay.histories():
 
@@ -154,10 +152,6 @@ class KnowledgeEngine:
             if not hypotheses:
                 continue
 
-            discoveries.extend(
-                self._discoverer.build(
-                    hypotheses
-                )
+            yield from self._discoverer.build(
+                hypotheses
             )
-
-        return discoveries
