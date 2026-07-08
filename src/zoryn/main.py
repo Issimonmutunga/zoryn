@@ -1,30 +1,64 @@
 """
-Zoryn pilot entry point.
+Command-line entry point for Zoryn.
 """
 
 from __future__ import annotations
 
+import argparse
 from pathlib import Path
 
-from zoryn.ingestion.loader import load_observations
-from zoryn.replay import ReplayEngine
+from .api import Zoryn
 
 
-def run(observation_file: str | Path):
+def parse_args() -> argparse.Namespace:
     """
-    Execute a historical replay.
+    Parse command-line arguments.
     """
 
-    observations = load_observations(observation_file)
+    parser = argparse.ArgumentParser(
+        prog="zoryn",
+        description=(
+            "Run the Zoryn environmental "
+            "reasoning engine."
+        ),
+    )
 
-    engine = ReplayEngine()
+    parser.add_argument(
+        "observations",
+        type=Path,
+        help=(
+            "Path to the observations "
+            "Parquet file."
+        ),
+    )
 
-    knowledge = engine.run(observations)
+    return parser.parse_args()
 
-    return knowledge
+
+def main() -> None:
+    """
+    Execute the reasoning pipeline.
+    """
+
+    args = parse_args()
+
+    runtime = Zoryn(
+        args.observations
+    )
+
+    discoveries = runtime.run()
+
+    print("=" * 70)
+    print("ZORYN REASONING COMPLETE")
+    print("=" * 70)
+
+    print(
+        f"Discoveries : {len(discoveries):,}"
+    )
+
+    print("=" * 70)
 
 
 if __name__ == "__main__":
-    raise SystemExit(
-        "Import run() or integrate with the CLI when available."
-    )
+
+    main()
