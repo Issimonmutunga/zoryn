@@ -48,13 +48,9 @@ class KnowledgeEngine:
         discoverer: Discoverer | None = None,
     ) -> None:
 
-        builder = SignatureBuilder(
-            store
-        )
+        builder = SignatureBuilder(store)
 
-        self._replay = ReplayEngine(
-            builder
-        )
+        self._replay = ReplayEngine(builder)
 
         self._comparator = (
             comparator
@@ -85,6 +81,7 @@ class KnowledgeEngine:
             if discoverer is not None
             else Discoverer()
         )
+
     @property
     def discoverer(
         self,
@@ -103,16 +100,17 @@ class KnowledgeEngine:
         list[Discovery]
         """
 
-        evidence = []
+        discoveries = []
 
         for _, history in self._replay.histories():
+
+            evidence = []
 
             previous = None
 
             for current in history:
 
                 if previous is None:
-
                     previous = current
                     continue
 
@@ -131,26 +129,35 @@ class KnowledgeEngine:
 
                 previous = current
 
-        evidence_store = EvidenceStore(
-            evidence
-        )
+            if not evidence:
+                continue
 
-        patterns = (
-            self._pattern_rule.discover(
-                evidence_store
+            evidence_store = EvidenceStore(
+                evidence
             )
-        )
 
-        hypotheses = (
-            self._hypothesis_engine.build(
-                patterns
+            patterns = (
+                self._pattern_rule.discover(
+                    evidence_store
+                )
             )
-        )
 
-        discoveries = (
-            self._discoverer.build(
-                hypotheses
+            if not patterns:
+                continue
+
+            hypotheses = (
+                self._hypothesis_engine.build(
+                    patterns
+                )
             )
-        )
+
+            if not hypotheses:
+                continue
+
+            discoveries.extend(
+                self._discoverer.build(
+                    hypotheses
+                )
+            )
 
         return discoveries
