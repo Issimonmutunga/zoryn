@@ -1,5 +1,8 @@
 """
-Immutable representation of a scientific hypothesis.
+Immutable hazard hypothesis.
+
+A hypothesis represents an interpretable environmental
+explanation supported by one or more patterns.
 """
 
 from __future__ import annotations
@@ -7,46 +10,135 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Mapping
 
-from .evidence import Evidence
+from .pattern import Pattern
 
 
-@dataclass(frozen=True, slots=True)
+@dataclass(
+    frozen=True,
+    slots=True,
+)
 class Hypothesis:
     """
-    Candidate explanation derived from accumulated evidence.
+    Environmental hypothesis.
+
+    Examples
+
+    - Developing Meteorological Drought
+    - Developing Heatwave
+    - Developing Flood
     """
 
     name: str
 
-    statement: str
-
-    evidence: tuple[Evidence, ...]
+    patterns: tuple[
+        Pattern,
+        ...
+    ]
 
     confidence: float
 
-    metadata: Mapping[str, object]
+    metadata: Mapping[
+        str,
+        object,
+    ]
 
     @property
-    def support(self) -> int:
-        """
-        Number of supporting evidence items.
-        """
-        return len(self.evidence)
-
-    def is_supported(
+    def frequency(
         self,
-        minimum: int = 10,
-    ) -> bool:
+    ) -> int:
         """
-        Return True if sufficient evidence exists.
+        Total supporting frequency.
         """
-        return self.support >= minimum
 
-    def is_confident(
+        return sum(
+            pattern.frequency
+            for pattern in self.patterns
+        )
+
+    @property
+    def variables(
         self,
-        threshold: float = 0.8,
+    ) -> tuple[str, ...]:
+
+        variables = set()
+
+        for pattern in self.patterns:
+
+            variables.update(
+                pattern.variables
+            )
+
+        return tuple(
+            sorted(
+                variables
+            )
+        )
+
+    def supports(
+        self,
+        variable: str,
     ) -> bool:
+
+        return variable in self.variables
+    @property
+    def h3_ids(
+        self,
+    ) -> tuple[str, ...]:
         """
-        Return True if confidence exceeds the threshold.
+        H3 cells supporting this hypothesis.
         """
-        return self.confidence >= threshold
+
+        return tuple(
+            sorted(
+                {
+                    pattern.metadata["h3_id"]
+                    for pattern in self.patterns
+                }
+            )
+        )
+
+    @property
+    def start(
+        self,
+    ) -> str:
+        """
+        Earliest supporting timestamp.
+        """
+
+        return min(
+            pattern.metadata["start"]
+            for pattern in self.patterns
+        )
+
+    @property
+    def end(
+        self,
+    ) -> str:
+        """
+        Latest supporting timestamp.
+        """
+
+        return max(
+            pattern.metadata["end"]
+            for pattern in self.patterns
+        )
+
+    def __len__(
+        self,
+    ) -> int:
+        """
+        Number of supporting patterns.
+        """
+
+        return len(
+            self.patterns
+        )
+
+    def __iter__(
+        self,
+    ):
+        """
+        Iterate over supporting patterns.
+        """
+
+        yield from self.patterns
