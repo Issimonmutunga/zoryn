@@ -8,23 +8,23 @@ Patterns           : 1,732,885
 ======================================================================
 TOP 20 PATTERNS
 ======================================================================
-persistent_Direction.INCREASEprecipitation_amount          2002-07 -> 2002-12   length=6
-persistent_Direction.INCREASEprecipitation_amount          2002-07 -> 2002-12   length=6
-persistent_Direction.INCREASEprecipitation_amount          2002-07 -> 2002-12   length=6
-persistent_Direction.INCREASEprecipitation_amount          2002-07 -> 2002-12   length=6
-persistent_Direction.INCREASEprecipitation_amount          2002-07 -> 2002-12   length=6
-persistent_Direction.INCREASEprecipitation_amount          2002-07 -> 2002-12   length=6
-persistent_Direction.INCREASEprecipitation_amount          2002-07 -> 2002-12   length=6
-persistent_Direction.INCREASEprecipitation_amount          2002-07 -> 2002-12   length=6
-persistent_Direction.INCREASEprecipitation_amount          2002-07 -> 2002-12   length=6
-persistent_Direction.INCREASEprecipitation_amount          2002-07 -> 2002-12   length=6
-persistent_Direction.INCREASEprecipitation_amount          2002-07 -> 2002-12   length=6
-persistent_Direction.INCREASEprecipitation_amount          2002-07 -> 2002-12   length=6
-persistent_Direction.INCREASEprecipitation_amount          2002-07 -> 2002-12   length=6
-persistent_Direction.INCREASEprecipitation_amount          2002-07 -> 2002-12   length=6
-persistent_Direction.INCREASEprecipitation_amount          2002-07 -> 2002-12   length=6
-persistent_Direction.INCREASEprecipitation_amount          2002-07 -> 2002-12   length=6
-persistent_Direction.INCREASEprecipitation_amount          2002-07 -> 2002-12   length=6
-persistent_Direction.INCREASEprecipitation_amount          2002-07 -> 2002-12   length=6
-persistent_Direction.INCREASEprecipitation_amount          2002-07 -> 2002-12   length=6
-persistent_Direction.INCREASEprecipitation_amount          2002-07 -> 2002-12   length=6
+persistent_increase      precipitation_amount          2002-07 -> 2002-12   length=6
+persistent_increase      precipitation_amount          2002-07 -> 2002-12   length=6
+persistent_increase      precipitation_amount          2002-07 -> 2002-12   length=6
+persistent_increase      precipitation_amount          2002-07 -> 2002-12   length=6
+persistent_increase      precipitation_amount          2002-07 -> 2002-12   length=6
+persistent_increase      precipitation_amount          2002-07 -> 2002-12   length=6
+persistent_increase      precipitation_amount          2002-07 -> 2002-12   length=6
+persistent_increase      precipitation_amount          2002-07 -> 2002-12   length=6
+persistent_increase      precipitation_amount          2002-07 -> 2002-12   length=6
+persistent_increase      precipitation_amount          2002-07 -> 2002-12   length=6
+persistent_increase      precipitation_amount          2002-07 -> 2002-12   length=6
+persistent_increase      precipitation_amount          2002-07 -> 2002-12   length=6
+persistent_increase      precipitation_amount          2002-07 -> 2002-12   length=6
+persistent_increase      precipitation_amount          2002-07 -> 2002-12   length=6
+persistent_increase      precipitation_amount          2002-07 -> 2002-12   length=6
+persistent_increase      precipitation_amount          2002-07 -> 2002-12   length=6
+persistent_increase      precipitation_amount          2002-07 -> 2002-12   length=6
+persistent_increase      precipitation_amount          2002-07 -> 2002-12   length=6
+persistent_increase      precipitation_amount          2002-07 -> 2002-12   length=6
+persistent_increase      precipitation_amount          2002-07 -> 2002-12   length=6
