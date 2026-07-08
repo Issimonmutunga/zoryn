@@ -116,3 +116,99 @@ def main() -> None:
     patterns = rule.discover(
         evidence_store
     )
+    print("=" * 70)
+    print("WRITING REPORT")
+    print("=" * 70)
+
+    output_dir = Path(
+        "data/validation/patterns"
+    )
+
+    output_dir.mkdir(
+        parents=True,
+        exist_ok=True,
+    )
+
+    report = (
+        output_dir
+        / "validate_drought_patterns.txt"
+    )
+
+    with report.open(
+        "w",
+        encoding="utf-8",
+    ) as f:
+
+        f.write("=" * 70 + "\n")
+        f.write("DROUGHT PATTERN VALIDATION\n")
+        f.write("=" * 70 + "\n")
+
+        f.write(
+            f"Histories          : {histories:,}\n"
+        )
+
+        f.write(
+            f"Relationships      : {relationships:,}\n"
+        )
+
+        f.write(
+            f"Evidence           : {len(evidence_store):,}\n"
+        )
+
+        f.write(
+            f"Drought Patterns   : {len(patterns):,}\n"
+        )
+
+        f.write("=" * 70 + "\n")
+        f.write("TOP 20 PATTERNS\n")
+        f.write("=" * 70 + "\n")
+
+        for pattern in sorted(
+            patterns,
+            key=lambda p: p.frequency,
+            reverse=True,
+        )[:20]:
+
+            f.write(
+                f"{pattern.metadata['start']} -> "
+                f"{pattern.metadata['end']}   "
+                f"length={pattern.frequency}   "
+                f"{pattern.metadata['variable']}\n"
+            )
+
+    print("=" * 70)
+    print("DROUGHT PATTERN VALIDATION")
+    print("=" * 70)
+
+    print(
+        f"Histories          : {histories:,}"
+    )
+
+    print(
+        f"Relationships      : {relationships:,}"
+    )
+
+    print(
+        f"Evidence           : {len(evidence_store):,}"
+    )
+
+    print(
+        f"Drought Patterns   : {len(patterns):,}"
+    )
+
+    print("=" * 70)
+
+    print("Report written to:")
+
+    print(
+        report.resolve()
+    )
+
+    print("=" * 70)
+    print("VALIDATION PASSED")
+    print("=" * 70)
+
+
+if __name__ == "__main__":
+
+    main()
