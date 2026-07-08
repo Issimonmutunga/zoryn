@@ -14,7 +14,7 @@ from .knowledge.store import ObservationStore
 
 class Zoryn:
     """
-    Public interface to the Zoryn runtime.
+    Public interface to the Zoryn reasoning engine.
     """
 
     def __init__(
@@ -22,26 +22,45 @@ class Zoryn:
         observations: str | Path,
     ) -> None:
 
-        observations = Path(observations)
-
-        if not observations.exists():
-            raise FileNotFoundError(observations)
-
-        store = ObservationStore(
-            pl.scan_parquet(observations)
+        observations = Path(
+            observations
         )
 
-        self._engine = KnowledgeEngine(store)
+        if not observations.exists():
+
+            raise FileNotFoundError(
+                observations
+            )
+
+        store = ObservationStore(
+            pl.scan_parquet(
+                observations
+            )
+        )
+
+        self._engine = KnowledgeEngine(
+            store
+        )
 
     @property
-    def engine(self) -> KnowledgeEngine:
+    def engine(
+        self,
+    ) -> KnowledgeEngine:
         """
-        Return the runtime knowledge engine.
+        Return the underlying reasoning engine.
         """
+
         return self._engine
 
-    def run(self) -> None:
+    def run(
+        self,
+    ):
         """
-        Execute one complete replay.
+        Execute the complete reasoning pipeline.
+
+        Returns
+        -------
+        list[Discovery]
         """
-        self._engine.run()
+
+        return self._engine.run()
