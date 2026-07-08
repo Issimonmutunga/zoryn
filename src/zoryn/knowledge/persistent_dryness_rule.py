@@ -20,8 +20,14 @@ class PersistentDrynessRule(
     """
     Discover persistent dryness patterns.
 
-    Criteria
+    Assumptions
+    ----------
+    The supplied evidence belongs to a single H3 history,
+    is already ordered chronologically, and represents one
+    environmental variable.
 
+    Criteria
+    --------
     - decreasing environmental signal
     - minimum persistence
     """
@@ -44,54 +50,22 @@ class PersistentDrynessRule(
     ) -> list[Pattern]:
 
         patterns: list[Pattern] = []
-
         run: list[Evidence] = []
 
-        previous_h3 = None
-        previous_variable = None
-
-        for item in sorted(
-            evidence,
-            key=lambda e: (
-                e.h3_id,
-                e.variable,
-                e.timestamp,
-            ),
-        ):
-
-            comparison = item.comparison
+        for item in evidence:
 
             if (
-                previous_h3 != item.h3_id
-                or
-                previous_variable != item.variable
-            ):
-
-                self._flush(
-                    run,
-                    patterns,
-                )
-
-                run = []
-
-            if (
-                comparison.direction.value
+                item.comparison.direction.value
                 == "decrease"
             ):
-
                 run.append(item)
 
             else:
-
                 self._flush(
                     run,
                     patterns,
                 )
-
                 run = []
-
-            previous_h3 = item.h3_id
-            previous_variable = item.variable
 
         self._flush(
             run,

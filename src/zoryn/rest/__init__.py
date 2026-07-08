@@ -1,11 +1,9 @@
 """
-Zoryn.
+Zoryn REST API.
 """
 
-from .api import Zoryn
-from .version import __version__
+from .app import app
 
 __all__ = [
-    "Zoryn",
-    "__version__",
+    "app",
 ]
