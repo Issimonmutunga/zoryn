@@ -1,5 +1,8 @@
 """
 Export environmental discoveries to Parquet.
+
+The exporter consumes discoveries as a stream from the knowledge engine and
+writes them in bounded-memory Parquet batches.
 """
 
 from __future__ import annotations
@@ -9,13 +12,45 @@ from pathlib import Path
 import polars as pl
 
 from zoryn.api import Zoryn
-from zoryn.rest.routes import hypothesis
+
+
+BATCH_SIZE = 5_000
+
+
+def _write_batch(
+    rows: list[dict],
+    output_dir: Path,
+    batch_number: int,
+) -> None:
+    """
+    Write one Parquet batch.
+    """
+
+    if not rows:
+        return
+
+    output = (
+        output_dir
+        / f"discoveries_part_{batch_number:06d}.parquet"
+    )
+
+    pl.DataFrame(rows).write_parquet(output)
+
 
 def main() -> None:
 
     observations = Path(
         "data/processed/observations/"
         "master_observations.parquet"
+    )
+
+    output_dir = Path(
+        "data/processed/discoveries"
+    )
+
+    output_dir.mkdir(
+        parents=True,
+        exist_ok=True,
     )
 
     print("=" * 70)
@@ -26,19 +61,16 @@ def main() -> None:
         observations
     )
 
-    discoveries = runtime.run()
+    rows: list[dict] = []
 
-    print(
-        f"Discoveries : {len(discoveries):,}"
-    )
+    batch_number = 1
+    discovery_count = 0
 
     print("=" * 70)
-    print("BUILDING TABLE")
+    print("EXPORTING DISCOVERIES")
     print("=" * 70)
 
-    rows = []
-
-    for discovery in discoveries:
+    for discovery in runtime.run():
 
         hypothesis = discovery.hypothesis
 
@@ -70,50 +102,52 @@ def main() -> None:
             }
         )
 
-    dataframe = pl.DataFrame(
-        rows
-    )
-    output_dir = Path(
-        "data/processed/discoveries"
-    )
+        discovery_count += 1
 
-    output_dir.mkdir(
-        parents=True,
-        exist_ok=True,
-    )
+        if len(rows) >= BATCH_SIZE:
 
-    output = (
-        output_dir
-        / "discoveries.parquet"
-    )
+            _write_batch(
+                rows,
+                output_dir,
+                batch_number,
+            )
 
-    print("=" * 70)
-    print("WRITING DISCOVERIES")
-    print("=" * 70)
+            print(
+                f"Wrote batch {batch_number:,} "
+                f"({len(rows):,} discoveries)"
+            )
 
-    dataframe.write_parquet(
-        output
-    )
+            rows.clear()
+            batch_number += 1
+
+    if rows:
+
+        _write_batch(
+            rows,
+            output_dir,
+            batch_number,
+        )
+
+        print(
+            f"Wrote batch {batch_number:,} "
+            f"({len(rows):,} discoveries)"
+        )
 
     print("=" * 70)
     print("EXPORT COMPLETE")
     print("=" * 70)
 
     print(
-        f"Discoveries : {len(dataframe):,}"
+        f"Total discoveries: {discovery_count:,}"
     )
 
-    print("Output:")
+    print("Output directory:")
 
     print(
-        output.resolve()
+        output_dir.resolve()
     )
 
     print("=" * 70)
-
-    print(
-        dataframe.head(10)
-    )
 
 
 if __name__ == "__main__":
