@@ -1,12 +1,11 @@
 """
-Zoryn REST API.
-
-Exposes the pilot environmental reasoning engine
-through a FastAPI application.
+Zoryn.
 """
 
-from .app import app
+from .api import Zoryn
+from .version import __version__
 
 __all__ = [
-    "app",
+    "Zoryn",
+    "__version__",
 ]

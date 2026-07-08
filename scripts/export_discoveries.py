@@ -8,8 +8,8 @@ from pathlib import Path
 
 import polars as pl
 
-from zoryn.rest import Zoryn
-
+from zoryn.api import Zoryn
+from zoryn.rest.routes import hypothesis
 
 def main() -> None:
 
@@ -41,6 +41,9 @@ def main() -> None:
     for discovery in discoveries:
 
         hypothesis = discovery.hypothesis
+
+        if not hypothesis.patterns:
+            continue
 
         pattern = hypothesis.patterns[0]
 
