@@ -1,49 +1,79 @@
 """
 API dependency providers.
 
-Centralizes construction of shared application
-components for the REST API.
+Centralizes access to the persisted knowledge dataset.
 """
 
 from __future__ import annotations
 
+from functools import lru_cache
 from pathlib import Path
 
 import polars as pl
 
-from zoryn.knowledge import (
-    KnowledgeEngine,
-    ObservationStore,
+
+_KNOWLEDGE = Path(
+    "data/processed/knowledge"
 )
 
 
-_OBSERVATIONS = (
-    Path(
-        "data/processed/observations/"
-        "master_observations.parquet"
-    )
-)
-
-
-def get_store() -> ObservationStore:
+def _load(
+    table: str,
+) -> pl.DataFrame:
     """
-    Return the observation store.
+    Load a partitioned knowledge table.
     """
 
-    observations = pl.scan_parquet(
-        _OBSERVATIONS
+    directory = _KNOWLEDGE / table
+
+    files = sorted(
+        directory.glob(
+            "*.parquet"
+        )
     )
 
-    return ObservationStore(
-        observations
+    if not files:
+
+        raise FileNotFoundError(
+            f"No parquet files found for {table}."
+        )
+
+    return pl.concat(
+        [
+            pl.read_parquet(
+                file
+            )
+            for file in files
+        ]
     )
 
 
-def get_engine() -> KnowledgeEngine:
+@lru_cache(maxsize=1)
+def get_knowledge() -> dict[str, pl.DataFrame]:
     """
-    Return the knowledge engine.
+    Return the persisted knowledge dataset.
+
+    The dataset is loaded once and reused by
+    all API requests.
     """
 
-    return KnowledgeEngine(
-        get_store()
-    )
+    return {
+        "discoveries": _load(
+            "discoveries"
+        ),
+        "hypotheses": _load(
+            "hypotheses"
+        ),
+        "patterns": _load(
+            "patterns"
+        ),
+        "evidence": _load(
+            "evidence"
+        ),
+        "hypothesis_patterns": _load(
+            "hypothesis_patterns"
+        ),
+        "pattern_evidence": _load(
+            "pattern_evidence"
+        ),
+    }
