@@ -1,7 +1,7 @@
 """
 Knowledge graph repository.
 
-Persists knowledge bundles.
+Persists knowledge bundles in bounded-memory batches.
 """
 
 from __future__ import annotations
@@ -16,99 +16,127 @@ from .schema import KnowledgeBundle
 
 class KnowledgeRepository:
     """
-    Persist knowledge bundles.
+    Persist knowledge bundles as partitioned Parquet batches.
     """
 
     def __init__(
         self,
         root: Path,
+        batch_size: int = 5_000,
     ) -> None:
 
-        self._root = Path(
-            root
-        )
+        self._root = Path(root)
+        self._batch_size = batch_size
 
         self._root.mkdir(
             parents=True,
             exist_ok=True,
         )
 
-    def save(
+        self._bundle = KnowledgeBundle()
+
+        self._batch = 1
+
+        self._discoveries = 0
+
+    def add(
         self,
         bundle: KnowledgeBundle,
     ) -> None:
         """
-        Persist one knowledge bundle.
+        Add a bundle to the current batch.
         """
 
-        self._append(
-            "discoveries.parquet",
-            bundle.discoveries,
+        self._bundle.extend(
+            bundle
         )
 
-        self._append(
-            "hypotheses.parquet",
-            bundle.hypotheses,
+        self._discoveries += len(
+            bundle.discoveries
         )
 
-        self._append(
-            "hypothesis_patterns.parquet",
-            bundle.hypothesis_patterns,
-        )
+        if (
+            self._discoveries
+            >= self._batch_size
+        ):
 
-        self._append(
-            "patterns.parquet",
-            bundle.patterns,
-        )
+            self.flush()
 
-        self._append(
-            "pattern_evidence.parquet",
-            bundle.pattern_evidence,
-        )
-
-        self._append(
-            "evidence.parquet",
-            bundle.evidence,
-        )
-
-    def _append(
+    def flush(
         self,
-        filename: str,
-        records: list,
     ) -> None:
         """
-        Append records to a Parquet dataset.
+        Flush the current batch.
         """
+
+        if not self._bundle.discoveries:
+            return
+
+        self._write(
+            "discoveries",
+            self._bundle.discoveries,
+        )
+
+        self._write(
+            "hypotheses",
+            self._bundle.hypotheses,
+        )
+
+        self._write(
+            "hypothesis_patterns",
+            self._bundle.hypothesis_patterns,
+        )
+
+        self._write(
+            "patterns",
+            self._bundle.patterns,
+        )
+
+        self._write(
+            "pattern_evidence",
+            self._bundle.pattern_evidence,
+        )
+
+        self._write(
+            "evidence",
+            self._bundle.evidence,
+        )
+
+        self._bundle.clear()
+
+        self._discoveries = 0
+
+        self._batch += 1
+
+    def _write(
+        self,
+        table: str,
+        records: list,
+    ) -> None:
 
         if not records:
             return
 
-        path = (
+        directory = (
             self._root
-            / filename
+            / table
         )
 
-        dataframe = pl.DataFrame(
+        directory.mkdir(
+            parents=True,
+            exist_ok=True,
+        )
+
+        output = (
+            directory
+            / f"part_{self._batch:06d}.parquet"
+        )
+
+        pl.DataFrame(
             [
                 asdict(record)
                 for record in records
             ]
-        )
-
-        if path.exists():
-
-            existing = pl.read_parquet(
-                path
-            )
-
-            dataframe = pl.concat(
-                [
-                    existing,
-                    dataframe,
-                ],
-                how="vertical",
-            )
-
-        dataframe.write_parquet(
-            path
+        ).write_parquet(
+            output
         )
