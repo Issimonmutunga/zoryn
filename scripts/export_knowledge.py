@@ -52,7 +52,8 @@ def main() -> None:
     writer = KnowledgeWriter()
 
     repository = KnowledgeRepository(
-        output
+        root=output,
+        batch_size=5_000,
     )
 
     discoveries = 0
@@ -67,17 +68,19 @@ def main() -> None:
             discovery
         )
 
-        repository.save(
+        repository.add(
             bundle
         )
 
         discoveries += 1
 
-        if discoveries % 1000 == 0:
+        if discoveries % 5_000 == 0:
 
             print(
                 f"{discoveries:,} discoveries exported..."
             )
+
+    repository.flush()
 
     print(LINE)
     print("EXPORT COMPLETE")
