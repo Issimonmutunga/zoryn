@@ -39,6 +39,23 @@ class KnowledgeRepository:
 
         self._discoveries = 0
 
+        #
+        # Deduplication indices
+        #
+
+        self._seen_discoveries: set[str] = set()
+        self._seen_hypotheses: set[str] = set()
+        self._seen_patterns: set[str] = set()
+        self._seen_evidence: set[str] = set()
+
+        self._seen_hypothesis_patterns: set[
+            tuple[str, str]
+        ] = set()
+
+        self._seen_pattern_evidence: set[
+            tuple[str, str]
+        ] = set()
+
     def add(
         self,
         bundle: KnowledgeBundle,
@@ -47,9 +64,117 @@ class KnowledgeRepository:
         Add a bundle to the current batch.
         """
 
-        self._bundle.extend(
-            bundle
-        )
+        #
+        # Discoveries
+        #
+
+        for record in bundle.discoveries:
+
+            if record.id in self._seen_discoveries:
+                continue
+
+            self._bundle.discoveries.append(
+                record
+            )
+
+            self._seen_discoveries.add(
+                record.id
+            )
+
+        #
+        # Hypotheses
+        #
+
+        for record in bundle.hypotheses:
+
+            if record.id in self._seen_hypotheses:
+                continue
+
+            self._bundle.hypotheses.append(
+                record
+            )
+
+            self._seen_hypotheses.add(
+                record.id
+            )
+
+        #
+        # Patterns
+        #
+
+        for record in bundle.patterns:
+
+            if record.id in self._seen_patterns:
+                continue
+
+            self._bundle.patterns.append(
+                record
+            )
+
+            self._seen_patterns.add(
+                record.id
+            )
+
+        #
+        # Evidence
+        #
+
+        for record in bundle.evidence:
+
+            if record.id in self._seen_evidence:
+                continue
+
+            self._bundle.evidence.append(
+                record
+            )
+
+            self._seen_evidence.add(
+                record.id
+            )
+
+        #
+        # Hypothesis → Pattern
+        #
+
+        for record in bundle.hypothesis_patterns:
+
+            key = (
+                record.hypothesis_id,
+                record.pattern_id,
+            )
+
+            if key in self._seen_hypothesis_patterns:
+                continue
+
+            self._bundle.hypothesis_patterns.append(
+                record
+            )
+
+            self._seen_hypothesis_patterns.add(
+                key
+            )
+
+        #
+        # Pattern → Evidence
+        #
+
+        for record in bundle.pattern_evidence:
+
+            key = (
+                record.pattern_id,
+                record.evidence_id,
+            )
+
+            if key in self._seen_pattern_evidence:
+                continue
+
+            self._bundle.pattern_evidence.append(
+                record
+            )
+
+            self._seen_pattern_evidence.add(
+                key
+            )
 
         self._discoveries += len(
             bundle.discoveries
@@ -107,6 +232,17 @@ class KnowledgeRepository:
         self._discoveries = 0
 
         self._batch += 1
+
+        #
+        # Reset batch indices
+        #
+
+        self._seen_discoveries.clear()
+        self._seen_hypotheses.clear()
+        self._seen_patterns.clear()
+        self._seen_evidence.clear()
+        self._seen_hypothesis_patterns.clear()
+        self._seen_pattern_evidence.clear()
 
     def _write(
         self,
