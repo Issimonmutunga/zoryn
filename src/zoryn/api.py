@@ -54,9 +54,16 @@ class Zoryn:
 
     def run(
         self,
+        limit: int | None = None,
     ):
         """
         Execute the complete reasoning pipeline.
+
+        Parameters
+        ----------
+        limit
+            Maximum number of H3 histories to process.
+            If None, all histories are processed.
 
         Yields
         ------
@@ -64,4 +71,6 @@ class Zoryn:
             Discoveries produced by the reasoning engine.
         """
 
-        return self._engine.run()
+        return self._engine.run(
+            limit=limit,
+        )
