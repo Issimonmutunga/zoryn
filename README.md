@@ -1,53 +1,241 @@
-# Zoryn
+# <p align="center"><img src="assets/logos/zoryn.png" alt="Zoryn" width="140"></p>
 
-> Learning Earth's future from its evolving memory.
+<h1 align="center">Zoryn</h1>
 
-## Vision
+<p align="center">
+<b>An Explainable Environmental Reasoning Engine for Early Warning</b>
+</p>
 
-Zoryn is a self-evolving spatiotemporal intelligence engine that continuously learns the state of the Earth and reasons about its future.
+<p align="center">
+Observe • Reason • Protect
+</p>
 
-Rather than building independent models for droughts, floods, heatwaves, wildfires, or other hazards, Zoryn learns the evolving relationships between environmental, ecological, hydrological, atmospheric, and human systems.
+---
 
-Hazards are treated as emergent patterns within a continuously evolving planetary knowledge graph.
+## Overview
 
-## Core Principles
+Zoryn is an environmental reasoning engine designed to infer emerging environmental hazards from scientific observations using transparent, explainable reasoning.
 
-- Earth is a dynamic graph.
-- Space and time are inseparable.
-- Learn normal evolution before learning hazards.
-- Continuously update knowledge rather than retraining from scratch.
-- Discover unknown precursor signatures.
-- Explain every prediction.
-- Build once, support many domains.
+Unlike conventional machine learning systems that produce predictions with limited interpretability, Zoryn constructs an explicit chain of scientific reasoning from observations to environmental discoveries.
 
-## Architecture Philosophy
+Every conclusion can be traced back to the observations, evidence, environmental patterns and scientific standards that produced it.
 
-Each H3 cell is treated as a living entity.
+---
 
-Every observation updates the knowledge graph.
+## Objectives
 
-Relationships evolve over time.
+The pilot demonstrates that environmental hazards can be discovered through transparent reasoning rather than opaque prediction.
 
-Predictions emerge from graph evolution instead of isolated machine learning models.
+For every environmental conclusion, Zoryn answers:
 
-The system should eventually be capable of identifying patterns that have never been explicitly labelled by humans.
+* What is happening?
+* Why is it happening?
+* Which observations support the conclusion?
+* Which scientific reasoning rule produced it?
+* Which scientific standard supports the reasoning?
 
-## Long-Term Goals
+---
 
-- Self-evolving temporal knowledge graph
-- Continual learning
-- Graph reasoning
-- Explainable early warning
-- Discovery of novel environmental precursor patterns
-- Global scalability
-- Resource-efficient deployment
+## Reasoning Pipeline
 
-## Repository Status
+```text
+Observation
+      │
+      ▼
+Environmental Signature
+      │
+      ▼
+Relationship
+      │
+      ▼
+Evidence
+      │
+      ▼
+Pattern
+      │
+      ▼
+Hypothesis
+      │
+      ▼
+Discovery
+```
 
-Early research and development.
+The reasoning process is deterministic, explainable and scientifically grounded.
 
-The architecture is expected to evolve significantly as new ideas are explored.
+---
+
+## Current Scientific Rules
+
+The pilot currently includes:
+
+* Persistent Dryness Rule (WMO SPI)
+
+The architecture is designed to accommodate additional reasoning rules including:
+
+* Persistent Wetness
+* Heatwave
+* Vegetation Stress
+* Flood Precursors
+* Compound Hazards
+
+---
+
+## Scientific References
+
+Environmental reasoning is supported by internationally recognised standards.
+
+Current references include:
+
+* World Meteorological Organization (WMO)
+* Intergovernmental Panel on Climate Change (IPCC)
+* Food and Agriculture Organization (FAO)
+* United States Geological Survey (USGS)
+* United Nations Office for Disaster Risk Reduction (UNDRR)
+
+Reference material is available under:
+
+```text
+references/
+```
+
+---
+
+## Project Structure
+
+```text
+src/
+    zoryn/
+
+scripts/
+
+tests/
+
+references/
+
+docs/
+
+data/
+```
+
+---
+
+## Installation
+
+Clone the repository:
+
+```bash
+git clone https://github.com/Issimonmutunga/zoryn.git
+```
+
+Create a virtual environment:
+
+```bash
+python -m venv .venv
+```
+
+Activate it.
+
+Windows
+
+```bash
+.venv\Scripts\activate
+```
+
+Linux/macOS
+
+```bash
+source .venv/bin/activate
+```
+
+Install dependencies:
+
+```bash
+pip install -e .
+```
+
+---
+
+## Running the Pipeline
+
+Execute the reasoning engine:
+
+```bash
+python scripts/export_discoveries.py
+```
+
+Export the complete knowledge dataset:
+
+```bash
+python scripts/export_knowledge.py
+```
+
+---
+
+## Validation
+
+Zoryn includes independent validation scripts covering each stage of the reasoning pipeline.
+
+Examples:
+
+```bash
+python scripts/validate_patterns.py
+
+python scripts/validate_hypothesis.py
+
+python scripts/validate_discoverer.py
+
+python scripts/validate_knowledge.py
+```
+
+---
+
+## REST API
+
+Start the API:
+
+```bash
+python -m zoryn.rest.main
+```
+
+The API exposes persisted environmental discoveries for downstream applications and interactive mapping.
+
+---
+
+## Design Principles
+
+Zoryn is built around a small set of guiding principles:
+
+* Scientific correctness before software convenience.
+* Explainability over opacity.
+* Deterministic reasoning.
+* Modular scientific rules.
+* Streaming, constant-memory execution.
+* Reproducible environmental analysis.
+
+---
+
+## Current Status
+
+The pilot currently supports:
+
+* Environmental reasoning pipeline
+* Explainable discoveries
+* Streaming execution
+* Knowledge persistence
+* REST API
+* Validation framework
+
+Future work focuses on expanding the scientific rule library and building interactive decision-support applications.
+
+---
 
 ## License
 
-MIT
+This project is released under the MIT License.
+
+---
+
+<p align="center">
+<b>Zoryn</b><br>
+An Explainable Environmental Reasoning Engine for Early Warning
+</p>
