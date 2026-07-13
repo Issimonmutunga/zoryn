@@ -5,6 +5,7 @@ Immutable representation of evidence supporting a hypothesis.
 from __future__ import annotations
 
 from dataclasses import dataclass
+from hashlib import sha256
 from typing import Mapping
 
 from .relationship import Relationship
@@ -34,6 +35,24 @@ class Evidence:
     variable: str
     strength: float
     metadata: Mapping[str, object]
+
+    @property
+    def id(self) -> str:
+        """
+        Stable identifier for this evidence.
+        """
+
+        value = "|".join(
+            (
+                self.h3_id,
+                self.timestamp,
+                self.variable,
+            )
+        )
+
+        return sha256(
+            value.encode("utf-8")
+        ).hexdigest()
 
     @property
     def h3_id(self) -> str:
