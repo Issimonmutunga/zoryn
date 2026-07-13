@@ -48,9 +48,13 @@ class KnowledgeEngine:
         discoverer: Discoverer | None = None,
     ) -> None:
 
-        builder = SignatureBuilder(store)
+        builder = SignatureBuilder(
+            store
+        )
 
-        self._replay = ReplayEngine(builder)
+        self._replay = ReplayEngine(
+            builder
+        )
 
         self._comparator = (
             comparator
@@ -91,16 +95,25 @@ class KnowledgeEngine:
 
     def run(
         self,
+        limit: int | None = None,
     ):
         """
         Execute the complete reasoning pipeline.
+
+        Parameters
+        ----------
+        limit
+            Maximum number of H3 histories to process.
+            If None, all histories are processed.
 
         Yields
         ------
         Discovery
         """
 
-        for _, history in self._replay.histories():
+        for _, history in self._replay.histories(
+            limit=limit,
+        ):
 
             evidence = []
 
