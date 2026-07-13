@@ -6,6 +6,7 @@ Persists knowledge bundles.
 
 from __future__ import annotations
 
+from dataclasses import asdict
 from pathlib import Path
 
 import polars as pl
@@ -23,7 +24,9 @@ class KnowledgeRepository:
         root: Path,
     ) -> None:
 
-        self._root = Path(root)
+        self._root = Path(
+            root
+        )
 
         self._root.mkdir(
             parents=True,
@@ -34,53 +37,78 @@ class KnowledgeRepository:
         self,
         bundle: KnowledgeBundle,
     ) -> None:
+        """
+        Persist one knowledge bundle.
+        """
 
-        self._write(
+        self._append(
             "discoveries.parquet",
             bundle.discoveries,
         )
 
-        self._write(
+        self._append(
             "hypotheses.parquet",
             bundle.hypotheses,
         )
 
-        self._write(
+        self._append(
             "hypothesis_patterns.parquet",
             bundle.hypothesis_patterns,
         )
 
-        self._write(
+        self._append(
             "patterns.parquet",
             bundle.patterns,
         )
 
-        self._write(
+        self._append(
             "pattern_evidence.parquet",
             bundle.pattern_evidence,
         )
 
-        self._write(
+        self._append(
             "evidence.parquet",
             bundle.evidence,
         )
 
-    def _write(
+    def _append(
         self,
         filename: str,
-        records,
+        records: list,
     ) -> None:
+        """
+        Append records to a Parquet dataset.
+        """
 
         if not records:
             return
 
+        path = (
+            self._root
+            / filename
+        )
+
         dataframe = pl.DataFrame(
             [
-                record.__dict__
+                asdict(record)
                 for record in records
             ]
         )
 
+        if path.exists():
+
+            existing = pl.read_parquet(
+                path
+            )
+
+            dataframe = pl.concat(
+                [
+                    existing,
+                    dataframe,
+                ],
+                how="vertical",
+            )
+
         dataframe.write_parquet(
-            self._root / filename
+            path
         )
