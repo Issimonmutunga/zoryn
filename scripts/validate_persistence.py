@@ -1,8 +1,8 @@
 """
-Validate the persistence layer.
+Validate the persistence mapping layer.
 
-Checks that discoveries are correctly mapped into
-knowledge persistence records.
+Validates that a single Discovery is correctly mapped into
+a KnowledgeBundle.
 """
 
 from __future__ import annotations
@@ -31,128 +31,133 @@ def main() -> None:
         observations
     )
 
+    print(LINE)
+    print("FETCHING FIRST DISCOVERY")
+    print(LINE)
+
+    try:
+        discovery = next(
+            runtime.run()
+        )
+
+    except StopIteration:
+
+        raise RuntimeError(
+            "No discoveries were produced."
+        )
+
     writer = KnowledgeWriter()
 
-    discovery_count = 0
-    hypothesis_count = 0
-    pattern_count = 0
-    evidence_count = 0
-    hypothesis_pattern_count = 0
-    pattern_evidence_count = 0
-
     print(LINE)
-    print("VALIDATING PERSISTENCE")
+    print("MAPPING DISCOVERY")
     print(LINE)
 
-    for discovery in runtime.run():
+    bundle = writer.write(
+        discovery
+    )
 
-        bundle = writer.write(
-            discovery
+    #
+    # Counts
+    #
+
+    assert len(
+        bundle.discoveries
+    ) == 1
+
+    assert len(
+        bundle.hypotheses
+    ) == 1
+
+    assert len(
+        bundle.patterns
+    ) > 0
+
+    assert len(
+        bundle.evidence
+    ) > 0
+
+    #
+    # Foreign keys
+    #
+
+    hypothesis_ids = {
+        h.id
+        for h in bundle.hypotheses
+    }
+
+    pattern_ids = {
+        p.id
+        for p in bundle.patterns
+    }
+
+    evidence_ids = {
+        e.id
+        for e in bundle.evidence
+    }
+
+    discovery = bundle.discoveries[0]
+
+    assert (
+        discovery.hypothesis_id
+        in hypothesis_ids
+    )
+
+    for relation in bundle.hypothesis_patterns:
+
+        assert (
+            relation.hypothesis_id
+            in hypothesis_ids
         )
 
-        discovery_count += len(
-            bundle.discoveries
+        assert (
+            relation.pattern_id
+            in pattern_ids
         )
 
-        hypothesis_count += len(
-            bundle.hypotheses
+    for relation in bundle.pattern_evidence:
+
+        assert (
+            relation.pattern_id
+            in pattern_ids
         )
 
-        pattern_count += len(
-            bundle.patterns
+        assert (
+            relation.evidence_id
+            in evidence_ids
         )
-
-        evidence_count += len(
-            bundle.evidence
-        )
-
-        hypothesis_pattern_count += len(
-            bundle.hypothesis_patterns
-        )
-
-        pattern_evidence_count += len(
-            bundle.pattern_evidence
-        )
-
-        #
-        # Structural validation
-        #
-
-        assert len(
-            bundle.discoveries
-        ) == 1
-
-        assert len(
-            bundle.hypotheses
-        ) == 1
-
-        hypothesis_ids = {
-            h.id
-            for h in bundle.hypotheses
-        }
-
-        pattern_ids = {
-            p.id
-            for p in bundle.patterns
-        }
-
-        evidence_ids = {
-            e.id
-            for e in bundle.evidence
-        }
-
-        for relation in bundle.hypothesis_patterns:
-
-            assert (
-                relation.hypothesis_id
-                in hypothesis_ids
-            )
-
-            assert (
-                relation.pattern_id
-                in pattern_ids
-            )
-
-        for relation in bundle.pattern_evidence:
-
-            assert (
-                relation.pattern_id
-                in pattern_ids
-            )
-
-            assert (
-                relation.evidence_id
-                in evidence_ids
-            )
 
     print(LINE)
     print("PERSISTENCE VALIDATION")
     print(LINE)
 
     print(
-        f"Discoveries         : {discovery_count:,}"
+        f"Discoveries         : "
+        f"{len(bundle.discoveries)}"
     )
 
     print(
-        f"Hypotheses         : {hypothesis_count:,}"
+        f"Hypotheses         : "
+        f"{len(bundle.hypotheses)}"
     )
 
     print(
-        f"Patterns           : {pattern_count:,}"
+        f"Patterns           : "
+        f"{len(bundle.patterns)}"
     )
 
     print(
-        f"Evidence           : {evidence_count:,}"
+        f"Evidence           : "
+        f"{len(bundle.evidence)}"
     )
 
     print(
         f"Hypothesis Links   : "
-        f"{hypothesis_pattern_count:,}"
+        f"{len(bundle.hypothesis_patterns)}"
     )
 
     print(
         f"Pattern Links      : "
-        f"{pattern_evidence_count:,}"
+        f"{len(bundle.pattern_evidence)}"
     )
 
     print(LINE)
