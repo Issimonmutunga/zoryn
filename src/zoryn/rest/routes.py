@@ -4,19 +4,40 @@ REST API routes.
 
 from __future__ import annotations
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends, HTTPException
+
+from .dependencies import get_knowledge
+from .repository import KnowledgeRepository
+
 
 router = APIRouter()
+
+
+def get_repository() -> KnowledgeRepository:
+    """
+    Return the knowledge repository.
+    """
+
+    return KnowledgeRepository(
+        get_knowledge()
+    )
 
 
 @router.get(
     "/health",
     tags=["System"],
 )
-def health() -> dict[str, str]:
+def health(
+    repository: KnowledgeRepository = Depends(
+        get_repository,
+    ),
+):
 
     return {
         "status": "healthy",
+        "discoveries": len(
+            repository.discoveries()
+        ),
     }
 
 
@@ -24,9 +45,13 @@ def health() -> dict[str, str]:
     "/discoveries",
     tags=["Discoveries"],
 )
-def discoveries():
+def discoveries(
+    repository: KnowledgeRepository = Depends(
+        get_repository,
+    ),
+):
 
-    return []
+    return repository.discoveries()
 
 
 @router.get(
@@ -35,54 +60,80 @@ def discoveries():
 )
 def discovery(
     h3_id: str,
+    repository: KnowledgeRepository = Depends(
+        get_repository,
+    ),
 ):
 
-    return {
-        "h3_id": h3_id,
-        "discovery": None,
-    }
+    discovery = repository.discovery(
+        h3_id
+    )
+
+    if discovery is None:
+
+        raise HTTPException(
+            status_code=404,
+            detail="Discovery not found.",
+        )
+
+    return discovery
 
 
 @router.get(
-    "/hypotheses/{h3_id}",
+    "/hypotheses/{hypothesis_id}",
     tags=["Hypotheses"],
 )
 def hypothesis(
-    h3_id: str,
+    hypothesis_id: str,
+    repository: KnowledgeRepository = Depends(
+        get_repository,
+    ),
 ):
 
-    return {
-        "h3_id": h3_id,
-        "hypothesis": None,
-    }
+    hypothesis = repository.hypothesis(
+        hypothesis_id
+    )
+
+    if hypothesis is None:
+
+        raise HTTPException(
+            status_code=404,
+            detail="Hypothesis not found.",
+        )
+
+    return hypothesis
 
 
 @router.get(
-    "/patterns/{h3_id}",
+    "/patterns/{hypothesis_id}",
     tags=["Patterns"],
 )
 def patterns(
-    h3_id: str,
+    hypothesis_id: str,
+    repository: KnowledgeRepository = Depends(
+        get_repository,
+    ),
 ):
 
-    return {
-        "h3_id": h3_id,
-        "patterns": [],
-    }
+    return repository.patterns(
+        hypothesis_id
+    )
 
 
 @router.get(
-    "/evidence/{h3_id}",
+    "/evidence/{pattern_id}",
     tags=["Evidence"],
 )
 def evidence(
-    h3_id: str,
+    pattern_id: str,
+    repository: KnowledgeRepository = Depends(
+        get_repository,
+    ),
 ):
 
-    return {
-        "h3_id": h3_id,
-        "evidence": [],
-    }
+    return repository.evidence(
+        pattern_id
+    )
 
 
 @router.get(
@@ -92,6 +143,10 @@ def evidence(
 def history(
     h3_id: str,
 ):
+
+    #
+    # Future implementation.
+    #
 
     return {
         "h3_id": h3_id,
