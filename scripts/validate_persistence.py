@@ -37,7 +37,9 @@ def main() -> None:
 
     try:
         discovery = next(
-            runtime.run()
+            runtime.run(
+                limit=1,
+            )
         )
 
     except StopIteration:
