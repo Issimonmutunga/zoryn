@@ -25,12 +25,31 @@ class ReplayEngine:
 
     def histories(
         self,
+        limit: int | None = None,
     ) -> Iterator[tuple[str, Iterator[Signature]]]:
         """
         Iterate over every H3 history.
+
+        Parameters
+        ----------
+        limit
+            Maximum number of histories to yield.
+            If None, all histories are replayed.
         """
 
-        yield from self._builder.iter_histories()
+        count = 0
+
+        for history in self._builder.iter_histories():
+
+            yield history
+
+            count += 1
+
+            if (
+                limit is not None
+                and count >= limit
+            ):
+                break
 
     def replay(
         self,
@@ -39,20 +58,31 @@ class ReplayEngine:
             None,
         ]
         | None = None,
+        limit: int | None = None,
     ) -> None:
         """
-        Replay every history.
+        Replay environmental histories.
 
-        The callback receives:
+        Parameters
+        ----------
+        callback
+            Optional callback receiving:
 
-            (h3_id, signature)
+                (h3_id, signature)
+
+        limit
+            Maximum number of histories to replay.
+            If None, all histories are replayed.
         """
 
-        for h3_id, history in self.histories():
+        for h3_id, history in self.histories(
+            limit=limit,
+        ):
 
             for signature in history:
 
                 if callback is not None:
+
                     callback(
                         h3_id,
                         signature,
