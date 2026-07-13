@@ -18,6 +18,7 @@ from .records import (
     PatternEvidenceRecord,
     PatternRecord,
 )
+from .schema import KnowledgeBundle
 
 
 class KnowledgeWriter:
@@ -28,12 +29,9 @@ class KnowledgeWriter:
     def write(
         self,
         discovery: Discovery,
-    ) -> dict[str, list]:
+    ) -> KnowledgeBundle:
 
-        evidence_records = []
-        pattern_records = []
-        pattern_evidence_records = []
-        hypothesis_pattern_records = []
+        bundle = KnowledgeBundle()
 
         hypothesis = discovery.hypothesis
 
@@ -43,10 +41,12 @@ class KnowledgeWriter:
             discovery.h3_id,
         )
 
-        hypothesis_record = HypothesisRecord(
-            id=hypothesis_id,
-            name=hypothesis.name,
-            confidence=hypothesis.confidence,
+        bundle.hypotheses.append(
+            HypothesisRecord(
+                id=hypothesis_id,
+                name=hypothesis.name,
+                confidence=hypothesis.confidence,
+            )
         )
 
         for pattern in hypothesis.patterns:
@@ -59,7 +59,7 @@ class KnowledgeWriter:
                 pattern.metadata["end"],
             )
 
-            pattern_records.append(
+            bundle.patterns.append(
                 PatternRecord(
                     id=pattern_id,
                     name=pattern.name,
@@ -72,7 +72,7 @@ class KnowledgeWriter:
                 )
             )
 
-            hypothesis_pattern_records.append(
+            bundle.hypothesis_patterns.append(
                 HypothesisPatternRecord(
                     hypothesis_id=hypothesis_id,
                     pattern_id=pattern_id,
@@ -88,7 +88,7 @@ class KnowledgeWriter:
                     evidence.variable,
                 )
 
-                evidence_records.append(
+                bundle.evidence.append(
                     EvidenceRecord(
                         id=evidence_id,
                         h3_id=evidence.h3_id,
@@ -101,43 +101,30 @@ class KnowledgeWriter:
                     )
                 )
 
-                pattern_evidence_records.append(
+                bundle.pattern_evidence.append(
                     PatternEvidenceRecord(
                         pattern_id=pattern_id,
                         evidence_id=evidence_id,
                     )
                 )
 
-        discovery_record = DiscoveryRecord(
-            id=self._id(
-                "discovery",
-                discovery.name,
-                discovery.h3_id,
-            ),
-            hypothesis_id=hypothesis_id,
-            h3_id=discovery.h3_id,
-            name=discovery.name,
-            confidence=discovery.confidence,
-            start=discovery.start,
-            end=discovery.end,
+        bundle.discoveries.append(
+            DiscoveryRecord(
+                id=self._id(
+                    "discovery",
+                    discovery.name,
+                    discovery.h3_id,
+                ),
+                hypothesis_id=hypothesis_id,
+                h3_id=discovery.h3_id,
+                name=discovery.name,
+                confidence=discovery.confidence,
+                start=discovery.start,
+                end=discovery.end,
+            )
         )
 
-        return {
-            "discoveries": [
-                discovery_record
-            ],
-            "hypotheses": [
-                hypothesis_record
-            ],
-            "hypothesis_patterns": (
-                hypothesis_pattern_records
-            ),
-            "patterns": pattern_records,
-            "pattern_evidence": (
-                pattern_evidence_records
-            ),
-            "evidence": evidence_records,
-        }
+        return bundle
 
     @staticmethod
     def _id(
