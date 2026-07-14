@@ -2,23 +2,25 @@ import { apiClient } from "@/services/api/client";
 
 export interface Hypothesis {
   id: string;
-  h3_id: string;
-  hypothesis: string | null;
+  name: string;
+  confidence: number;
 }
 
 export interface Pattern {
   id: string;
-  hypothesis_id: string;
   name: string;
-  confidence?: number;
+  confidence: number;
+  frequency: number;
+  standard: string;
 }
 
 export interface Evidence {
   id: string;
-  pattern_id: string;
+  h3_id: string;
+  timestamp: string;
   variable: string;
-  value: string | number;
-  unit?: string;
+  direction: string;
+  strength: number;
 }
 
 export const reasoningApi = {
