@@ -8,6 +8,15 @@ from fastapi import APIRouter, Depends, HTTPException
 
 from .dependencies import get_knowledge
 from .repository import KnowledgeRepository
+from .schemas import (
+    DiscoveryResponse,
+    EvidenceResponse,
+    HealthResponse,
+    HistoryResponse,
+    HypothesisResponse,
+    PatternResponse,
+    VersionResponse,
+)
 from .spatial_repository import SpatialRepository
 
 
@@ -27,6 +36,7 @@ def get_repository() -> KnowledgeRepository:
 @router.get(
     "/health",
     tags=["System"],
+    response_model=HealthResponse,
 )
 def health(
     repository: KnowledgeRepository = Depends(
@@ -45,6 +55,7 @@ def health(
 @router.get(
     "/discoveries",
     tags=["Discoveries"],
+    response_model=list[DiscoveryResponse],
 )
 def discoveries(
     repository: KnowledgeRepository = Depends(
@@ -58,6 +69,7 @@ def discoveries(
 @router.get(
     "/discoveries/{h3_id}",
     tags=["Discoveries"],
+    response_model=DiscoveryResponse,
 )
 def discovery(
     h3_id: str,
@@ -100,6 +112,7 @@ def map_discoveries(
 @router.get(
     "/hypotheses/{hypothesis_id}",
     tags=["Hypotheses"],
+    response_model=HypothesisResponse,
 )
 def hypothesis(
     hypothesis_id: str,
@@ -125,6 +138,7 @@ def hypothesis(
 @router.get(
     "/patterns/{hypothesis_id}",
     tags=["Patterns"],
+    response_model=list[PatternResponse],
 )
 def patterns(
     hypothesis_id: str,
@@ -141,6 +155,7 @@ def patterns(
 @router.get(
     "/evidence/{pattern_id}",
     tags=["Evidence"],
+    response_model=list[EvidenceResponse],
 )
 def evidence(
     pattern_id: str,
@@ -157,6 +172,7 @@ def evidence(
 @router.get(
     "/history/{h3_id}",
     tags=["History"],
+    response_model=HistoryResponse,
 )
 def history(
     h3_id: str,
@@ -175,6 +191,7 @@ def history(
 @router.get(
     "/version",
     tags=["System"],
+    response_model=VersionResponse,
 )
 def version():
 
