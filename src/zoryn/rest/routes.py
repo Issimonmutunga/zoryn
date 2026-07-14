@@ -8,6 +8,7 @@ from fastapi import APIRouter, Depends, HTTPException
 
 from .dependencies import get_knowledge
 from .repository import KnowledgeRepository
+from .spatial_repository import SpatialRepository
 
 
 router = APIRouter()
@@ -77,6 +78,23 @@ def discovery(
         )
 
     return discovery
+
+
+@router.get(
+    "/map/discoveries",
+    tags=["Map"],
+)
+def map_discoveries(
+    repository: KnowledgeRepository = Depends(
+        get_repository,
+    ),
+):
+
+    spatial = SpatialRepository(
+        repository
+    )
+
+    return spatial.map_discoveries()
 
 
 @router.get(
