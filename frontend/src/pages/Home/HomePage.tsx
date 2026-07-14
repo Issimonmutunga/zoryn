@@ -4,14 +4,14 @@ import { Button } from "@/components/ui/button";
 
 export default function HomePage() {
   return (
-    <main className="flex min-h-[calc(100vh-64px)] flex-col items-center justify-center px-8 text-center">
+    <main className="mx-auto flex min-h-[calc(100vh-64px)] max-w-7xl flex-col items-center justify-center px-8 text-center">
       <img
         src="/src/assets/logos/zoryn.png"
         alt="Zoryn"
-        className="mb-8 h-36 w-36"
+        className="mb-10 h-40 w-40"
       />
 
-      <h1 className="text-primary text-6xl font-bold tracking-[0.3em]">
+      <h1 className="text-primary text-7xl font-bold tracking-[0.3em]">
         ZORYN
       </h1>
 
@@ -19,8 +19,9 @@ export default function HomePage() {
         Environmental Reasoning Engine
       </p>
 
-      <p className="mt-3 max-w-3xl text-lg text-muted-foreground">
-        Observe. Reason. Protect.
+      <p className="mt-8 max-w-3xl text-lg leading-8 text-muted-foreground">
+        Transform environmental observations into transparent, explainable,
+        scientifically traceable discoveries.
       </p>
 
       <div className="mt-12 flex gap-4">
