@@ -16,7 +16,7 @@ export default function DiscoveryCard({
   );
 
   return (
-    <article className="rounded-xl border border-border bg-card shadow-sm">
+    <article className="overflow-hidden rounded-xl border border-border bg-card shadow-sm">
       <header className="border-b border-border px-6 py-5">
         <p className="text-primary text-xs font-semibold uppercase tracking-[0.2em]">
           Discovery
@@ -39,9 +39,9 @@ export default function DiscoveryCard({
             </span>
           </div>
 
-          <div className="h-2 rounded-full bg-muted">
+          <div className="h-2 overflow-hidden rounded-full bg-muted">
             <div
-              className="bg-primary h-2 rounded-full"
+              className="h-full rounded-full bg-primary"
               style={{
                 width: `${confidencePercent}%`,
               }}
@@ -64,9 +64,11 @@ export default function DiscoveryCard({
             Scientific Basis
           </h3>
 
-          <p className="mt-3 text-sm font-medium">
-            {scientificBasis}
-          </p>
+          <div className="mt-3 rounded-lg bg-muted/40 p-3">
+            <p className="text-sm font-medium">
+              {scientificBasis}
+            </p>
+          </div>
         </section>
       </div>
     </article>
