@@ -56,12 +56,7 @@ export default function ExplorerSidebar() {
 
   return (
     <aside className="h-full w-[420px] border-l border-border bg-background">
-      <ReasoningPanel
-        discovery={discovery.name}
-        confidence={discovery.confidence}
-        summary={`${discovery.start} → ${discovery.end}`}
-        scientificBasis="WMO Standardized Precipitation Index (SPI)"
-      />
+      <ReasoningPanel discovery={discovery} />
     </aside>
   );
 }
