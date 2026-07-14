@@ -17,7 +17,7 @@ export default function DiscoveryCard({
 
   return (
     <article className="rounded-xl border border-border bg-card p-6 shadow-sm">
-      <header>
+      <header className="border-b border-border pb-5">
         <p className="text-primary text-xs font-semibold uppercase tracking-[0.2em]">
           Discovery
         </p>
@@ -27,10 +27,10 @@ export default function DiscoveryCard({
         </h2>
       </header>
 
-      <section className="mt-8">
+      <section className="mt-6">
         <div className="mb-2 flex items-center justify-between">
           <span className="text-sm font-medium">
-            Reasoning Confidence
+            Confidence
           </span>
 
           <span className="text-primary font-semibold">
@@ -38,9 +38,9 @@ export default function DiscoveryCard({
           </span>
         </div>
 
-        <div className="h-2 overflow-hidden rounded-full bg-muted">
+        <div className="h-2 rounded-full bg-muted">
           <div
-            className="bg-primary h-full transition-all duration-500"
+            className="bg-primary h-2 rounded-full transition-all duration-500"
             style={{
               width: `${confidencePercent}%`,
             }}
@@ -48,7 +48,7 @@ export default function DiscoveryCard({
         </div>
       </section>
 
-      <section className="mt-8">
+      <section className="mt-6">
         <h3 className="text-primary text-xs font-semibold uppercase tracking-[0.2em]">
           Summary
         </h3>
@@ -58,12 +58,12 @@ export default function DiscoveryCard({
         </p>
       </section>
 
-      <section className="mt-8">
+      <section className="mt-6">
         <h3 className="text-primary text-xs font-semibold uppercase tracking-[0.2em]">
           Scientific Basis
         </h3>
 
-        <p className="mt-3 font-medium">
+        <p className="mt-3 text-sm">
           {scientificBasis}
         </p>
       </section>
