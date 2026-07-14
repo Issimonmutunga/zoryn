@@ -1,5 +1,15 @@
 import { apiClient } from "@/services/api/client";
 
+export interface Discovery {
+  id: string;
+  hypothesis_id: string;
+  h3_id: string;
+  name: string;
+  confidence: number;
+  start: string;
+  end: string;
+}
+
 export interface Hypothesis {
   id: string;
   name: string;
@@ -23,33 +33,20 @@ export interface Evidence {
   strength: number;
 }
 
+export interface ReasoningGraph {
+  discovery: Discovery;
+  hypothesis: Hypothesis;
+  patterns: Pattern[];
+  evidence: Evidence[];
+}
+
 export const reasoningApi = {
-  getHypothesis(
-    hypothesisId: string,
+  getReasoning(
+    h3Id: string,
   ) {
-    return apiClient.get<Hypothesis>(
-      `/hypotheses/${encodeURIComponent(
-        hypothesisId,
-      )}`,
-    );
-  },
-
-  getPatterns(
-    hypothesisId: string,
-  ) {
-    return apiClient.get<Pattern[]>(
-      `/patterns/${encodeURIComponent(
-        hypothesisId,
-      )}`,
-    );
-  },
-
-  getEvidence(
-    patternId: string,
-  ) {
-    return apiClient.get<Evidence[]>(
-      `/evidence/${encodeURIComponent(
-        patternId,
+    return apiClient.get<ReasoningGraph>(
+      `/reasoning/${encodeURIComponent(
+        h3Id,
       )}`,
     );
   },
