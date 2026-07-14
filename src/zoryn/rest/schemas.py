@@ -13,6 +13,8 @@ class HealthResponse(
 
     status: str
 
+    discoveries: int
+
 
 class VersionResponse(
     BaseModel,
@@ -29,47 +31,64 @@ class DiscoveryResponse(
     BaseModel,
 ):
 
+    id: str
+
+    hypothesis_id: str
+
     h3_id: str
 
-    discovery: str | None
+    name: str
 
+    confidence: float
 
-class DiscoveriesResponse(
-    BaseModel,
-):
+    start: str
 
-    discoveries: list[
-        DiscoveryResponse
-    ] = []
+    end: str
 
 
 class HypothesisResponse(
     BaseModel,
 ):
 
+    id: str
+
     h3_id: str
 
-    hypothesis: str | None
+    name: str
+
+    confidence: float
+
+    start: str
+
+    end: str
+
+
 class PatternResponse(
     BaseModel,
 ):
 
-    h3_id: str
+    id: str
 
-    patterns: list[
-        str
-    ] = []
+    hypothesis_id: str
+
+    name: str
+
+    confidence: float
 
 
 class EvidenceResponse(
     BaseModel,
 ):
 
-    h3_id: str
+    id: str
 
-    evidence: list[
-        str
-    ] = []
+    pattern_id: str
+
+    variable: str
+
+    value: str | float | int
+
+    unit: str | None = None
 
 
 class HistoryResponse(
