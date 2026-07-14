@@ -1,5 +1,7 @@
 import { Outlet } from "react-router-dom";
 
+import NavigationBar from "../components/layout/NavigationBar";
+
 export default function AppLayout() {
   return (
     <div
@@ -11,41 +13,7 @@ export default function AppLayout() {
         color: "#2F2A24",
       }}
     >
-      <header
-        style={{
-          height: "64px",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          padding: "0 32px",
-          borderBottom: "1px solid #DDD6C8",
-          background: "#F8F6F2",
-        }}
-      >
-        <div
-          style={{
-            fontSize: "1.25rem",
-            fontWeight: 700,
-            letterSpacing: "0.05em",
-          }}
-        >
-          ZORYN
-        </div>
-
-        <nav
-          style={{
-            display: "flex",
-            gap: "24px",
-            alignItems: "center",
-          }}
-        >
-          <span>Home</span>
-          <span>Explorer</span>
-          <span>Methodology</span>
-          <span>Standards</span>
-          <span>About</span>
-        </nav>
-      </header>
+      <NavigationBar />
 
       <main
         style={{
@@ -61,11 +29,20 @@ export default function AppLayout() {
         style={{
           borderTop: "1px solid #DDD6C8",
           padding: "16px 32px",
-          fontSize: "0.875rem",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          fontSize: "0.9rem",
           color: "#6E5845",
         }}
       >
-        Zoryn • Environmental Reasoning Engine
+        <span>
+          Zoryn Environmental Reasoning Engine
+        </span>
+
+        <span>
+          Version 0.1.0
+        </span>
       </footer>
     </div>
   );
