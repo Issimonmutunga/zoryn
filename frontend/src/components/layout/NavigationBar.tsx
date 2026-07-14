@@ -1,17 +1,32 @@
 import { NavLink } from "react-router-dom";
 
 const navigation = [
-  { label: "Home", path: "/" },
-  { label: "Explorer", path: "/explorer" },
-  { label: "Methodology", path: "/methodology" },
-  { label: "Standards", path: "/standards" },
-  { label: "About", path: "/about" },
+  {
+    label: "Home",
+    path: "/",
+  },
+  {
+    label: "Explorer",
+    path: "/explorer",
+  },
+  {
+    label: "Methodology",
+    path: "/methodology",
+  },
+  {
+    label: "Standards",
+    path: "/standards",
+  },
+  {
+    label: "About",
+    path: "/about",
+  },
 ];
 
 export default function NavigationBar() {
   return (
-    <header className="border-b border-border bg-background">
-      <div className="mx-auto flex h-16 max-w-[1600px] items-center justify-between px-8">
+    <header className="sticky top-0 z-50 border-b border-border bg-background/90 backdrop-blur">
+      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-8">
         <NavLink
           to="/"
           className="flex items-center gap-3"
@@ -23,25 +38,26 @@ export default function NavigationBar() {
           />
 
           <div>
-            <div className="text-primary text-lg font-bold tracking-[0.25em]">
+            <p className="text-primary text-lg font-bold tracking-[0.25em]">
               ZORYN
-            </div>
+            </p>
 
-            <div className="text-muted-foreground text-xs">
+            <p className="text-muted-foreground text-xs">
               Environmental Reasoning Engine
-            </div>
+            </p>
           </div>
         </NavLink>
 
-        <nav className="flex gap-8">
+        <nav className="flex items-center gap-8">
           {navigation.map((item) => (
             <NavLink
               key={item.path}
               to={item.path}
               className={({ isActive }) =>
                 [
-                  "transition-colors",
+                  "text-sm",
                   "font-medium",
+                  "transition-colors",
                   isActive
                     ? "text-primary"
                     : "text-muted-foreground hover:text-primary",
