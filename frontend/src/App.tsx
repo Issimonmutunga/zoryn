@@ -4,14 +4,9 @@ import {
   Routes,
 } from "react-router-dom";
 
-function HomePage() {
-  return (
-    <main>
-      <h1>Zoryn</h1>
-      <p>Environmental Reasoning Engine</p>
-    </main>
-  );
-}
+import AppLayout from "./layouts/AppLayout";
+
+import HomePage from "./pages/Home/HomePage";
 
 function ExplorerPage() {
   return (
@@ -48,30 +43,32 @@ function AboutPage() {
 export default function App() {
   return (
     <Routes>
-      <Route
-        path="/"
-        element={<HomePage />}
-      />
+      <Route element={<AppLayout />}>
+        <Route
+          index
+          element={<HomePage />}
+        />
 
-      <Route
-        path="/explorer"
-        element={<ExplorerPage />}
-      />
+        <Route
+          path="explorer"
+          element={<ExplorerPage />}
+        />
 
-      <Route
-        path="/methodology"
-        element={<MethodologyPage />}
-      />
+        <Route
+          path="methodology"
+          element={<MethodologyPage />}
+        />
 
-      <Route
-        path="/standards"
-        element={<StandardsPage />}
-      />
+        <Route
+          path="standards"
+          element={<StandardsPage />}
+        />
 
-      <Route
-        path="/about"
-        element={<AboutPage />}
-      />
+        <Route
+          path="about"
+          element={<AboutPage />}
+        />
+      </Route>
 
       <Route
         path="*"
