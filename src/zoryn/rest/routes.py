@@ -15,6 +15,7 @@ from .schemas import (
     HistoryResponse,
     HypothesisResponse,
     PatternResponse,
+    ReasoningResponse,
     VersionResponse,
 )
 from .spatial_repository import SpatialRepository
@@ -91,6 +92,31 @@ def discovery(
 
     return discovery
 
+@router.get(
+    "/reasoning/{h3_id}",
+    tags=["Reasoning"],
+    response_model=ReasoningResponse,
+)
+
+def reasoning(
+    h3_id: str,
+    repository: KnowledgeRepository = Depends(
+        get_repository,
+    ),
+):
+
+    reasoning = repository.reasoning(
+        h3_id
+    )
+
+    if reasoning is None:
+
+        raise HTTPException(
+            status_code=404,
+            detail="Reasoning graph not found.",
+        )
+
+    return reasoning
 
 @router.get(
     "/map/discoveries",
