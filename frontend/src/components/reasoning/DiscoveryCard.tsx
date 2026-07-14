@@ -16,8 +16,8 @@ export default function DiscoveryCard({
   );
 
   return (
-    <article className="rounded-xl border border-border bg-card p-6 shadow-sm">
-      <header className="border-b border-border pb-5">
+    <article className="rounded-xl border border-border bg-card shadow-sm">
+      <header className="border-b border-border px-6 py-5">
         <p className="text-primary text-xs font-semibold uppercase tracking-[0.2em]">
           Discovery
         </p>
@@ -27,46 +27,48 @@ export default function DiscoveryCard({
         </h2>
       </header>
 
-      <section className="mt-6">
-        <div className="mb-2 flex items-center justify-between">
-          <span className="text-sm font-medium">
-            Confidence
-          </span>
+      <div className="space-y-6 p-6">
+        <section>
+          <div className="mb-2 flex items-center justify-between">
+            <span className="text-sm font-medium">
+              Confidence
+            </span>
 
-          <span className="text-primary font-semibold">
-            {confidencePercent}%
-          </span>
-        </div>
+            <span className="text-primary font-semibold">
+              {confidencePercent}%
+            </span>
+          </div>
 
-        <div className="h-2 rounded-full bg-muted">
-          <div
-            className="bg-primary h-2 rounded-full transition-all duration-500"
-            style={{
-              width: `${confidencePercent}%`,
-            }}
-          />
-        </div>
-      </section>
+          <div className="h-2 rounded-full bg-muted">
+            <div
+              className="bg-primary h-2 rounded-full"
+              style={{
+                width: `${confidencePercent}%`,
+              }}
+            />
+          </div>
+        </section>
 
-      <section className="mt-6">
-        <h3 className="text-primary text-xs font-semibold uppercase tracking-[0.2em]">
-          Summary
-        </h3>
+        <section>
+          <h3 className="text-primary text-xs font-semibold uppercase tracking-[0.2em]">
+            Summary
+          </h3>
 
-        <p className="mt-3 leading-7 text-muted-foreground">
-          {summary}
-        </p>
-      </section>
+          <p className="mt-3 text-sm leading-7 text-muted-foreground">
+            {summary}
+          </p>
+        </section>
 
-      <section className="mt-6">
-        <h3 className="text-primary text-xs font-semibold uppercase tracking-[0.2em]">
-          Scientific Basis
-        </h3>
+        <section>
+          <h3 className="text-primary text-xs font-semibold uppercase tracking-[0.2em]">
+            Scientific Basis
+          </h3>
 
-        <p className="mt-3 text-sm">
-          {scientificBasis}
-        </p>
-      </section>
+          <p className="mt-3 text-sm font-medium">
+            {scientificBasis}
+          </p>
+        </section>
+      </div>
     </article>
   );
 }
