@@ -46,21 +46,24 @@ class DiscoveryResponse(
     end: str
 
 
+class DiscoveriesResponse(
+    BaseModel,
+):
+
+    discoveries: list[
+        DiscoveryResponse
+    ] = []
+
+
 class HypothesisResponse(
     BaseModel,
 ):
 
     id: str
 
-    h3_id: str
-
     name: str
 
     confidence: float
-
-    start: str
-
-    end: str
 
 
 class PatternResponse(
@@ -69,11 +72,13 @@ class PatternResponse(
 
     id: str
 
-    hypothesis_id: str
-
     name: str
 
     confidence: float
+
+    frequency: int
+
+    standard: str
 
 
 class EvidenceResponse(
@@ -82,13 +87,15 @@ class EvidenceResponse(
 
     id: str
 
-    pattern_id: str
+    h3_id: str
+
+    timestamp: str
 
     variable: str
 
-    value: str | float | int
+    direction: str
 
-    unit: str | None = None
+    strength: float
 
 
 class HistoryResponse(
