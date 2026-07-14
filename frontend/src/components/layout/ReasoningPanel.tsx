@@ -1,20 +1,16 @@
+import type { DiscoveryDetail } from "@/services/api/discoveries";
+
 import ConfidenceMeter from "@/components/reasoning/ConfidenceMeter";
 import DiscoveryCard from "@/components/reasoning/DiscoveryCard";
 import ReasoningChain from "@/components/reasoning/ReasoningChain";
 import ScientificBasisCard from "@/components/reasoning/ScientificBasisCard";
 
 type ReasoningPanelProps = {
-  discovery: string;
-  confidence: number;
-  summary: string;
-  scientificBasis: string;
+  discovery: DiscoveryDetail;
 };
 
 export default function ReasoningPanel({
   discovery,
-  confidence,
-  summary,
-  scientificBasis,
 }: ReasoningPanelProps) {
   return (
     <aside className="flex h-full w-full flex-col bg-background">
@@ -29,25 +25,27 @@ export default function ReasoningPanel({
 
         <p className="mt-2 text-sm leading-6 text-muted-foreground">
           Inspect the scientific reasoning behind the selected environmental
-          discovery. Every conclusion is supported by evidence, reasoning and
-          scientific guidance.
+          discovery. Every conclusion is supported by evidence, reasoning,
+          and scientific guidance.
         </p>
       </header>
 
       <div className="flex-1 space-y-6 overflow-y-auto p-6">
         <DiscoveryCard
-          discovery={discovery}
-          confidence={confidence}
-          summary={summary}
-          scientificBasis={scientificBasis}
+          discovery={discovery.name}
+          confidence={discovery.confidence}
+          summary={`${discovery.start} → ${discovery.end}`}
+          scientificBasis="WMO Standardized Precipitation Index (SPI)"
         />
 
-        <ConfidenceMeter confidence={confidence} />
+        <ConfidenceMeter
+          confidence={discovery.confidence}
+        />
 
         <ReasoningChain />
 
         <ScientificBasisCard
-          standard={scientificBasis}
+          standard="WMO Standardized Precipitation Index (SPI)"
           rule="Persistent Dryness Rule"
           reason="Three consecutive decreases in SPI indicate persistent precipitation deficits consistent with developing meteorological drought."
         />
