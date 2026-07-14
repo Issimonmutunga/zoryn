@@ -1,106 +1,170 @@
-import { useMemo } from "react";
+import { useEffect, useRef } from "react";
 
-import { useDiscoveries } from "@/hooks/useDiscoveries";
+import maplibregl from "maplibre-gl";
+import "maplibre-gl/dist/maplibre-gl.css";
+
 import { useExplorerStore } from "@/stores/explorerStore";
 
-import LayerSelector from "@/components/map/LayerSelector";
-import MapToolbar from "@/components/map/MapToolbar";
-
 export default function MapCanvas() {
-  const {
-    data: discoveries = [],
-    isLoading,
-    isError,
-  } = useDiscoveries();
+  const containerRef = useRef<HTMLDivElement | null>(null);
 
-  const selectedH3 = useExplorerStore(
-    (state) => state.selectedH3,
+  const mapRef = useRef<maplibregl.Map | null>(
+    null,
   );
 
   const setSelectedH3 = useExplorerStore(
     (state) => state.setSelectedH3,
   );
 
-  const discoveryCount = useMemo(
-    () => discoveries.length,
-    [discoveries],
-  );
+  useEffect(() => {
+    if (
+      mapRef.current ||
+      !containerRef.current
+    ) {
+      return;
+    }
+
+    const map = new maplibregl.Map({
+      container: containerRef.current,
+
+      style:
+        "https://demotiles.maplibre.org/style.json",
+
+      center: [
+        36.8219,
+        -1.2921,
+      ],
+
+      zoom: 10,
+    });
+
+    map.addControl(
+      new maplibregl.NavigationControl(),
+      "top-left",
+    );
+
+    map.on(
+      "load",
+      async () => {
+        const response =
+          await fetch(
+            "/map/discoveries",
+          );
+
+        const geojson =
+          await response.json();
+
+        map.addSource(
+          "discoveries",
+          {
+            type: "geojson",
+            data: geojson,
+          },
+        );
+
+        map.addLayer({
+          id: "discoveries-fill",
+
+          type: "fill",
+
+          source: "discoveries",
+
+          paint: {
+            "fill-color": [
+              "interpolate",
+              ["linear"],
+              [
+                "get",
+                "confidence",
+              ],
+              0,
+              "#fef3c7",
+              0.5,
+              "#f59e0b",
+              1,
+              "#b45309",
+            ],
+
+            "fill-opacity": 0.7,
+          },
+        });
+
+        map.addLayer({
+          id: "discoveries-outline",
+
+          type: "line",
+
+          source: "discoveries",
+
+          paint: {
+            "line-color":
+              "#92400e",
+
+            "line-width": 0.5,
+          },
+        });
+
+        map.on(
+          "click",
+          "discoveries-fill",
+          (event) => {
+            const feature =
+              event.features?.[0];
+
+            if (!feature) {
+              return;
+            }
+
+            const h3 =
+              feature.properties?.h3_id;
+
+            if (
+              typeof h3 ===
+              "string"
+            ) {
+              setSelectedH3(
+                h3,
+              );
+            }
+          },
+        );
+
+        map.on(
+          "mouseenter",
+          "discoveries-fill",
+          () => {
+            map.getCanvas().style.cursor =
+              "pointer";
+          },
+        );
+
+        map.on(
+          "mouseleave",
+          "discoveries-fill",
+          () => {
+            map.getCanvas().style.cursor =
+              "";
+          },
+        );
+      },
+    );
+
+    mapRef.current = map;
+
+    return () => {
+      map.remove();
+      mapRef.current = null;
+    };
+  }, [
+    setSelectedH3,
+  ]);
 
   return (
-    <section className="relative h-full w-full overflow-hidden bg-muted/20">
-      <div className="absolute left-4 top-4 z-20">
-        <MapToolbar />
-      </div>
-
-      <div className="absolute right-4 top-4 z-20">
-        <LayerSelector
-          layers={[
-            {
-              name: "Discoveries",
-              enabled: true,
-            },
-            {
-              name: "Administrative Boundaries",
-              enabled: true,
-            },
-            {
-              name: "Basemap",
-              enabled: true,
-            },
-          ]}
-        />
-      </div>
-
-      <div className="flex h-full items-center justify-center">
-        <div className="max-w-lg space-y-4 text-center">
-          <h2 className="text-2xl font-semibold">
-            Environmental Reasoning Map
-          </h2>
-
-          <p className="text-sm text-muted-foreground">
-            This placeholder will be replaced by the MapLibre
-            map. The discovery repository is already connected
-            and ready for spatial integration.
-          </p>
-
-          {isLoading && (
-            <p className="text-sm text-muted-foreground">
-              Loading discoveries…
-            </p>
-          )}
-
-          {isError && (
-            <p className="text-sm text-destructive">
-              Unable to load discovery repository.
-            </p>
-          )}
-
-          {!isLoading && !isError && (
-            <div className="space-y-2 rounded-lg border border-border bg-card p-4 text-left">
-              <p>
-                <strong>Available discoveries:</strong>{" "}
-                {discoveryCount}
-              </p>
-
-              <p>
-                <strong>Selected H3:</strong>{" "}
-                {selectedH3 ?? "None"}
-              </p>
-
-              {discoveries.length > 0 && (
-                <button
-                  className="rounded-lg border border-border px-3 py-2 text-sm hover:bg-muted"
-                  onClick={() =>
-                    setSelectedH3(discoveries[0].h3)
-                  }
-                >
-                  Select first discovery
-                </button>
-              )}
-            </div>
-          )}
-        </div>
-      </div>
+    <section className="h-full w-full">
+      <div
+        ref={containerRef}
+        className="h-full w-full"
+      />
     </section>
   );
 }
