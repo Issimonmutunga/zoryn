@@ -1,95 +1,58 @@
 import { NavLink } from "react-router-dom";
 
-type NavigationItem = {
-  label: string;
-  path: string;
-};
-
-const navigation: NavigationItem[] = [
-  {
-    label: "Home",
-    path: "/",
-  },
-  {
-    label: "Explorer",
-    path: "/explorer",
-  },
-  {
-    label: "Methodology",
-    path: "/methodology",
-  },
-  {
-    label: "Standards",
-    path: "/standards",
-  },
-  {
-    label: "About",
-    path: "/about",
-  },
+const navigation = [
+  { label: "Home", path: "/" },
+  { label: "Explorer", path: "/explorer" },
+  { label: "Methodology", path: "/methodology" },
+  { label: "Standards", path: "/standards" },
+  { label: "About", path: "/about" },
 ];
 
 export default function NavigationBar() {
   return (
-    <header
-      style={{
-        height: "64px",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        padding: "0 32px",
-        borderBottom: "1px solid #DDD6C8",
-        background: "#F8F6F2",
-      }}
-    >
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "12px",
-        }}
-      >
-        <img
-          src="/src/assets/logos/zoryn.png"
-          alt="Zoryn"
-          style={{
-            width: "36px",
-            height: "36px",
-          }}
-        />
-
-        <span
-          style={{
-            fontWeight: 700,
-            letterSpacing: "0.08em",
-            color: "#6E5845",
-            fontSize: "1.1rem",
-          }}
+    <header className="border-b border-border bg-background">
+      <div className="mx-auto flex h-16 max-w-[1600px] items-center justify-between px-8">
+        <NavLink
+          to="/"
+          className="flex items-center gap-3"
         >
-          ZORYN
-        </span>
-      </div>
+          <img
+            src="/src/assets/logos/zoryn.png"
+            alt="Zoryn"
+            className="h-10 w-10"
+          />
 
-      <nav
-        style={{
-          display: "flex",
-          gap: "28px",
-        }}
-      >
-        {navigation.map((item) => (
-          <NavLink
-            key={item.path}
-            to={item.path}
-            style={({ isActive }) => ({
-              textDecoration: "none",
-              color: isActive ? "#6E5845" : "#5F5A54",
-              fontWeight: isActive ? 700 : 500,
-              transition: "color 150ms ease",
-            })}
-          >
-            {item.label}
-          </NavLink>
-        ))}
-      </nav>
+          <div>
+            <div className="text-primary text-lg font-bold tracking-[0.25em]">
+              ZORYN
+            </div>
+
+            <div className="text-muted-foreground text-xs">
+              Environmental Reasoning Engine
+            </div>
+          </div>
+        </NavLink>
+
+        <nav className="flex gap-8">
+          {navigation.map((item) => (
+            <NavLink
+              key={item.path}
+              to={item.path}
+              className={({ isActive }) =>
+                [
+                  "transition-colors",
+                  "font-medium",
+                  isActive
+                    ? "text-primary"
+                    : "text-muted-foreground hover:text-primary",
+                ].join(" ")
+              }
+            >
+              {item.label}
+            </NavLink>
+          ))}
+        </nav>
+      </div>
     </header>
   );
 }
