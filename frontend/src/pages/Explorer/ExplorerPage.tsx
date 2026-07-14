@@ -2,16 +2,26 @@ import DiscoveryCard from "@/components/reasoning/DiscoveryCard";
 
 export default function ExplorerPage() {
   return (
-    <main className="mx-auto flex h-[calc(100vh-64px)] max-w-[1600px]">
-      <section className="flex-1 border-r border-border bg-muted/20">
-        <div className="flex h-full items-center justify-center">
-          <p className="text-muted-foreground">
-            Map (Coming Soon)
+    <main className="mx-auto flex h-[calc(100vh-64px)] max-w-7xl">
+      <section className="flex flex-1 flex-col border-r border-border">
+        <header className="border-b border-border px-6 py-4">
+          <h1 className="text-xl font-semibold">
+            Explorer
+          </h1>
+
+          <p className="mt-1 text-sm text-muted-foreground">
+            Explore environmental discoveries across space and time.
           </p>
+        </header>
+
+        <div className="flex flex-1 items-center justify-center bg-muted/20">
+          <span className="text-muted-foreground">
+            Map (Coming Soon)
+          </span>
         </div>
       </section>
 
-      <aside className="w-105 overflow-y-auto border-l border-border bg-background p-6">
+      <aside className="w-105 overflow-y-auto bg-background p-6">
         <DiscoveryCard
           discovery="Developing Meteorological Drought"
           confidence={0.87}
