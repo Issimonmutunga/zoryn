@@ -16,13 +16,13 @@ export default function DiscoveryCard({
   );
 
   return (
-    <section className="rounded-xl border border-border bg-card p-6 shadow-sm">
-      <header className="space-y-2">
-        <p className="text-primary text-sm font-semibold uppercase tracking-wide">
+    <article className="rounded-xl border border-border bg-card p-6 shadow-sm">
+      <header>
+        <p className="text-primary text-xs font-semibold uppercase tracking-[0.2em]">
           Discovery
         </p>
 
-        <h2 className="text-3xl font-semibold text-foreground">
+        <h2 className="mt-2 text-2xl font-semibold">
           {discovery}
         </h2>
       </header>
@@ -38,7 +38,7 @@ export default function DiscoveryCard({
           </span>
         </div>
 
-        <div className="bg-muted h-3 overflow-hidden rounded-full">
+        <div className="h-2 overflow-hidden rounded-full bg-muted">
           <div
             className="bg-primary h-full transition-all duration-500"
             style={{
@@ -48,25 +48,25 @@ export default function DiscoveryCard({
         </div>
       </section>
 
-      <section className="mt-8 space-y-2">
-        <h3 className="text-primary text-sm font-semibold uppercase tracking-wide">
+      <section className="mt-8">
+        <h3 className="text-primary text-xs font-semibold uppercase tracking-[0.2em]">
           Summary
         </h3>
 
-        <p className="text-muted-foreground leading-7">
+        <p className="mt-3 leading-7 text-muted-foreground">
           {summary}
         </p>
       </section>
 
-      <section className="mt-8 space-y-2">
-        <h3 className="text-primary text-sm font-semibold uppercase tracking-wide">
+      <section className="mt-8">
+        <h3 className="text-primary text-xs font-semibold uppercase tracking-[0.2em]">
           Scientific Basis
         </h3>
 
-        <p className="font-medium">
+        <p className="mt-3 font-medium">
           {scientificBasis}
         </p>
       </section>
-    </section>
+    </article>
   );
 }
