@@ -1,92 +1,41 @@
+import { Link } from "react-router-dom";
+
+import { Button } from "@/components/ui/button";
+
 export default function HomePage() {
   return (
-    <main
-      style={{
-        minHeight: "100%",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: "80px 32px",
-        textAlign: "center",
-        background: "#F8F6F2",
-      }}
-    >
+    <main className="flex min-h-[calc(100vh-64px)] flex-col items-center justify-center px-8 text-center">
       <img
         src="/src/assets/logos/zoryn.png"
         alt="Zoryn"
-        style={{
-          width: "160px",
-          marginBottom: "32px",
-        }}
+        className="mb-8 h-36 w-36"
       />
 
-      <h1
-        style={{
-          fontSize: "3.5rem",
-          margin: 0,
-          color: "#6E5845",
-          letterSpacing: "0.08em",
-        }}
-      >
+      <h1 className="text-primary text-6xl font-bold tracking-[0.3em]">
         ZORYN
       </h1>
 
-      <p
-        style={{
-          fontSize: "1.35rem",
-          marginTop: "16px",
-          color: "#4A433B",
-          maxWidth: "720px",
-        }}
-      >
+      <p className="mt-6 text-2xl text-muted-foreground">
         Environmental Reasoning Engine
       </p>
 
-      <p
-        style={{
-          marginTop: "12px",
-          fontSize: "1.05rem",
-          color: "#756B61",
-        }}
-      >
-        Observe • Reason • Protect
+      <p className="mt-3 max-w-3xl text-lg text-muted-foreground">
+        Observe. Reason. Protect.
       </p>
 
-      <div
-        style={{
-          display: "flex",
-          gap: "20px",
-          marginTop: "48px",
-        }}
-      >
-        <button>
-          Launch Explorer
-        </button>
+      <div className="mt-12 flex gap-4">
+        <Link to="/explorer">
+          <Button>
+            Launch Explorer
+          </Button>
+        </Link>
 
-        <button>
-          Methodology
-        </button>
+        <Link to="/methodology">
+          <Button variant="outline">
+            Methodology
+          </Button>
+        </Link>
       </div>
-
-      <section
-        style={{
-          marginTop: "96px",
-          maxWidth: "900px",
-          lineHeight: 1.8,
-        }}
-      >
-        <h2>
-          Environmental reasoning that can be verified.
-        </h2>
-
-        <p>
-          Zoryn transforms environmental observations into transparent,
-          scientifically supported discoveries. Every conclusion can be traced
-          through evidence, environmental patterns, hypotheses and recognised
-          scientific standards.
-        </p>
-      </section>
     </main>
   );
 }
