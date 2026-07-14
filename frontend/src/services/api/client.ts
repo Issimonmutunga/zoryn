@@ -39,12 +39,18 @@ export const apiClient = {
     return request<T>(endpoint);
   },
 
-  post<TResponse, TBody>(endpoint: string, body: TBody) {
-    return request<T>(endpoint, {
+post<TResponse, TBody>(
+  endpoint: string,
+  body: TBody,
+) {
+  return request<TResponse>(
+    endpoint,
+    {
       method: "POST",
       body: JSON.stringify(body),
-    });
-  },
+    },
+  );
+},
 };
 
 export { API_BASE_URL };

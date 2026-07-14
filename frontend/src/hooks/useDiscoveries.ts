@@ -32,7 +32,7 @@ export function useDiscovery(h3: string, enabled = true) {
 }
 
 export function useDiscoveryHistory(h3: string, enabled = true) {
-  return useQuery<DiscoveryHistoryItem[]>({
+  return useQuery<DiscoveryHistoryItem>({
     queryKey: discoveryQueryKeys.history(h3),
     queryFn: () => discoveriesApi.getHistory(h3),
     enabled: enabled && h3.length > 0,
