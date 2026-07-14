@@ -133,3 +133,47 @@ class KnowledgeRepository:
             )
             .to_dicts()
         )
+
+    def reasoning(
+        self,
+        h3_id: str,
+    ) -> dict | None:
+
+        discovery = self.discovery(
+            h3_id
+        )
+
+        if discovery is None:
+
+            return None
+
+        hypothesis = self.hypothesis(
+            discovery[
+                "hypothesis_id"
+            ]
+        )
+
+        if hypothesis is None:
+
+            return None
+
+        patterns = self.patterns(
+            hypothesis["id"]
+        )
+
+        evidence = []
+
+        for pattern in patterns:
+
+            evidence.extend(
+                self.evidence(
+                    pattern["id"]
+                )
+            )
+
+        return {
+            "discovery": discovery,
+            "hypothesis": hypothesis,
+            "patterns": patterns,
+            "evidence": evidence,
+        }
