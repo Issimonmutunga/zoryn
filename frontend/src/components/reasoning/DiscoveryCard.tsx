@@ -11,124 +11,59 @@ export default function DiscoveryCard({
   summary,
   scientificBasis,
 }: DiscoveryCardProps) {
-  const percentage = Math.round(
+  const confidencePercent = Math.round(
     confidence * 100,
   );
 
   return (
-    <section
-      style={{
-        background: "#FFFFFF",
-        border: "1px solid #DDD6C8",
-        borderRadius: "12px",
-        padding: "24px",
-        display: "flex",
-        flexDirection: "column",
-        gap: "20px",
-      }}
-    >
-      <header>
-        <p
-          style={{
-            margin: 0,
-            color: "#6E5845",
-            fontWeight: 600,
-            fontSize: "0.9rem",
-          }}
-        >
+    <section className="rounded-xl border border-border bg-card p-6 shadow-sm">
+      <header className="space-y-2">
+        <p className="text-primary text-sm font-semibold uppercase tracking-wide">
           Discovery
         </p>
 
-        <h2
-          style={{
-            marginTop: "8px",
-            marginBottom: 0,
-            fontSize: "1.7rem",
-            color: "#2F2A24",
-          }}
-        >
+        <h2 className="text-3xl font-semibold text-foreground">
           {discovery}
         </h2>
       </header>
 
-      <section>
-        <p
-          style={{
-            margin: 0,
-            fontWeight: 600,
-            color: "#6E5845",
-          }}
-        >
-          Reasoning Confidence
-        </p>
+      <section className="mt-8">
+        <div className="mb-2 flex items-center justify-between">
+          <span className="text-sm font-medium">
+            Reasoning Confidence
+          </span>
 
-        <div
-          style={{
-            marginTop: "12px",
-            height: "10px",
-            background: "#E8E2D7",
-            borderRadius: "999px",
-            overflow: "hidden",
-          }}
-        >
+          <span className="text-primary font-semibold">
+            {confidencePercent}%
+          </span>
+        </div>
+
+        <div className="bg-muted h-3 overflow-hidden rounded-full">
           <div
+            className="bg-primary h-full transition-all duration-500"
             style={{
-              width: `${percentage}%`,
-              height: "100%",
-              background: "#6E5845",
+              width: `${confidencePercent}%`,
             }}
           />
         </div>
-
-        <p
-          style={{
-            marginTop: "8px",
-            marginBottom: 0,
-            color: "#5F5A54",
-          }}
-        >
-          {percentage}% confidence
-        </p>
       </section>
 
-      <section>
-        <p
-          style={{
-            margin: 0,
-            fontWeight: 600,
-            color: "#6E5845",
-          }}
-        >
+      <section className="mt-8 space-y-2">
+        <h3 className="text-primary text-sm font-semibold uppercase tracking-wide">
           Summary
-        </p>
+        </h3>
 
-        <p
-          style={{
-            marginTop: "10px",
-            lineHeight: 1.7,
-          }}
-        >
+        <p className="text-muted-foreground leading-7">
           {summary}
         </p>
       </section>
 
-      <section>
-        <p
-          style={{
-            margin: 0,
-            fontWeight: 600,
-            color: "#6E5845",
-          }}
-        >
+      <section className="mt-8 space-y-2">
+        <h3 className="text-primary text-sm font-semibold uppercase tracking-wide">
           Scientific Basis
-        </p>
+        </h3>
 
-        <p
-          style={{
-            marginTop: "10px",
-            marginBottom: 0,
-          }}
-        >
+        <p className="font-medium">
           {scientificBasis}
         </p>
       </section>
