@@ -1,17 +1,50 @@
-import type { DiscoveryDetail } from "@/services/api/discoveries";
+import { useReasoning } from "@/hooks/useReasoning";
 
 import ConfidenceMeter from "@/components/reasoning/ConfidenceMeter";
 import DiscoveryCard from "@/components/reasoning/DiscoveryCard";
+import EvidenceList from "@/components/reasoning/EvidenceList";
 import ReasoningChain from "@/components/reasoning/ReasoningChain";
 import ScientificBasisCard from "@/components/reasoning/ScientificBasisCard";
 
 type ReasoningPanelProps = {
-  discovery: DiscoveryDetail;
+  h3Id: string;
 };
 
 export default function ReasoningPanel({
-  discovery,
+  h3Id,
 }: ReasoningPanelProps) {
+  const {
+    data: reasoning,
+    isLoading,
+    isError,
+  } = useReasoning(h3Id);
+
+  if (isLoading) {
+    return (
+      <aside className="flex h-full w-full items-center justify-center">
+        <p className="text-sm text-muted-foreground">
+          Loading reasoning...
+        </p>
+      </aside>
+    );
+  }
+
+  if (isError || !reasoning) {
+    return (
+      <aside className="flex h-full w-full items-center justify-center">
+        <p className="text-sm text-destructive">
+          Unable to load reasoning.
+        </p>
+      </aside>
+    );
+  }
+
+  const discovery = reasoning.discovery;
+  const hypothesis = reasoning.hypothesis;
+
+  const primaryPattern =
+    reasoning.patterns[0];
+
   return (
     <aside className="flex h-full w-full flex-col bg-background">
       <header className="border-b border-border px-6 py-5">
@@ -24,9 +57,8 @@ export default function ReasoningPanel({
         </h2>
 
         <p className="mt-2 text-sm leading-6 text-muted-foreground">
-          Inspect the scientific reasoning behind the selected environmental
-          discovery. Every conclusion is supported by evidence, reasoning,
-          and scientific guidance.
+          Inspect the scientific reasoning behind the selected
+          environmental discovery.
         </p>
       </header>
 
@@ -34,20 +66,41 @@ export default function ReasoningPanel({
         <DiscoveryCard
           discovery={discovery.name}
           confidence={discovery.confidence}
-          summary={`${discovery.start} → ${discovery.end}`}
-          scientificBasis="WMO Standardized Precipitation Index (SPI)"
+          summary={hypothesis.name}
+          scientificBasis={
+            primaryPattern?.standard ??
+            "Scientific Standard"
+          }
         />
 
         <ConfidenceMeter
-          confidence={discovery.confidence}
+          confidence={
+            discovery.confidence
+          }
         />
 
         <ReasoningChain />
 
+        <EvidenceList
+          evidence={reasoning.evidence.map(
+            (item) => ({
+              variable:
+                item.variable,
+              value: `${item.direction} (${item.strength})`,
+            }),
+          )}
+        />
+
         <ScientificBasisCard
-          standard="WMO Standardized Precipitation Index (SPI)"
-          rule="Persistent Dryness Rule"
-          reason="Three consecutive decreases in SPI indicate persistent precipitation deficits consistent with developing meteorological drought."
+          standard={
+            primaryPattern?.standard ??
+            "Scientific Standard"
+          }
+          rule={
+            primaryPattern?.name ??
+            "No rule"
+          }
+          reason={`The hypothesis "${hypothesis.name}" is supported by ${reasoning.evidence.length} evidence item(s) and ${reasoning.patterns.length} detected pattern(s).`}
         />
       </div>
     </aside>
