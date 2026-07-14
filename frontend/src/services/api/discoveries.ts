@@ -1,46 +1,54 @@
 import { apiClient } from "@/services/api/client";
 
 export interface DiscoverySummary {
-  h3: string;
-  discovery: string;
+  id: string;
+  hypothesis_id: string;
+  h3_id: string;
+  name: string;
   confidence: number;
-  summary: string;
-  scientific_basis: string;
-  timestamp: string;
+  start: string;
+  end: string;
 }
 
-export interface DiscoveryDetail extends DiscoverySummary {
-  evidence_count: number;
-  pattern_count: number;
-  rule_count: number;
-}
+export interface DiscoveryDetail extends DiscoverySummary {}
 
 export interface DiscoveryHistoryItem {
-  timestamp: string;
-  discovery: string;
-  confidence: number;
+  h3_id: string;
+  history: Record<string, unknown>[];
+}
+
+export interface VersionResponse {
+  name: string;
+  version: string;
+  api: string;
 }
 
 export const discoveriesApi = {
   getDiscoveries() {
-    return apiClient.get<DiscoverySummary[]>("/discoveries");
-  },
-
-  getDiscovery(h3: string) {
-    return apiClient.get<DiscoveryDetail>(
-      `/discoveries/${encodeURIComponent(h3)}`,
+    return apiClient.get<DiscoverySummary[]>(
+      "/discoveries",
     );
   },
 
-  getHistory(h3: string) {
-    return apiClient.get<DiscoveryHistoryItem[]>(
-      `/history/${encodeURIComponent(h3)}`,
+  getDiscovery(
+    h3Id: string,
+  ) {
+    return apiClient.get<DiscoveryDetail>(
+      `/discoveries/${encodeURIComponent(h3Id)}`,
+    );
+  },
+
+  getHistory(
+    h3Id: string,
+  ) {
+    return apiClient.get<DiscoveryHistoryItem>(
+      `/history/${encodeURIComponent(h3Id)}`,
     );
   },
 
   getVersion() {
-    return apiClient.get<{
-      version: string;
-    }>("/version");
+    return apiClient.get<VersionResponse>(
+      "/version",
+    );
   },
 };
