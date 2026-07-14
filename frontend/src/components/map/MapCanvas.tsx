@@ -7,10 +7,19 @@ import LayerSelector from "@/components/map/LayerSelector";
 import MapToolbar from "@/components/map/MapToolbar";
 
 export default function MapCanvas() {
-  const { data: discoveries = [], isLoading, isError } = useDiscoveries();
+  const {
+    data: discoveries = [],
+    isLoading,
+    isError,
+  } = useDiscoveries();
 
-  const selectedH3 = useExplorerStore((state) => state.selectedH3);
-  const setSelectedH3 = useExplorerStore((state) => state.setSelectedH3);
+  const selectedH3 = useExplorerStore(
+    (state) => state.selectedH3,
+  );
+
+  const setSelectedH3 = useExplorerStore(
+    (state) => state.setSelectedH3,
+  );
 
   const discoveryCount = useMemo(
     () => discoveries.length,
@@ -24,7 +33,22 @@ export default function MapCanvas() {
       </div>
 
       <div className="absolute right-4 top-4 z-20">
-        <LayerSelector />
+        <LayerSelector
+          layers={[
+            {
+              name: "Discoveries",
+              enabled: true,
+            },
+            {
+              name: "Administrative Boundaries",
+              enabled: true,
+            },
+            {
+              name: "Basemap",
+              enabled: true,
+            },
+          ]}
+        />
       </div>
 
       <div className="flex h-full items-center justify-center">
@@ -34,8 +58,9 @@ export default function MapCanvas() {
           </h2>
 
           <p className="text-sm text-muted-foreground">
-            This placeholder will be replaced by the MapLibre map. The data
-            layer is already connected to the discovery API.
+            This placeholder will be replaced by the MapLibre
+            map. The discovery repository is already connected
+            and ready for spatial integration.
           </p>
 
           {isLoading && (
@@ -51,9 +76,10 @@ export default function MapCanvas() {
           )}
 
           {!isLoading && !isError && (
-            <div className="space-y-2 rounded-lg border p-4 text-left">
+            <div className="space-y-2 rounded-lg border border-border bg-card p-4 text-left">
               <p>
-                <strong>Available discoveries:</strong> {discoveryCount}
+                <strong>Available discoveries:</strong>{" "}
+                {discoveryCount}
               </p>
 
               <p>
@@ -63,8 +89,10 @@ export default function MapCanvas() {
 
               {discoveries.length > 0 && (
                 <button
-                  className="rounded border px-3 py-2 text-sm"
-                  onClick={() => setSelectedH3(discoveries[0].h3)}
+                  className="rounded-lg border border-border px-3 py-2 text-sm hover:bg-muted"
+                  onClick={() =>
+                    setSelectedH3(discoveries[0].h3)
+                  }
                 >
                   Select first discovery
                 </button>
