@@ -1,48 +1,22 @@
 import { Outlet } from "react-router-dom";
 
-import NavigationBar from "../components/layout/NavigationBar";
+import NavigationBar from "@/components/layout/NavigationBar";
 
 export default function AppLayout() {
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        minHeight: "100vh",
-        background: "#F8F6F2",
-        color: "#2F2A24",
-      }}
-    >
+    <div className="flex min-h-screen flex-col bg-background text-foreground">
       <NavigationBar />
 
-      <main
-        style={{
-          flex: 1,
-          display: "flex",
-          flexDirection: "column",
-        }}
-      >
+      <main className="flex-1">
         <Outlet />
       </main>
 
-      <footer
-        style={{
-          borderTop: "1px solid #DDD6C8",
-          padding: "16px 32px",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          fontSize: "0.9rem",
-          color: "#6E5845",
-        }}
-      >
-        <span>
-          Zoryn Environmental Reasoning Engine
-        </span>
+      <footer className="border-t border-border">
+        <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-8 text-sm text-muted-foreground">
+          <span>Zoryn Environmental Reasoning Engine</span>
 
-        <span>
-          Version 0.1.0
-        </span>
+          <span>v0.1.0</span>
+        </div>
       </footer>
     </div>
   );
