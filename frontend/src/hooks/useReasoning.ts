@@ -2,59 +2,25 @@ import { useQuery } from "@tanstack/react-query";
 
 import { reasoningApi } from "@/services/api/reasoning";
 
-export function useHypothesis(
-  hypothesisId: string,
+export function useReasoning(
+  h3Id: string,
   enabled = true,
 ) {
   return useQuery({
     queryKey: [
-      "hypothesis",
-      hypothesisId,
+      "reasoning",
+      h3Id,
     ],
-    queryFn: () =>
-      reasoningApi.getHypothesis(
-        hypothesisId,
-      ),
-    enabled:
-      enabled &&
-      hypothesisId.length > 0,
-  });
-}
 
-export function usePatterns(
-  hypothesisId: string,
-  enabled = true,
-) {
-  return useQuery({
-    queryKey: [
-      "patterns",
-      hypothesisId,
-    ],
     queryFn: () =>
-      reasoningApi.getPatterns(
-        hypothesisId,
+      reasoningApi.getReasoning(
+        h3Id,
       ),
-    enabled:
-      enabled &&
-      hypothesisId.length > 0,
-  });
-}
 
-export function useEvidence(
-  patternId: string,
-  enabled = true,
-) {
-  return useQuery({
-    queryKey: [
-      "evidence",
-      patternId,
-    ],
-    queryFn: () =>
-      reasoningApi.getEvidence(
-        patternId,
-      ),
     enabled:
       enabled &&
-      patternId.length > 0,
+      h3Id.length > 0,
+
+    staleTime: 5 * 60 * 1000,
   });
 }
