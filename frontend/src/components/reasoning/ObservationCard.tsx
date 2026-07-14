@@ -47,3 +47,5 @@ export default function ObservationCard({
         </div>
       </div>
     </section>
+  );
+}
