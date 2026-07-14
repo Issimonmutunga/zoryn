@@ -107,3 +107,19 @@ class HistoryResponse(
     history: list[
         dict
     ] = []
+  
+class ReasoningResponse(
+    BaseModel,
+):
+
+    discovery: DiscoveryResponse
+
+    hypothesis: HypothesisResponse
+
+    patterns: list[
+        PatternResponse
+    ]
+
+    evidence: list[
+        EvidenceResponse
+    ]
