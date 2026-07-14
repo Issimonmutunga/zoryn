@@ -1,8 +1,7 @@
 """
 Spatial repository.
 
-Provides spatial access to persisted H3 geometries and joins them with
-environmental discoveries for map visualisation.
+Provides spatial access to persisted H3 geometries for map visualisation.
 """
 
 from __future__ import annotations
@@ -13,30 +12,41 @@ import polars as pl
 from shapely import from_wkb
 from shapely.geometry import mapping
 
+from .repository import KnowledgeRepository
+
 
 class SpatialRepository:
     """
-    Read persisted spatial data.
+    Build spatial representations of the knowledge repository.
     """
 
     def __init__(
         self,
-        discoveries: pl.DataFrame,
-        h3_path: Path,
+        repository: KnowledgeRepository,
     ) -> None:
 
-        self._discoveries = discoveries
+        self._repository = repository
+
+        root = Path(__file__).resolve().parents[3]
 
         self._h3 = pl.read_parquet(
-            h3_path
+            root
+            / "data"
+            / "processed"
+            / "h3"
+            / "pilot_nairobi_h3_res10.parquet"
         )
 
     def map_discoveries(
         self,
     ) -> dict:
 
+        discoveries = pl.DataFrame(
+            self._repository.discoveries()
+        )
+
         joined = self._h3.join(
-            self._discoveries,
+            discoveries,
             on="h3_id",
             how="inner",
         )
@@ -47,24 +57,22 @@ class SpatialRepository:
             named=True,
         ):
 
-            geometry = mapping(
-                from_wkb(
-                    row["geometry"]
-                )
-            )
-
-            properties = {
-                key: value
-                for key, value in row.items()
-                if key != "geometry"
+            feature = {
+                "type": "Feature",
+                "geometry": mapping(
+                    from_wkb(
+                        row["geometry"]
+                    )
+                ),
+                "properties": {
+                    key: value
+                    for key, value in row.items()
+                    if key != "geometry"
+                },
             }
 
             features.append(
-                {
-                    "type": "Feature",
-                    "geometry": geometry,
-                    "properties": properties,
-                }
+                feature
             )
 
         return {
