@@ -14,24 +14,28 @@ export default function ExplorerPage() {
           </p>
         </header>
 
-        <div className="relative flex flex-1 items-center justify-center bg-muted/20">
-          <span className="text-muted-foreground">
-            Interactive Map
-          </span>
-
-          <div className="absolute bottom-6 left-6 rounded-lg border border-border bg-background px-4 py-2 shadow-sm">
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">
-              Timeline
-            </p>
-
-            <p className="mt-1 text-sm text-muted-foreground">
-              January 2024
-            </p>
+        <div className="relative flex flex-1 flex-col bg-muted/20">
+          <div className="flex flex-1 items-center justify-center">
+            <span className="text-muted-foreground">
+              Interactive Map
+            </span>
           </div>
+
+          <footer className="border-t border-border bg-background px-6 py-3">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">
+                Timeline
+              </span>
+
+              <span className="text-sm text-muted-foreground">
+                January 2024
+              </span>
+            </div>
+          </footer>
         </div>
       </section>
 
-      <aside className="w-105 overflow-y-auto bg-background p-6">
+      <aside className="w-105 overflow-y-auto border-l border-border bg-background p-6">
         <DiscoveryCard
           discovery="Developing Meteorological Drought"
           confidence={0.87}
