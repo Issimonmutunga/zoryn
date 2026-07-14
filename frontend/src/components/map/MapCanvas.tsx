@@ -1,11 +1,24 @@
-import { Layers, Map as MapIcon } from "lucide-react";
+import { useMemo } from "react";
+
+import { useDiscoveries } from "@/hooks/useDiscoveries";
+import { useExplorerStore } from "@/stores/explorerStore";
 
 import LayerSelector from "@/components/map/LayerSelector";
 import MapToolbar from "@/components/map/MapToolbar";
 
 export default function MapCanvas() {
+  const { data: discoveries = [], isLoading, isError } = useDiscoveries();
+
+  const selectedH3 = useExplorerStore((state) => state.selectedH3);
+  const setSelectedH3 = useExplorerStore((state) => state.setSelectedH3);
+
+  const discoveryCount = useMemo(
+    () => discoveries.length,
+    [discoveries],
+  );
+
   return (
-    <section className="relative flex h-full w-full overflow-hidden rounded-lg border border-border bg-card">
+    <section className="relative h-full w-full overflow-hidden bg-muted/20">
       <div className="absolute left-4 top-4 z-20">
         <MapToolbar />
       </div>
@@ -14,32 +27,51 @@ export default function MapCanvas() {
         <LayerSelector />
       </div>
 
-      <div className="flex h-full w-full items-center justify-center bg-muted/30">
-        <div className="max-w-md text-center">
-          <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full border border-border bg-background">
-            <MapIcon className="h-10 w-10 text-muted-foreground" />
-          </div>
-
-          <h2 className="text-xl font-semibold">
-            Interactive Environmental Map
+      <div className="flex h-full items-center justify-center">
+        <div className="max-w-lg space-y-4 text-center">
+          <h2 className="text-2xl font-semibold">
+            Environmental Reasoning Map
           </h2>
 
-          <p className="mt-3 text-sm leading-6 text-muted-foreground">
-            This workspace will display H3 environmental discoveries,
-            administrative boundaries and future environmental layers. Selecting
-            an H3 cell will populate the Reasoning Workspace without obscuring
-            the spatial context.
+          <p className="text-sm text-muted-foreground">
+            This placeholder will be replaced by the MapLibre map. The data
+            layer is already connected to the discovery API.
           </p>
 
-          <div className="mt-8 inline-flex items-center gap-2 rounded-md border border-border bg-background px-4 py-2 text-sm text-muted-foreground">
-            <Layers className="h-4 w-4" />
-            MapLibre integration coming next
-          </div>
-        </div>
-      </div>
+          {isLoading && (
+            <p className="text-sm text-muted-foreground">
+              Loading discoveries…
+            </p>
+          )}
 
-      <div className="absolute bottom-4 left-4 rounded-md border border-border bg-background/95 px-3 py-2 text-xs text-muted-foreground shadow-sm backdrop-blur">
-        Ready
+          {isError && (
+            <p className="text-sm text-destructive">
+              Unable to load discovery repository.
+            </p>
+          )}
+
+          {!isLoading && !isError && (
+            <div className="space-y-2 rounded-lg border p-4 text-left">
+              <p>
+                <strong>Available discoveries:</strong> {discoveryCount}
+              </p>
+
+              <p>
+                <strong>Selected H3:</strong>{" "}
+                {selectedH3 ?? "None"}
+              </p>
+
+              {discoveries.length > 0 && (
+                <button
+                  className="rounded border px-3 py-2 text-sm"
+                  onClick={() => setSelectedH3(discoveries[0].h3)}
+                >
+                  Select first discovery
+                </button>
+              )}
+            </div>
+          )}
+        </div>
       </div>
     </section>
   );
