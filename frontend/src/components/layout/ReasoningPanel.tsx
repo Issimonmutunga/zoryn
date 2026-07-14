@@ -17,7 +17,7 @@ export default function ReasoningPanel({
   scientificBasis,
 }: ReasoningPanelProps) {
   return (
-    <aside className="flex h-full w-full flex-col border-l border-border bg-background">
+    <aside className="flex h-full w-full flex-col bg-background">
       <header className="border-b border-border px-6 py-5">
         <p className="text-primary text-xs font-semibold uppercase tracking-[0.2em]">
           Reasoning Workspace
@@ -29,8 +29,8 @@ export default function ReasoningPanel({
 
         <p className="mt-2 text-sm leading-6 text-muted-foreground">
           Inspect the scientific reasoning behind the selected environmental
-          discovery. The workspace is organised around evidence,
-          explainability, and scientific traceability.
+          discovery. Every conclusion is supported by evidence, reasoning and
+          scientific guidance.
         </p>
       </header>
 
