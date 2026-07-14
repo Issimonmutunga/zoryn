@@ -27,7 +27,7 @@ export default function DiscoveryCard({
         </h2>
       </header>
 
-      <div className="space-y-6 p-6">
+      <div className="space-y-8 p-6">
         <section>
           <div className="mb-2 flex items-center justify-between">
             <span className="text-sm font-medium">
@@ -64,10 +64,20 @@ export default function DiscoveryCard({
             Scientific Basis
           </h3>
 
-          <div className="mt-3 rounded-lg bg-muted/40 p-3">
+          <div className="mt-3 rounded-lg border border-border bg-muted/30 p-4">
             <p className="text-sm font-medium">
               {scientificBasis}
             </p>
+          </div>
+        </section>
+
+        <section>
+          <h3 className="text-primary text-xs font-semibold uppercase tracking-[0.2em]">
+            Status
+          </h3>
+
+          <div className="mt-3 inline-flex rounded-full bg-primary/10 px-3 py-1 text-sm font-medium text-primary">
+            Active Discovery
           </div>
         </section>
       </div>
