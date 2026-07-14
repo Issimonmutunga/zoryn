@@ -10,14 +10,24 @@ export default function ExplorerPage() {
           </h1>
 
           <p className="mt-1 text-sm text-muted-foreground">
-            Explore environmental discoveries across space and time.
+            Explore environmental reasoning across space and time.
           </p>
         </header>
 
-        <div className="flex flex-1 items-center justify-center bg-muted/20">
+        <div className="relative flex flex-1 items-center justify-center bg-muted/20">
           <span className="text-muted-foreground">
-            Map (Coming Soon)
+            Interactive Map
           </span>
+
+          <div className="absolute bottom-6 left-6 rounded-lg border border-border bg-background px-4 py-2 shadow-sm">
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">
+              Timeline
+            </p>
+
+            <p className="mt-1 text-sm text-muted-foreground">
+              January 2024
+            </p>
+          </div>
         </div>
       </section>
 
