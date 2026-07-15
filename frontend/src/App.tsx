@@ -7,38 +7,10 @@ import {
 import AppLayout from "./layouts/AppLayout";
 
 import HomePage from "./pages/Home/HomePage";
-
-function ExplorerPage() {
-  return (
-    <main>
-      <h1>Explorer</h1>
-    </main>
-  );
-}
-
-function MethodologyPage() {
-  return (
-    <main>
-      <h1>Methodology</h1>
-    </main>
-  );
-}
-
-function StandardsPage() {
-  return (
-    <main>
-      <h1>Scientific Standards</h1>
-    </main>
-  );
-}
-
-function AboutPage() {
-  return (
-    <main>
-      <h1>About</h1>
-    </main>
-  );
-}
+import ExplorerPage from "./pages/Explorer/ExplorerPage";
+import MethodologyPage from "./pages/Methodology/MethodologyPage";
+import StandardsPage from "./pages/Standards/StandardsPage";
+import AboutPage from "./pages/About/AboutPage";
 
 export default function App() {
   return (
