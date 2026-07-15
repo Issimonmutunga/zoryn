@@ -7,6 +7,11 @@ Provides read access to the persisted knowledge dataset.
 from __future__ import annotations
 
 import polars as pl
+from zoryn.explanation.models import (
+    EvidenceSummary,
+    PatternSummary,
+    ReasoningPackage,
+)
 
 
 class KnowledgeRepository:
@@ -137,43 +142,89 @@ class KnowledgeRepository:
     def reasoning(
         self,
         h3_id: str,
-    ) -> dict | None:
+    ) -> ReasoningPackage | None:
 
         discovery = self.discovery(
-            h3_id
+            h3_id,
         )
 
         if discovery is None:
-
             return None
 
         hypothesis = self.hypothesis(
-            discovery[
-                "hypothesis_id"
-            ]
+            discovery["hypothesis_id"],
         )
 
         if hypothesis is None:
-
             return None
 
         patterns = self.patterns(
-            hypothesis["id"]
+            hypothesis["id"],
         )
 
-        evidence = []
+        evidence: list[dict] = []
 
         for pattern in patterns:
-
             evidence.extend(
                 self.evidence(
-                    pattern["id"]
+                    pattern["id"],
                 )
             )
 
-        return {
-            "discovery": discovery,
-            "hypothesis": hypothesis,
-            "patterns": patterns,
-            "evidence": evidence,
-        }
+        pattern_names = [
+            pattern.get(
+                "rule_name",
+                pattern.get(
+                    "name",
+                    "Unknown Pattern",
+                ),
+            )
+            for pattern in patterns
+        ]
+
+        evidence_variables = sorted(
+            {
+                item.get(
+                    "variable",
+                    "Unknown",
+                )
+                for item in evidence
+            }
+        )
+
+        return ReasoningPackage(
+            h3_id=h3_id,
+            discovery=discovery.get(
+                "discovery",
+                "",
+            ),
+            hypothesis=hypothesis.get(
+                "name",
+                hypothesis.get(
+                    "hypothesis",
+                    "",
+                ),
+            ),
+            confidence=float(
+                discovery.get(
+                    "confidence",
+                    0.0,
+                )
+            ),
+            standard=discovery.get(
+                "scientific_basis",
+                "Unknown",
+            ),
+            evidence=EvidenceSummary(
+                evidence_count=len(
+                    evidence,
+                ),
+                variables=evidence_variables,
+            ),
+            patterns=PatternSummary(
+                pattern_count=len(
+                    patterns,
+                ),
+                names=pattern_names,
+            ),
+        )

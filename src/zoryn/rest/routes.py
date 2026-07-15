@@ -20,6 +20,12 @@ from .schemas import (
 )
 from .spatial_repository import SpatialRepository
 
+from datetime import UTC
+from datetime import datetime
+
+from zoryn.explanation.context import ExplanationContext
+from zoryn.explanation.factory import create_provider
+from zoryn.explanation.service import ExplanationService
 
 router = APIRouter()
 
@@ -117,6 +123,50 @@ def reasoning(
         )
 
     return reasoning
+
+
+@router.get(
+    "/reasoning/{h3_id}/explanation",
+    tags=["Reasoning"],
+)
+def explanation(
+    h3_id: str,
+    repository: KnowledgeRepository = Depends(
+        get_repository,
+    ),
+):
+
+    reasoning = repository.reasoning(
+        h3_id,
+    )
+
+    if reasoning is None:
+
+        raise HTTPException(
+            status_code=404,
+            detail="Reasoning graph not found.",
+        )
+
+    context = ExplanationContext(
+        reasoning=reasoning,
+        generated_at=datetime.now(
+            UTC,
+        ).isoformat(),
+        reasoning_engine="Zoryn",
+        reasoning_version="0.1.0",
+        knowledge_graph_version="pilot",
+        reasoning_hash=h3_id,
+    )
+
+    service = ExplanationService(
+        provider=create_provider(),
+    )
+
+    explanation = service.explain(
+        context,
+    )
+
+    return explanation
 
 @router.get(
     "/map/discoveries",
