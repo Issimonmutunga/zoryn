@@ -6,15 +6,16 @@ import "maplibre-gl/dist/maplibre-gl.css";
 import { useExplorerStore } from "@/stores/explorerStore";
 
 export default function MapCanvas() {
-  const containerRef = useRef<HTMLDivElement | null>(null);
+  const containerRef =
+    useRef<HTMLDivElement | null>(null);
 
-  const mapRef = useRef<maplibregl.Map | null>(
-    null,
-  );
+  const mapRef =
+    useRef<maplibregl.Map | null>(null);
 
-  const setSelectedH3 = useExplorerStore(
-    (state) => state.setSelectedH3,
-  );
+  const setSelectedH3 =
+    useExplorerStore(
+      (state) => state.setSelectedH3,
+    );
 
   useEffect(() => {
     if (
@@ -46,106 +47,161 @@ export default function MapCanvas() {
     map.on(
       "load",
       async () => {
-        const response =
-          await fetch(
-            "/map/discoveries",
+        try {
+          const response =
+            await fetch(
+              "http://127.0.0.1:8000/map/discoveries",
+            );
+
+          if (!response.ok) {
+            throw new Error(
+              `HTTP ${response.status}`,
+            );
+          }
+
+          const geojson =
+            await response.json();
+
+          console.log(
+            "Response:",
+            response.status,
           );
 
-        const geojson =
-          await response.json();
+          console.log(
+            "URL:",
+            response.url,
+          );
 
-        map.addSource(
-          "discoveries",
-          {
-            type: "geojson",
-            data: geojson,
-          },
-        );
+          console.log(
+            "GeoJSON:",
+            geojson.type,
+          );
 
-        map.addLayer({
-          id: "discoveries-fill",
+          console.log(
+            "Features:",
+            geojson.features.length,
+          );
 
-          type: "fill",
+          map.addSource(
+            "discoveries",
+            {
+              type: "geojson",
+              data: geojson,
+            },
+          );
 
-          source: "discoveries",
+          console.log(
+            "Source:",
+            map.getSource(
+              "discoveries",
+            ),
+          );
 
-          paint: {
-            "fill-color": [
-              "interpolate",
-              ["linear"],
-              [
-                "get",
-                "confidence",
-              ],
-              0,
-              "#fef3c7",
-              0.5,
-              "#f59e0b",
-              1,
-              "#b45309",
-            ],
+          map.addLayer({
+            id: "discoveries-fill",
 
-            "fill-opacity": 0.7,
-          },
-        });
+            type: "fill",
 
-        map.addLayer({
-          id: "discoveries-outline",
+            source: "discoveries",
 
-          type: "line",
+            paint: {
+              "fill-color":
+                "#ff0000",
 
-          source: "discoveries",
+              "fill-opacity": 1,
+            },
+          });
 
-          paint: {
-            "line-color":
-              "#92400e",
+          map.addLayer({
+            id: "discoveries-outline",
 
-            "line-width": 0.5,
-          },
-        });
+            type: "line",
 
-        map.on(
-          "click",
-          "discoveries-fill",
-          (event) => {
-            const feature =
-              event.features?.[0];
+            source: "discoveries",
 
-            if (!feature) {
-              return;
-            }
+            paint: {
+              "line-color":
+                "#000000",
 
-            const h3 =
-              feature.properties?.h3_id;
+              "line-width": 1,
+            },
+          });
 
-            if (
-              typeof h3 ===
-              "string"
-            ) {
-              setSelectedH3(
-                h3,
+          const bounds =
+            new maplibregl.LngLatBounds();
+
+          for (const feature of geojson.features) {
+            const ring =
+              feature.geometry.coordinates[0];
+
+            for (const coordinate of ring) {
+              bounds.extend(
+                coordinate as [
+                  number,
+                  number,
+                ],
               );
             }
-          },
-        );
+          }
 
-        map.on(
-          "mouseenter",
-          "discoveries-fill",
-          () => {
-            map.getCanvas().style.cursor =
-              "pointer";
-          },
-        );
+          map.fitBounds(
+            bounds,
+            {
+              padding: 40,
+            },
+          );
 
-        map.on(
-          "mouseleave",
-          "discoveries-fill",
-          () => {
-            map.getCanvas().style.cursor =
-              "";
-          },
-        );
+          map.on(
+            "click",
+            "discoveries-fill",
+            (
+              event,
+            ) => {
+              const feature =
+                event.features?.[0];
+
+              if (!feature) {
+                return;
+              }
+
+              const h3 =
+                feature.properties
+                  ?.h3_id;
+
+              if (
+                typeof h3 ===
+                "string"
+              ) {
+                setSelectedH3(
+                  h3,
+                );
+              }
+            },
+          );
+
+          map.on(
+            "mouseenter",
+            "discoveries-fill",
+            () => {
+              map.getCanvas().style.cursor =
+                "pointer";
+            },
+          );
+
+          map.on(
+            "mouseleave",
+            "discoveries-fill",
+            () => {
+              map.getCanvas().style.cursor =
+                "";
+            },
+          );
+        } catch (error) {
+          console.error(
+            "Failed to load discoveries:",
+            error,
+          );
+        }
       },
     );
 
