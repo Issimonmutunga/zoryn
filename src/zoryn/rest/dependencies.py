@@ -9,7 +9,7 @@ from __future__ import annotations
 from functools import lru_cache
 from pathlib import Path
 
-import polars as pl
+from .repository import KnowledgeRepository
 
 
 _PROJECT_ROOT = (
@@ -26,61 +26,12 @@ _KNOWLEDGE = (
 )
 
 
-def _load(
-    table: str,
-) -> pl.DataFrame:
-    """
-    Load a partitioned knowledge table.
-    """
-
-    directory = _KNOWLEDGE / table
-
-    files = sorted(
-        directory.glob(
-            "*.parquet"
-        )
-    )
-
-    if not files:
-
-        raise FileNotFoundError(
-            f"No parquet files found for {table}."
-        )
-
-    return (
-        pl.scan_parquet(
-            [str(file) for file in files]
-        )
-        .collect()
-    )
-
-
 @lru_cache(maxsize=1)
-def get_knowledge() -> dict[str, pl.DataFrame]:
+def get_repository() -> KnowledgeRepository:
     """
-    Return the persisted knowledge dataset.
-
-    The dataset is loaded once and reused by
-    all API requests.
+    Return the shared knowledge repository.
     """
 
-    return {
-        "discoveries": _load(
-            "discoveries"
-        ),
-        "hypotheses": _load(
-            "hypotheses"
-        ),
-        "patterns": _load(
-            "patterns"
-        ),
-        "evidence": _load(
-            "evidence"
-        ),
-        "hypothesis_patterns": _load(
-            "hypothesis_patterns"
-        ),
-        "pattern_evidence": _load(
-            "pattern_evidence"
-        ),
-    }
+    return KnowledgeRepository(
+        _KNOWLEDGE,
+    )

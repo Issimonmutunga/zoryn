@@ -8,7 +8,7 @@ from datetime import UTC
 from datetime import datetime
 from fastapi import APIRouter, Depends, HTTPException, Query
 
-from .dependencies import get_knowledge
+from .dependencies import get_repository
 from .repository import KnowledgeRepository
 from .schemas import (
     DiscoveryResponse,
@@ -33,16 +33,6 @@ from zoryn.explanation.service import ExplanationService
 
 
 router = APIRouter()
-
-
-def get_repository() -> KnowledgeRepository:
-    """
-    Return the knowledge repository.
-    """
-
-    return KnowledgeRepository(
-        get_knowledge()
-    )
 
 
 @router.get(

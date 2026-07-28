@@ -7,6 +7,7 @@ Provides read access to the persisted knowledge dataset.
 from __future__ import annotations
 
 import math
+from pathlib import Path
 
 import polars as pl
 
@@ -18,32 +19,118 @@ class KnowledgeRepository:
 
     def __init__(
         self,
-        knowledge: dict[str, pl.DataFrame],
+        root: Path,
     ) -> None:
 
-        self._discoveries = knowledge[
-            "discoveries"
-        ]
+        self._root = root
 
-        self._hypotheses = knowledge[
-            "hypotheses"
-        ]
+        self._discoveries: pl.DataFrame | None = None
+        self._hypotheses: pl.DataFrame | None = None
+        self._patterns: pl.DataFrame | None = None
+        self._evidence: pl.DataFrame | None = None
+        self._hypothesis_patterns: pl.DataFrame | None = None
+        self._pattern_evidence: pl.DataFrame | None = None
 
-        self._patterns = knowledge[
-            "patterns"
-        ]
+    def _load(
+        self,
+        table: str,
+    ) -> pl.DataFrame:
+        """
+        Load a partitioned knowledge table.
+        """
 
-        self._evidence = knowledge[
-            "evidence"
-        ]
+        directory = self._root / table
 
-        self._hypothesis_patterns = knowledge[
-            "hypothesis_patterns"
-        ]
+        files = sorted(
+            directory.glob(
+                "*.parquet"
+            )
+        )
 
-        self._pattern_evidence = knowledge[
-            "pattern_evidence"
-        ]
+        if not files:
+
+            raise FileNotFoundError(
+                f"No parquet files found for {table}."
+            )
+
+        return (
+            pl.scan_parquet(
+                [str(file) for file in files]
+            )
+            .collect()
+        )
+
+    @property
+    def discoveries_table(
+        self,
+    ) -> pl.DataFrame:
+
+        if self._discoveries is None:
+            self._discoveries = self._load(
+                "discoveries"
+            )
+
+        return self._discoveries
+
+    @property
+    def hypotheses_table(
+        self,
+    ) -> pl.DataFrame:
+
+        if self._hypotheses is None:
+            self._hypotheses = self._load(
+                "hypotheses"
+            )
+
+        return self._hypotheses
+
+    @property
+    def patterns_table(
+        self,
+    ) -> pl.DataFrame:
+
+        if self._patterns is None:
+            self._patterns = self._load(
+                "patterns"
+            )
+
+        return self._patterns
+
+    @property
+    def evidence_table(
+        self,
+    ) -> pl.DataFrame:
+
+        if self._evidence is None:
+            self._evidence = self._load(
+                "evidence"
+            )
+
+        return self._evidence
+
+    @property
+    def hypothesis_patterns_table(
+        self,
+    ) -> pl.DataFrame:
+
+        if self._hypothesis_patterns is None:
+            self._hypothesis_patterns = self._load(
+                "hypothesis_patterns"
+            )
+
+        return self._hypothesis_patterns
+
+    @property
+    def pattern_evidence_table(
+        self,
+    ) -> pl.DataFrame:
+
+        if self._pattern_evidence is None:
+            self._pattern_evidence = self._load(
+                "pattern_evidence"
+            )
+
+        return self._pattern_evidence
 
     def _sanitize(
         self,
@@ -79,7 +166,7 @@ class KnowledgeRepository:
         timestamp: str | None = None,
     ) -> list[dict]:
 
-        rows = self._discoveries
+        rows = self.discoveries_table
 
         if timestamp is not None:
             rows = rows.filter(
@@ -96,7 +183,7 @@ class KnowledgeRepository:
         timestamp: str | None = None,
     ) -> dict | None:
 
-        rows = self._discoveries.filter(
+        rows = self.discoveries_table.filter(
             pl.col("h3_id") == h3_id
         )
 
@@ -123,7 +210,7 @@ class KnowledgeRepository:
         """
 
         return (
-            self._discoveries
+            self.discoveries_table
             .group_by("timestamp")
             .len()
             .rename(
@@ -142,7 +229,7 @@ class KnowledgeRepository:
         the selected timestamp.
         """
 
-        rows = self._discoveries.filter(
+        rows = self.discoveries_table.filter(
             pl.col("timestamp") == timestamp,
         )
 
@@ -159,7 +246,7 @@ class KnowledgeRepository:
         hypothesis_id: str,
     ) -> dict | None:
 
-        rows = self._hypotheses.filter(
+        rows = self.hypotheses_table.filter(
             pl.col("id") == hypothesis_id
         )
 
@@ -176,7 +263,7 @@ class KnowledgeRepository:
         hypothesis_id: str,
     ) -> list[dict]:
 
-        links = self._hypothesis_patterns.filter(
+        links = self.hypothesis_patterns_table.filter(
             pl.col(
                 "hypothesis_id"
             ) == hypothesis_id
@@ -191,7 +278,7 @@ class KnowledgeRepository:
         ].to_list()
 
         return self._sanitize(
-            self._patterns.filter(
+            self.patterns_table.filter(
                 pl.col("id").is_in(ids)
             ).to_dicts()
         )
@@ -201,7 +288,7 @@ class KnowledgeRepository:
         pattern_id: str,
     ) -> list[dict]:
 
-        links = self._pattern_evidence.filter(
+        links = self.pattern_evidence_table.filter(
             pl.col(
                 "pattern_id"
             ) == pattern_id
@@ -216,7 +303,7 @@ class KnowledgeRepository:
         ].to_list()
 
         return self._sanitize(
-            self._evidence.filter(
+            self.evidence_table.filter(
                 pl.col("id").is_in(ids)
             ).to_dicts()
         )
