@@ -47,13 +47,11 @@ def _load(
             f"No parquet files found for {table}."
         )
 
-    return pl.concat(
-        [
-            pl.read_parquet(
-                file
-            )
-            for file in files
-        ]
+    return (
+        pl.scan_parquet(
+            [str(file) for file in files]
+        )
+        .collect()
     )
 
 
