@@ -139,60 +139,30 @@ class SpatialRepository:
         timestamp: str | None = None,
     ) -> dict:
 
-        #
-        # Return cached GeoJSON whenever possible.
-        #
         if (
             SpatialRepository._geojson_cache
             is not None
         ):
             return SpatialRepository._geojson_cache
 
-        discoveries = pl.DataFrame(
-            self._repository.discoveries(
-                timestamp=timestamp,
-            )
+        root = Path(__file__).resolve().parents[3]
+
+        path = (
+            root
+            / "data"
+            / "processed"
+            / "h3"
+            / "pilot_nairobi_discoveries.geojson"
         )
 
-        joined = (
-            SpatialRepository._h3.join(
-                discoveries,
-                on="h3_id",
-                how="inner",
+        with open(
+            path,
+            encoding="utf-8",
+        ) as handle:
+
+            SpatialRepository._geojson_cache = json.load(
+                handle,
             )
-        )
-        print("\n===== H3 JOINED COLUMNS =====")
-        print(joined.columns)
-
-        print("\n===== SAMPLE ROW =====")
-        print(joined.head())
-
-        features = []
-
-        for row in joined.iter_rows(
-            named=True,
-        ):
-
-            features.append(
-                {
-                    "type": "Feature",
-                    "geometry": mapping(
-                        from_wkb(
-                            row["geometry"]
-                        )
-                    ),
-                    "properties": {
-                        key: value
-                        for key, value in row.items()
-                        if key != "geometry"
-                    },
-                }
-            )
-
-        SpatialRepository._geojson_cache = {
-            "type": "FeatureCollection",
-            "features": features,
-        }
 
         return SpatialRepository._geojson_cache
 
