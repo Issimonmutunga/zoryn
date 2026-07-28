@@ -37,17 +37,29 @@ class SpatialRepository:
 
         self._repository = repository
 
-        if SpatialRepository._h3 is None:
+    def _h3_table(
+        self,
+    ) -> pl.DataFrame:
+        """
+        Return the cached H3 geometry table.
+        """
 
-            root = Path(__file__).resolve().parents[3]
+        if SpatialRepository._h3 is not None:
 
-            SpatialRepository._h3 = pl.read_parquet(
-                root
-                / "data"
-                / "processed"
-                / "h3"
-                / "pilot_nairobi_h3_res10.parquet"
-            )
+            return SpatialRepository._h3
+
+        root = Path(__file__).resolve().parents[3]
+
+        SpatialRepository._h3 = pl.read_parquet(
+            root
+            / "data"
+            / "processed"
+            / "h3"
+            / "pilot_nairobi_h3_res10.parquet"
+        )
+
+        return SpatialRepository._h3
+
     def geometry(
         self,
     ) -> dict:
@@ -100,7 +112,7 @@ class SpatialRepository:
 )
 
         joined = (
-            SpatialRepository._h3.join(
+            self._h3_table().join(
                 observations,
                 on="h3_id",
                 how="inner",

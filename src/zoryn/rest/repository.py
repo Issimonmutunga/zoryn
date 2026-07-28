@@ -1,234 +1,361 @@
 """
-Spatial repository.
+Knowledge repository.
 
-Provides spatial access to persisted H3 geometries
-for map visualisation.
+Provides read access to the persisted knowledge dataset.
 """
 
 from __future__ import annotations
 
-import json
+import math
 from pathlib import Path
 
 import polars as pl
-from shapely import from_wkb
-from shapely.geometry import mapping
-
-from .repository import KnowledgeRepository
 
 
-class SpatialRepository:
+class KnowledgeRepository:
     """
-    Build spatial representations of the
-    knowledge repository.
+    Read persisted knowledge.
     """
-
-    #
-    # Shared process-wide cache.
-    #
-    _h3: pl.DataFrame | None = None
-    _geojson_cache: dict | None = None
-    _geometry_cache: dict | None = None
 
     def __init__(
         self,
-        repository: KnowledgeRepository,
+        root: Path,
     ) -> None:
 
-        self._repository = repository
+        self._root = root
 
-    def _h3_table(
+        self._discoveries: pl.DataFrame | None = None
+        self._hypotheses: pl.DataFrame | None = None
+        self._patterns: pl.DataFrame | None = None
+        self._evidence: pl.DataFrame | None = None
+        self._hypothesis_patterns: pl.DataFrame | None = None
+        self._pattern_evidence: pl.DataFrame | None = None
+
+    def _load(
         self,
+        table: str,
     ) -> pl.DataFrame:
         """
-        Return the cached H3 geometry table.
+        Load a partitioned knowledge table.
         """
 
-        if SpatialRepository._h3 is not None:
+        directory = self._root / table
 
-            return SpatialRepository._h3
-
-        root = Path(__file__).resolve().parents[3]
-
-        SpatialRepository._h3 = pl.read_parquet(
-            root
-            / "data"
-            / "processed"
-            / "h3"
-            / "pilot_nairobi_h3_res10.parquet"
-        )
-
-        return SpatialRepository._h3
-
-    def geometry(
-        self,
-    ) -> dict:
-        """
-        Return static H3 geometry.
-
-        Geometry never changes and is cached
-        independently from SPI observations.
-        """
-
-        if (
-            SpatialRepository._geometry_cache
-            is not None
-        ):
-            return SpatialRepository._geometry_cache
-
-        root = Path(__file__).resolve().parents[3]
-
-        path = (
-            root
-            / "data"
-            / "processed"
-            / "h3"
-            / "pilot_nairobi_h3_res10.geojson"
-        )
-
-        with open(path, "r", encoding="utf-8") as handle:
-            SpatialRepository._geometry_cache = json.load(handle)
-
-        return SpatialRepository._geometry_cache
-
-    def map_observations(
-        self,
-        timestamp: str,
-    ) -> dict:
-
-        root = Path(__file__).resolve().parents[3]
-        observations = (
-            pl.scan_parquet(
-                root
-                / "data"
-                / "processed"
-                / "spi"
-                / "spi3.parquet"
+        files = sorted(
+            directory.glob(
+                "*.parquet"
             )
-            .filter(
-                pl.col("timestamp") == timestamp
+        )
+
+        if not files:
+
+            raise FileNotFoundError(
+                f"No parquet files found for {table}."
+            )
+
+        return (
+            pl.scan_parquet(
+                [str(file) for file in files]
             )
             .collect()
-)
-
-        joined = (
-            self._h3_table().join(
-                observations,
-                on="h3_id",
-                how="inner",
-            )
         )
 
-        features = []
+    @property
+    def discoveries_table(
+        self,
+    ) -> pl.DataFrame:
 
-        for row in joined.iter_rows(
-            named=True,
-        ):
-
-            features.append(
-                {
-                    "type": "Feature",
-                    "geometry": mapping(
-                        from_wkb(
-                            row["geometry"]
-                        )
-                    ),
-                    "properties": {
-                        key: value
-                        for key, value in row.items()
-                        if key != "geometry"
-                    },
-                }
+        if self._discoveries is None:
+            self._discoveries = self._load(
+                "discoveries"
             )
 
-        return {
-            "type": "FeatureCollection",
-            "features": features,
-        }
+        return self._discoveries
 
-    def map_discoveries(
+    @property
+    def hypotheses_table(
         self,
-        timestamp: str | None = None,
-    ) -> dict:
+    ) -> pl.DataFrame:
+
+        if self._hypotheses is None:
+            self._hypotheses = self._load(
+                "hypotheses"
+            )
+
+        return self._hypotheses
+
+    @property
+    def patterns_table(
+        self,
+    ) -> pl.DataFrame:
+
+        if self._patterns is None:
+            self._patterns = self._load(
+                "patterns"
+            )
+
+        return self._patterns
+
+    @property
+    def evidence_table(
+        self,
+    ) -> pl.DataFrame:
+
+        if self._evidence is None:
+            self._evidence = self._load(
+                "evidence"
+            )
+
+        return self._evidence
+
+    @property
+    def hypothesis_patterns_table(
+        self,
+    ) -> pl.DataFrame:
+
+        if self._hypothesis_patterns is None:
+            self._hypothesis_patterns = self._load(
+                "hypothesis_patterns"
+            )
+
+        return self._hypothesis_patterns
+
+    @property
+    def pattern_evidence_table(
+        self,
+    ) -> pl.DataFrame:
+
+        if self._pattern_evidence is None:
+            self._pattern_evidence = self._load(
+                "pattern_evidence"
+            )
+
+        return self._pattern_evidence
+
+    def _sanitize(
+        self,
+        value,
+    ):
+        """
+        Replace NaN values with None so responses
+        are JSON serializable.
+        """
+
+        if isinstance(value, dict):
+            return {
+                key: self._sanitize(val)
+                for key, val in value.items()
+            }
+
+        if isinstance(value, list):
+            return [
+                self._sanitize(item)
+                for item in value
+            ]
 
         if (
-            SpatialRepository._geojson_cache
-            is not None
+            isinstance(value, float)
+            and math.isnan(value)
         ):
-            return SpatialRepository._geojson_cache
+            return None
 
-        root = Path(__file__).resolve().parents[3]
+        return value
 
-        path = (
-            root
-            / "data"
-            / "processed"
-            / "h3"
-            / "pilot_nairobi_discoveries.geojson"
-        )
+    def discoveries(
+        self,
+        timestamp: str | None = None,
+    ) -> list[dict]:
 
-        with open(
-            path,
-            encoding="utf-8",
-        ) as handle:
+        rows = self.discoveries_table
 
-            SpatialRepository._geojson_cache = json.load(
-                handle,
+        if timestamp is not None:
+            rows = rows.filter(
+                pl.col("timestamp") == timestamp
             )
 
-        return SpatialRepository._geojson_cache
+        return self._sanitize(
+            rows.to_dicts()
+        )
 
-    @classmethod
-    def clear_cache(
-        cls,
-    ) -> None:
+    def discovery(
+        self,
+        h3_id: str,
+        timestamp: str | None = None,
+    ) -> dict | None:
+
+        rows = self.discoveries_table.filter(
+            pl.col("h3_id") == h3_id
+        )
+
+        if timestamp is not None:
+
+            rows = rows.filter(
+                pl.col("timestamp") == timestamp
+            )
+
+        if rows.is_empty():
+
+            return None
+
+        return self._sanitize(
+            rows.to_dicts()[0]
+        )
+
+    def discovery_timeline(
+        self,
+    ) -> list[dict]:
         """
-        Clear cached spatial data.
-
-        Useful during development or
-        after rebuilding discoveries.
+        Return the number of discoveries
+        available for each timestamp.
         """
 
-        cls._geojson_cache = None
-        cls._geometry_cache = None
+        return (
+            self.discoveries_table
+            .group_by("timestamp")
+            .len()
+            .rename(
+                {"len": "discoveries"}
+            )
+            .sort("timestamp")
+            .to_dicts()
+        )
 
-    def map_spi(
+    def discovery_highlights(
         self,
         timestamp: str,
     ) -> list[dict]:
+        """
+        Return H3 cells that contain discoveries for
+        the selected timestamp.
+        """
 
-        root = Path(__file__).resolve().parents[3]
-
-        observations = (
-            pl.scan_parquet(
-                root
-                / "data"
-                / "processed"
-                / "spi"
-                / "spi3.parquet"
-            )
-            .filter(
-                pl.col("timestamp") == timestamp
-            )
-            .select(
-                [
-                    "h3_id",
-                    "spi3",
-                    "timestamp",
-                ]
-            )
-            .collect()
+        rows = self.discoveries_table.filter(
+            pl.col("timestamp") == timestamp,
         )
 
-        rows = observations.to_dicts()
+        return self._sanitize(
+            rows
+            .select(["h3_id"])
+            .unique()
+            .sort("h3_id")
+            .to_dicts()
+        )
 
-        for row in rows:
-            value = row["spi3"]
+    def hypothesis(
+        self,
+        hypothesis_id: str,
+    ) -> dict | None:
 
-            if value is None:
-                continue
+        rows = self.hypotheses_table.filter(
+            pl.col("id") == hypothesis_id
+        )
 
-            if value != value:
-                row["spi3"] = None
+        if rows.is_empty():
 
-        return rows
+            return None
+
+        return self._sanitize(
+            rows.to_dicts()[0]
+        )
+
+    def patterns(
+        self,
+        hypothesis_id: str,
+    ) -> list[dict]:
+
+        links = self.hypothesis_patterns_table.filter(
+            pl.col(
+                "hypothesis_id"
+            ) == hypothesis_id
+        )
+
+        if links.is_empty():
+
+            return []
+
+        ids = links[
+            "pattern_id"
+        ].to_list()
+
+        return self._sanitize(
+            self.patterns_table.filter(
+                pl.col("id").is_in(ids)
+            ).to_dicts()
+        )
+
+    def evidence(
+        self,
+        pattern_id: str,
+    ) -> list[dict]:
+
+        links = self.pattern_evidence_table.filter(
+            pl.col(
+                "pattern_id"
+            ) == pattern_id
+        )
+
+        if links.is_empty():
+
+            return []
+
+        ids = links[
+            "evidence_id"
+        ].to_list()
+
+        return self._sanitize(
+            self.evidence_table.filter(
+                pl.col("id").is_in(ids)
+            ).to_dicts()
+        )
+
+    def reasoning(
+        self,
+        h3_id: str,
+        timestamp: str | None = None,
+    ) -> dict | None:
+        """
+        Return the complete deterministic reasoning graph
+        used by the Explorer UI.
+        """
+
+        discovery = self.discovery(
+            h3_id,
+            timestamp=timestamp,
+        )
+
+        if discovery is None:
+
+            return None
+
+        hypothesis = self.hypothesis(
+            discovery[
+                "hypothesis_id"
+            ]
+        )
+
+        if hypothesis is None:
+
+            return None
+
+        patterns = self.patterns(
+            hypothesis["id"]
+        )
+
+        evidence: list[dict] = []
+
+        for pattern in patterns:
+
+            evidence.extend(
+                self.evidence(
+                    pattern["id"]
+                )
+            )
+
+        return self._sanitize(
+            {
+                "discovery": discovery,
+                "hypothesis": hypothesis,
+                "patterns": patterns,
+                "evidence": evidence,
+            }
+        )
