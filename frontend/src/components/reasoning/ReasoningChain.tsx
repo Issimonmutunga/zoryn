@@ -1,4 +1,4 @@
-const steps = [
+const CHAIN = [
   "Observation",
   "Signature",
   "Relationship",
@@ -10,31 +10,22 @@ const steps = [
 
 export default function ReasoningChain() {
   return (
-    <section className="rounded-xl border border-border bg-card p-6 shadow-sm">
-      <h2 className="text-primary text-xs font-semibold uppercase tracking-[0.2em]">
-        Reasoning Chain
-      </h2>
+    <ol className="relative ml-2 border-l border-[#D8CEB8] pl-6">
+      {CHAIN.map((step, index) => (
+        <li
+          key={step}
+          className={index === CHAIN.length - 1 ? "" : "pb-6"}
+        >
+          <span
+            aria-hidden="true"
+            className="absolute -left-1.75 mt-1.5 h-3 w-3 rounded-full border-2 border-[#5B6B45] bg-[#FAF7EF]"
+          />
 
-      <div className="mt-6 flex flex-wrap items-center gap-3">
-        {steps.map((step, index) => (
-          <div
-            key={step}
-            className="flex items-center gap-3"
-          >
-            <div className="rounded-lg border border-border bg-background px-4 py-2">
-              <p className="text-sm font-medium">
-                {step}
-              </p>
-            </div>
-
-            {index < steps.length - 1 && (
-              <span className="text-muted-foreground">
-                →
-              </span>
-            )}
-          </div>
-        ))}
-      </div>
-    </section>
+          <p className="text-sm font-medium text-[#2B2417]">
+            {step}
+          </p>
+        </li>
+      ))}
+    </ol>
   );
 }

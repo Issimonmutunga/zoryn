@@ -34,20 +34,37 @@ export interface Evidence {
 }
 
 export interface ReasoningGraph {
-  discovery: Discovery;
-  hypothesis: Hypothesis;
-  patterns: Pattern[];
-  evidence: Evidence[];
+  available: boolean;
+
+  message?: string;
+
+  discovery?: Discovery;
+
+  hypothesis?: Hypothesis;
+
+  patterns?: Pattern[];
+
+  evidence?: Evidence[];
 }
 
 export const reasoningApi = {
+
   getReasoning(
     h3Id: string,
+    timestamp?: string,
   ) {
+
+    const query =
+      timestamp
+        ? `?timestamp=${encodeURIComponent(timestamp)}`
+        : "";
+
     return apiClient.get<ReasoningGraph>(
       `/reasoning/${encodeURIComponent(
         h3Id,
-      )}`,
+      )}${query}`,
     );
+
   },
+
 };

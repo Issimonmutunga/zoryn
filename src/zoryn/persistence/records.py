@@ -100,3 +100,7 @@ class DiscoveryRecord:
     confidence: float
     start: str
     end: str
+    timestamp: str
+    spi3: float | None
+    spi6: float | None
+    spi12: float | None

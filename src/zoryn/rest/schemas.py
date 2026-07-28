@@ -7,18 +7,14 @@ from __future__ import annotations
 from pydantic import BaseModel
 
 
-class HealthResponse(
-    BaseModel,
-):
+class HealthResponse(BaseModel):
 
     status: str
 
     discoveries: int
 
 
-class VersionResponse(
-    BaseModel,
-):
+class VersionResponse(BaseModel):
 
     name: str
 
@@ -27,9 +23,7 @@ class VersionResponse(
     api: str
 
 
-class DiscoveryResponse(
-    BaseModel,
-):
+class DiscoveryResponse(BaseModel):
 
     id: str
 
@@ -45,19 +39,18 @@ class DiscoveryResponse(
 
     end: str
 
+    spi3: float | None = None
 
-class DiscoveriesResponse(
-    BaseModel,
-):
+    spi6: float | None = None
 
-    discoveries: list[
-        DiscoveryResponse
-    ] = []
+    spi12: float | None = None
+
+class DiscoveriesResponse(BaseModel):
+
+    discoveries: list[DiscoveryResponse] = []
 
 
-class HypothesisResponse(
-    BaseModel,
-):
+class HypothesisResponse(BaseModel):
 
     id: str
 
@@ -66,9 +59,7 @@ class HypothesisResponse(
     confidence: float
 
 
-class PatternResponse(
-    BaseModel,
-):
+class PatternResponse(BaseModel):
 
     id: str
 
@@ -81,9 +72,7 @@ class PatternResponse(
     standard: str
 
 
-class EvidenceResponse(
-    BaseModel,
-):
+class EvidenceResponse(BaseModel):
 
     id: str
 
@@ -98,16 +87,32 @@ class EvidenceResponse(
     strength: float
 
 
-class HistoryResponse(
-    BaseModel,
-):
+class HistoryResponse(BaseModel):
 
     h3_id: str
 
-    history: list[
-        dict
-    ] = []
-  
+    history: list[dict] = []
+
+
+# ------------------------------------------------------------------
+# New deterministic reasoning responses
+# ------------------------------------------------------------------
+
+
+class EvidenceSummaryResponse(BaseModel):
+
+    evidence_count: int
+
+    variables: list[str]
+
+
+class PatternSummaryResponse(BaseModel):
+
+    pattern_count: int
+
+    names: list[str]
+
+
 class ReasoningResponse(
     BaseModel,
 ):

@@ -6,12 +6,9 @@ Provides read access to the persisted knowledge dataset.
 
 from __future__ import annotations
 
+import math
+
 import polars as pl
-from zoryn.explanation.models import (
-    EvidenceSummary,
-    PatternSummary,
-    ReasoningPackage,
-)
 
 
 class KnowledgeRepository:
@@ -48,29 +45,114 @@ class KnowledgeRepository:
             "pattern_evidence"
         ]
 
+    def _sanitize(
+        self,
+        value,
+    ):
+        """
+        Replace NaN values with None so responses
+        are JSON serializable.
+        """
+
+        if isinstance(value, dict):
+            return {
+                key: self._sanitize(val)
+                for key, val in value.items()
+            }
+
+        if isinstance(value, list):
+            return [
+                self._sanitize(item)
+                for item in value
+            ]
+
+        if (
+            isinstance(value, float)
+            and math.isnan(value)
+        ):
+            return None
+
+        return value
+
     def discoveries(
         self,
+        timestamp: str | None = None,
     ) -> list[dict]:
 
-        return (
-            self._discoveries
-            .to_dicts()
+        rows = self._discoveries
+
+        if timestamp is not None:
+            rows = rows.filter(
+                pl.col("timestamp") == timestamp
+            )
+
+        return self._sanitize(
+            rows.to_dicts()
         )
 
     def discovery(
         self,
         h3_id: str,
+        timestamp: str | None = None,
     ) -> dict | None:
 
         rows = self._discoveries.filter(
             pl.col("h3_id") == h3_id
         )
 
+        if timestamp is not None:
+
+            rows = rows.filter(
+                pl.col("timestamp") == timestamp
+            )
+
         if rows.is_empty():
 
             return None
 
-        return rows.to_dicts()[0]
+        return self._sanitize(
+            rows.to_dicts()[0]
+        )
+
+    def discovery_timeline(
+        self,
+    ) -> list[dict]:
+        """
+        Return the number of discoveries
+        available for each timestamp.
+        """
+
+        return (
+            self._discoveries
+            .group_by("timestamp")
+            .len()
+            .rename(
+                {"len": "discoveries"}
+            )
+            .sort("timestamp")
+            .to_dicts()
+        )
+
+    def discovery_highlights(
+        self,
+        timestamp: str,
+    ) -> list[dict]:
+        """
+        Return H3 cells that contain discoveries for
+        the selected timestamp.
+        """
+
+        rows = self._discoveries.filter(
+            pl.col("timestamp") == timestamp,
+        )
+
+        return self._sanitize(
+            rows
+            .select(["h3_id"])
+            .unique()
+            .sort("h3_id")
+            .to_dicts()
+        )
 
     def hypothesis(
         self,
@@ -85,7 +167,9 @@ class KnowledgeRepository:
 
             return None
 
-        return rows.to_dicts()[0]
+        return self._sanitize(
+            rows.to_dicts()[0]
+        )
 
     def patterns(
         self,
@@ -106,11 +190,10 @@ class KnowledgeRepository:
             "pattern_id"
         ].to_list()
 
-        return (
+        return self._sanitize(
             self._patterns.filter(
                 pl.col("id").is_in(ids)
-            )
-            .to_dicts()
+            ).to_dicts()
         )
 
     def evidence(
@@ -132,99 +215,60 @@ class KnowledgeRepository:
             "evidence_id"
         ].to_list()
 
-        return (
+        return self._sanitize(
             self._evidence.filter(
                 pl.col("id").is_in(ids)
-            )
-            .to_dicts()
+            ).to_dicts()
         )
 
     def reasoning(
         self,
         h3_id: str,
-    ) -> ReasoningPackage | None:
+        timestamp: str | None = None,
+    ) -> dict | None:
+        """
+        Return the complete deterministic reasoning graph
+        used by the Explorer UI.
+        """
 
         discovery = self.discovery(
             h3_id,
+            timestamp=timestamp,
         )
 
         if discovery is None:
+
             return None
 
         hypothesis = self.hypothesis(
-            discovery["hypothesis_id"],
+            discovery[
+                "hypothesis_id"
+            ]
         )
 
         if hypothesis is None:
+
             return None
 
         patterns = self.patterns(
-            hypothesis["id"],
+            hypothesis["id"]
         )
 
         evidence: list[dict] = []
 
         for pattern in patterns:
+
             evidence.extend(
                 self.evidence(
-                    pattern["id"],
+                    pattern["id"]
                 )
             )
 
-        pattern_names = [
-            pattern.get(
-                "rule_name",
-                pattern.get(
-                    "name",
-                    "Unknown Pattern",
-                ),
-            )
-            for pattern in patterns
-        ]
-
-        evidence_variables = sorted(
+        return self._sanitize(
             {
-                item.get(
-                    "variable",
-                    "Unknown",
-                )
-                for item in evidence
+                "discovery": discovery,
+                "hypothesis": hypothesis,
+                "patterns": patterns,
+                "evidence": evidence,
             }
-        )
-
-        return ReasoningPackage(
-            h3_id=h3_id,
-            discovery=discovery.get(
-                "discovery",
-                "",
-            ),
-            hypothesis=hypothesis.get(
-                "name",
-                hypothesis.get(
-                    "hypothesis",
-                    "",
-                ),
-            ),
-            confidence=float(
-                discovery.get(
-                    "confidence",
-                    0.0,
-                )
-            ),
-            standard=discovery.get(
-                "scientific_basis",
-                "Unknown",
-            ),
-            evidence=EvidenceSummary(
-                evidence_count=len(
-                    evidence,
-                ),
-                variables=evidence_variables,
-            ),
-            patterns=PatternSummary(
-                pattern_count=len(
-                    patterns,
-                ),
-                names=pattern_names,
-            ),
         )

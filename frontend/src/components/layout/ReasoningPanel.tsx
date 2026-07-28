@@ -1,23 +1,29 @@
+import { useExplanation } from "@/hooks/useExplanation";
 import { useReasoning } from "@/hooks/useReasoning";
 
-import ConfidenceMeter from "@/components/reasoning/ConfidenceMeter";
 import DiscoveryCard from "@/components/reasoning/DiscoveryCard";
-import EvidenceList from "@/components/reasoning/EvidenceList";
+import CollapsibleSection from "@/components/reasoning/CollapsibleSection";
+import EvidenceAndBasisCard from "@/components/reasoning/EvidenceAndBasisCard";
+import ExplanationSection from "@/components/reasoning/ExplanationSection";
+import ReferencesMetadata from "@/components/reasoning/ReferencesMetadata";
 import ReasoningChain from "@/components/reasoning/ReasoningChain";
-import ScientificBasisCard from "@/components/reasoning/ScientificBasisCard";
 
 type ReasoningPanelProps = {
   h3Id: string;
 };
 
-export default function ReasoningPanel({
-  h3Id,
-}: ReasoningPanelProps) {
+export default function ReasoningPanel({ h3Id }: ReasoningPanelProps) {
   const {
     data: reasoning,
     isLoading,
     isError,
   } = useReasoning(h3Id);
+
+  const {
+    data: explanation,
+    isLoading: explanationLoading,
+    isError: explanationError,
+  } = useExplanation(h3Id, reasoning?.available !== false);
 
   if (isLoading) {
     return (
@@ -39,11 +45,47 @@ export default function ReasoningPanel({
     );
   }
 
+  if (reasoning.available === false) {
+    return (
+      <aside className="flex h-full w-full flex-col bg-background">
+        <header className="border-b border-border px-6 py-5">
+          <p className="text-primary text-xs font-semibold uppercase tracking-[0.2em]">
+            Reasoning Workspace
+          </p>
+
+          <h2 className="mt-2 text-xl font-semibold">
+            No Discovery
+          </h2>
+        </header>
+
+        <div className="p-6">
+          <div className="rounded-xl border border-border bg-card p-6 shadow-sm">
+            <p className="text-sm text-muted-foreground">
+              {reasoning.message}
+            </p>
+          </div>
+        </div>
+      </aside>
+    );
+  }
+
   const discovery = reasoning.discovery;
+
   const hypothesis = reasoning.hypothesis;
 
-  const primaryPattern =
-    reasoning.patterns[0];
+  const patterns = reasoning.patterns ?? [];
+
+  const evidence = reasoning.evidence ?? [];
+
+  const primaryPattern = patterns[0];
+
+  const scientificStandard =
+    primaryPattern?.standard ??
+    "Unknown";
+
+  if (!discovery || !hypothesis) {
+    return null;
+  }
 
   return (
     <aside className="flex h-full w-full flex-col bg-background">
@@ -57,51 +99,80 @@ export default function ReasoningPanel({
         </h2>
 
         <p className="mt-2 text-sm leading-6 text-muted-foreground">
-          Inspect the scientific reasoning behind the selected
-          environmental discovery.
+          Inspect the deterministic reasoning and AI-generated
+          scientific explanation for the selected environmental
+          discovery.
         </p>
       </header>
 
-      <div className="flex-1 space-y-6 overflow-y-auto p-6">
+      <div className="flex-1 space-y-6 overflow-y-auto p-6 md:space-y-8">
         <DiscoveryCard
           discovery={discovery.name}
           confidence={discovery.confidence}
           summary={hypothesis.name}
-          scientificBasis={
-            primaryPattern?.standard ??
-            "Scientific Standard"
-          }
+          scientificBasis={scientificStandard}
         />
 
-        <ConfidenceMeter
-          confidence={
-            discovery.confidence
-          }
+        <EvidenceAndBasisCard
+          evidence={evidence}
+          standard={scientificStandard}
+          rule={primaryPattern?.name ?? "No rule"}
+          reason={`The hypothesis "${hypothesis.name}" is supported by ${evidence.length} evidence item(s) and ${patterns.length} detected pattern(s).`}
         />
 
-        <ReasoningChain />
+        <CollapsibleSection title="Reasoning Chain">
+          <ReasoningChain />
+        </CollapsibleSection>
 
-        <EvidenceList
-          evidence={reasoning.evidence.map(
-            (item) => ({
-              variable:
-                item.variable,
-              value: `${item.direction} (${item.strength})`,
-            }),
-          )}
-        />
+        {explanationLoading && (
+          <div className="rounded-xl border border-border bg-card p-6 shadow-sm">
+            <p className="text-sm text-muted-foreground">
+              Generating scientific explanation...
+            </p>
+          </div>
+        )}
 
-        <ScientificBasisCard
-          standard={
-            primaryPattern?.standard ??
-            "Scientific Standard"
-          }
-          rule={
-            primaryPattern?.name ??
-            "No rule"
-          }
-          reason={`The hypothesis "${hypothesis.name}" is supported by ${reasoning.evidence.length} evidence item(s) and ${reasoning.patterns.length} detected pattern(s).`}
-        />
+        {explanationError && (
+          <div className="rounded-xl border border-destructive bg-card p-6 shadow-sm">
+            <p className="text-sm text-destructive">
+              Unable to generate scientific explanation.
+            </p>
+          </div>
+        )}
+
+        {explanation && (
+          <>
+            <ExplanationSection
+              explanation={explanation.explanation}
+              provider={explanation.provider}
+              model={explanation.model}
+              latencyMs={explanation.latency_ms}
+              totalTokens={explanation.total_tokens}
+            />
+
+            <CollapsibleSection
+              title="References & Metadata"
+            >
+              <ReferencesMetadata
+                references={
+                  explanation.references
+                }
+                reasoningVersion={
+                  explanation.reasoning_version
+                }
+                generatedAt={
+                  explanation.generated_at
+                }
+                provider={
+                  explanation.provider
+                }
+                model={
+                  explanation.model
+                }
+              />
+            </CollapsibleSection>
+          </>
+        )}
       </div>
     </aside>
   );

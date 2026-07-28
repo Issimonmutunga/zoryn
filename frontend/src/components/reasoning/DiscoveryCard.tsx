@@ -1,3 +1,5 @@
+import { formatConfidence } from "@/utils/reasoningFormat";
+
 type DiscoveryCardProps = {
   discovery: string;
   confidence: number;
@@ -11,76 +13,47 @@ export default function DiscoveryCard({
   summary,
   scientificBasis,
 }: DiscoveryCardProps) {
-  const confidencePercent = Math.round(
-    confidence * 100,
-  );
-
   return (
-    <article className="overflow-hidden rounded-xl border border-border bg-card shadow-sm">
-      <header className="border-b border-border px-6 py-5">
-        <p className="text-primary text-xs font-semibold uppercase tracking-[0.2em]">
-          Discovery
-        </p>
+    <section className="rounded-2xl border border-[#D8CEB8] bg-[#FAF7EF] p-6 shadow-sm">
 
-        <h2 className="mt-2 text-2xl font-semibold">
-          {discovery}
-        </h2>
-      </header>
+      <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#7C6A45]">
+        Discovery
+      </p>
 
-      <div className="space-y-8 p-6">
-        <section>
-          <div className="mb-2 flex items-center justify-between">
-            <span className="text-sm font-medium">
-              Confidence
-            </span>
+      <div className="mt-4 flex flex-wrap items-start justify-between gap-4">
 
-            <span className="text-primary font-semibold">
-              {confidencePercent}%
-            </span>
-          </div>
+        <div className="min-w-0 flex-1">
 
-          <div className="h-2 overflow-hidden rounded-full bg-muted">
-            <div
-              className="h-full rounded-full bg-primary"
-              style={{
-                width: `${confidencePercent}%`,
-              }}
-            />
-          </div>
-        </section>
+          <h2 className="text-2xl font-semibold leading-tight text-[#2B2417]">
+            {discovery}
+          </h2>
 
-        <section>
-          <h3 className="text-primary text-xs font-semibold uppercase tracking-[0.2em]">
-            Summary
-          </h3>
-
-          <p className="mt-3 text-sm leading-7 text-muted-foreground">
+          <p className="mt-2 text-sm leading-6 text-[#5A5240]">
             {summary}
           </p>
-        </section>
 
-        <section>
-          <h3 className="text-primary text-xs font-semibold uppercase tracking-[0.2em]">
-            Scientific Basis
-          </h3>
+        </div>
 
-          <div className="mt-3 rounded-lg border border-border bg-muted/30 p-4">
-            <p className="text-sm font-medium">
-              {scientificBasis}
-            </p>
-          </div>
-        </section>
+        <span className="rounded-full border border-[#D8CEB8] bg-[#F3EEE2] px-3 py-1 text-sm font-medium text-[#2B2417]">
 
-        <section>
-          <h3 className="text-primary text-xs font-semibold uppercase tracking-[0.2em]">
-            Status
-          </h3>
+          {formatConfidence(confidence)}
 
-          <div className="mt-3 inline-flex rounded-full bg-primary/10 px-3 py-1 text-sm font-medium text-primary">
-            Active Discovery
-          </div>
-        </section>
+        </span>
+
       </div>
-    </article>
+
+      <div className="mt-6 flex flex-wrap gap-2">
+
+        <span className="rounded-full bg-[#5B6B45] px-3 py-1 text-xs font-medium text-white">
+          Active Discovery
+        </span>
+
+        <span className="rounded-full border border-[#D8CEB8] bg-[#F3EEE2] px-3 py-1 text-xs font-medium text-[#4A422F]">
+          {scientificBasis}
+        </span>
+
+      </div>
+
+    </section>
   );
 }

@@ -4,8 +4,17 @@ Zoryn Pilot REST API.
 
 from __future__ import annotations
 
+from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+
+#
+# Load local environment variables.
+#
+# In production, environment variables supplied by
+# the hosting platform take precedence.
+#
+load_dotenv()
 
 from .routes import router
 

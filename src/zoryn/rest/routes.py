@@ -4,7 +4,9 @@ REST API routes.
 
 from __future__ import annotations
 
-from fastapi import APIRouter, Depends, HTTPException
+from datetime import UTC
+from datetime import datetime
+from fastapi import APIRouter, Depends, HTTPException, Query
 
 from .dependencies import get_knowledge
 from .repository import KnowledgeRepository
@@ -20,12 +22,15 @@ from .schemas import (
 )
 from .spatial_repository import SpatialRepository
 
-from datetime import UTC
-from datetime import datetime
-
 from zoryn.explanation.context import ExplanationContext
 from zoryn.explanation.factory import create_provider
+from zoryn.explanation.models import (
+    EvidenceSummary,
+    PatternSummary,
+    ReasoningPackage,
+)
 from zoryn.explanation.service import ExplanationService
+
 
 router = APIRouter()
 
@@ -65,13 +70,46 @@ def health(
     response_model=list[DiscoveryResponse],
 )
 def discoveries(
+    timestamp: str | None = Query(default=None),
+    repository: KnowledgeRepository = Depends(get_repository),
+):
+    return repository.discoveries(timestamp=timestamp)
+
+@router.get(
+    "/discoveries/timeline",
+    tags=["Discoveries"],
+)
+def discovery_timeline(
     repository: KnowledgeRepository = Depends(
         get_repository,
     ),
 ):
+    """
+    Return the number of discoveries
+    available for each timestamp.
+    """
 
-    return repository.discoveries()
+    return repository.discovery_timeline()
 
+@router.get(
+    "/discoveries/highlights",
+    tags=["Discoveries"],
+)
+def discovery_highlights(
+    timestamp: str = Query(...),
+    repository: KnowledgeRepository = Depends(
+        get_repository,
+    ),
+):
+    """
+    Return the H3 cells that contain
+    environmental discoveries for the
+    selected timestamp.
+    """
+
+    return repository.discovery_highlights(
+        timestamp,
+    )
 
 @router.get(
     "/discoveries/{h3_id}",
@@ -80,13 +118,15 @@ def discoveries(
 )
 def discovery(
     h3_id: str,
+    timestamp: str | None = Query(default=None),
     repository: KnowledgeRepository = Depends(
         get_repository,
     ),
 ):
 
     discovery = repository.discovery(
-        h3_id
+        h3_id,
+        timestamp=timestamp,
     )
 
     if discovery is None:
@@ -98,31 +138,36 @@ def discovery(
 
     return discovery
 
+
 @router.get(
     "/reasoning/{h3_id}",
     tags=["Reasoning"],
-    response_model=ReasoningResponse,
 )
-
 def reasoning(
     h3_id: str,
+    timestamp: str | None = Query(default=None),
     repository: KnowledgeRepository = Depends(
         get_repository,
     ),
 ):
 
-    reasoning = repository.reasoning(
-        h3_id
+    graph = repository.reasoning(
+        h3_id,
+        timestamp=timestamp,
     )
 
-    if reasoning is None:
+    if graph is None:
 
-        raise HTTPException(
-            status_code=404,
-            detail="Reasoning graph not found.",
-        )
+        return {
+            "available": False,
+            "message": (
+                "No environmental discovery "
+                "was detected for the selected "
+                "location and month."
+            ),
+        }
 
-    return reasoning
+    return graph
 
 
 @router.get(
@@ -131,21 +176,62 @@ def reasoning(
 )
 def explanation(
     h3_id: str,
+    timestamp: str | None = Query(default=None),
     repository: KnowledgeRepository = Depends(
         get_repository,
     ),
 ):
 
-    reasoning = repository.reasoning(
+    graph = repository.reasoning(
         h3_id,
+        timestamp=timestamp,
     )
 
-    if reasoning is None:
+    if graph is None:
 
-        raise HTTPException(
-            status_code=404,
-            detail="Reasoning graph not found.",
-        )
+        return {
+            "available": False,
+            "message": (
+                "No environmental discovery "
+                "was detected for the selected "
+                "location and month."
+            ),
+        }
+
+    discovery = graph["discovery"]
+    hypothesis = graph["hypothesis"]
+    patterns = graph["patterns"]
+    evidence = graph["evidence"]
+
+    reasoning = ReasoningPackage(
+        h3_id=h3_id,
+        discovery=discovery["name"],
+        hypothesis=hypothesis["name"],
+        confidence=float(
+            discovery["confidence"],
+        ),
+        standard=(
+            patterns[0]["standard"]
+            if patterns
+            else "Unknown"
+        ),
+        evidence=EvidenceSummary(
+            evidence_count=len(evidence),
+            variables=sorted(
+                {
+                    item["variable"]
+                    for item in evidence
+                },
+            ),
+        ),
+        patterns=PatternSummary(
+            pattern_count=len(patterns),
+            names=[
+                pattern["name"]
+                for pattern in patterns
+            ],
+        ),
+    )
 
     context = ExplanationContext(
         reasoning=reasoning,
@@ -162,27 +248,46 @@ def explanation(
         provider=create_provider(),
     )
 
-    explanation = service.explain(
+    return service.explain(
         context,
     )
 
-    return explanation
 
 @router.get(
-    "/map/discoveries",
+    "/map/geometry",
     tags=["Map"],
 )
-def map_discoveries(
+def map_geometry(
     repository: KnowledgeRepository = Depends(
         get_repository,
     ),
 ):
 
     spatial = SpatialRepository(
-        repository
+        repository,
     )
 
-    return spatial.map_discoveries()
+    return spatial.geometry()
+
+
+@router.get(
+    "/map/spi",
+    tags=["Map"],
+)
+def map_spi(
+    timestamp: str = Query(...),
+    repository: KnowledgeRepository = Depends(
+        get_repository,
+    ),
+):
+
+    spatial = SpatialRepository(
+        repository,
+    )
+
+    return spatial.map_spi(
+        timestamp,
+    )
 
 
 @router.get(
@@ -252,11 +357,8 @@ def evidence(
 )
 def history(
     h3_id: str,
+    timestamp: str | None = Query(default=None),
 ):
-
-    #
-    # Future implementation.
-    #
 
     return {
         "h3_id": h3_id,

@@ -85,6 +85,18 @@ outputs/
 !data/processed/h3/
 !data/processed/h3/**
 
+!data/processed/discoveries/
+!data/processed/discoveries/**
+
+!data/processed/knowledge/
+!data/processed/knowledge/**
+
+!data/processed/observations/
+!data/processed/observations/**
+
+!data/processed/spi/
+!data/processed/spi/**
+
 # ============================================================
 # Models
 # ============================================================
@@ -112,10 +124,16 @@ outputs/
 # Ignore all parquet files by default
 *.parquet
 
-# Keep only reference parquet files
+# Keep runtime parquet datasets
 !data/raw/admin/*.parquet
 !data/raw/admin/*.geoparquet
+
 !data/processed/h3/*.parquet
+!data/processed/discoveries/*.parquet
+!data/processed/observations/*.parquet
+!data/processed/spi/*.parquet
+
+!data/processed/knowledge/**/*.parquet
 
 # ============================================================
 # Databases

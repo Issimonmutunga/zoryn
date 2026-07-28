@@ -100,22 +100,17 @@ class KnowledgeEngine:
         """
         Execute the complete reasoning pipeline.
 
-        Parameters
-        ----------
-        limit
-            Maximum number of H3 histories to process.
-            If None, all histories are processed.
-
         Yields
         ------
         Discovery
+            One discovery snapshot for every replay step.
         """
 
         for _, history in self._replay.histories(
             limit=limit,
         ):
 
-            evidence = []
+            evidence: list = []
 
             previous = None
 
@@ -125,46 +120,37 @@ class KnowledgeEngine:
                     previous = current
                     continue
 
-                relationship = (
-                    self._comparator.compare(
-                        previous,
-                        current,
-                    )
+                relationship = self._comparator.compare(
+                    previous,
+                    current,
                 )
 
                 evidence.extend(
                     self._evidence_builder.build(
-                        relationship
+                        relationship,
                     )
                 )
 
                 previous = current
 
-            if not evidence:
-                continue
-
-            evidence_store = EvidenceStore(
-                evidence
-            )
-
-            patterns = (
-                self._pattern_rule.discover(
-                    evidence_store
+                evidence_store = EvidenceStore(
+                    evidence,
                 )
-            )
 
-            if not patterns:
-                continue
-
-            hypotheses = (
-                self._hypothesis_engine.build(
-                    patterns
+                patterns = self._pattern_rule.discover(
+                    evidence_store,
                 )
-            )
 
-            if not hypotheses:
-                continue
+                if not patterns:
+                    continue
 
-            yield from self._discoverer.build(
-                hypotheses
-            )
+                hypotheses = self._hypothesis_engine.build(
+                    patterns,
+                )
+
+                if not hypotheses:
+                    continue
+
+                yield from self._discoverer.build(
+                    hypotheses,
+                )

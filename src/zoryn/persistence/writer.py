@@ -121,9 +121,18 @@ class KnowledgeWriter:
                 confidence=discovery.confidence,
                 start=discovery.start,
                 end=discovery.end,
+                timestamp=discovery.end,
+                spi3=discovery.metadata.get(
+                    "spi3",
+                ),
+                spi6=discovery.metadata.get(
+                    "spi6",
+                ),
+                spi12=discovery.metadata.get(
+                    "spi12",
+                ),
             )
         )
-
         return bundle
 
     @staticmethod
