@@ -7,6 +7,7 @@ for map visualisation.
 
 from __future__ import annotations
 
+import json
 from pathlib import Path
 
 import polars as pl
@@ -63,32 +64,18 @@ class SpatialRepository:
         ):
             return SpatialRepository._geometry_cache
 
-        features = []
+        root = Path(__file__).resolve().parents[3]
 
-        for row in SpatialRepository._h3.iter_rows(
-            named=True,
-        ):
+        path = (
+            root
+            / "data"
+            / "processed"
+            / "h3"
+            / "pilot_nairobi_h3_res10.geojson"
+        )
 
-            features.append(
-                {
-                    "type": "Feature",
-                    "geometry": mapping(
-                        from_wkb(
-                            row["geometry"]
-                        )
-                    ),
-                    "properties": {
-                        "h3_id": row["h3_id"],
-                        "latitude": row["latitude"],
-                        "longitude": row["longitude"],
-                    },
-                }
-            )
-
-        SpatialRepository._geometry_cache = {
-            "type": "FeatureCollection",
-            "features": features,
-        }
+        with open(path, "r", encoding="utf-8") as handle:
+            SpatialRepository._geometry_cache = json.load(handle)
 
         return SpatialRepository._geometry_cache
 
