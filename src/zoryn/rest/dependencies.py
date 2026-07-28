@@ -12,8 +12,17 @@ from pathlib import Path
 import polars as pl
 
 
-_KNOWLEDGE = Path(
-    "data/processed/knowledge"
+_PROJECT_ROOT = (
+    Path(__file__)
+    .resolve()
+    .parents[3]
+)
+
+_KNOWLEDGE = (
+    _PROJECT_ROOT
+    / "data"
+    / "processed"
+    / "knowledge"
 )
 
 
