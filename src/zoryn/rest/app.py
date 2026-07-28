@@ -4,6 +4,8 @@ Zoryn Pilot REST API.
 
 from __future__ import annotations
 
+import os
+
 from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -18,19 +20,28 @@ load_dotenv()
 
 from .routes import router
 
-
 app = FastAPI(
     title="Zoryn",
     description="Environmental reasoning engine.",
     version="0.1.0",
 )
 
+#
+# Allowed frontend origins.
+#
+frontend_origin = os.getenv("FRONTEND_URL")
+
+allowed_origins = [
+    "http://127.0.0.1:5173",
+    "http://localhost:5173",
+]
+
+if frontend_origin:
+    allowed_origins.append(frontend_origin)
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://127.0.0.1:5173",
-        "http://localhost:5173",
-    ],
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
