@@ -10,6 +10,8 @@ how to communicate with Groq.
 
 from __future__ import annotations
 
+import json
+
 from datetime import UTC
 from datetime import datetime
 from time import perf_counter
@@ -109,12 +111,47 @@ class GroqProvider(
 
         usage = response.usage
 
+        raw = choice.message.content or ""
+
+        try:
+
+            payload = json.loads(raw)
+
+            summary = payload.get(
+                "summary", ""
+            )
+
+            interpretation = payload.get(
+                "interpretation", ""
+            )
+
+            limitations = payload.get(
+                "limitations", []
+            )
+
+            if not isinstance(
+                limitations, list
+            ):
+
+                limitations = []
+
+        except (
+            json.JSONDecodeError,
+            AttributeError,
+        ):
+
+            summary = raw
+
+            interpretation = ""
+
+            limitations = []
+
         return ProviderResponse(
             provider=self.provider_name,
             model=self.model_name,
-            explanation=(
-                choice.message.content or ""
-            ),
+            summary=summary,
+            interpretation=interpretation,
+            limitations=limitations,
             latency_ms=latency,
             prompt_tokens=(
                 usage.prompt_tokens
