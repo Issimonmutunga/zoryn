@@ -66,11 +66,6 @@ export default function MapCanvas() {
       (state) => state.setSelectedH3,
     );
 
-  const isReasoningLoading =
-    useExplorerStore(
-      (state) => state.isReasoningLoading,
-    );
-
   const searchTarget =
     useExplorerStore(
       (state) => state.searchTarget,
@@ -398,7 +393,10 @@ export default function MapCanvas() {
             event,
           ) => {
 
-            if (isReasoningLoading) {
+            if (
+              useExplorerStore.getState()
+                .isReasoningLoading
+            ) {
               return;
             }
 
