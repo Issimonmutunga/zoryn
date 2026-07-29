@@ -113,7 +113,7 @@ export default function HomePage() {
       <section className="relative overflow-hidden border-b border-[#D8CEB8]">
         <Contours className="pointer-events-none absolute inset-x-0 top-0 h-105 w-full text-[#39492F] opacity-[0.35]" />
         <div className="relative mx-auto flex max-w-287.5 flex-col items-center px-8 pb-24 pt-24 text-center">
-          <Eyebrow>Environmental Intelligence Platform</Eyebrow>
+          <Eyebrow>Explainable Environmental Reasoning</Eyebrow>
 
           <h1
             style={{ fontFamily: FONT_DISPLAY }}
