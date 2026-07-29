@@ -7,19 +7,9 @@ Provides read access to the persisted knowledge dataset.
 from __future__ import annotations
 
 import math
-import os
-import psutil
 from pathlib import Path
 
 import polars as pl
-
-
-_PROCESS = psutil.Process(os.getpid())
-
-
-def log_memory(stage: str) -> None:
-    rss = _PROCESS.memory_info().rss / (1024 * 1024)
-    print(f"[MEM] {stage}: {rss:.1f} MB")
 
 
 class KnowledgeRepository:
@@ -48,8 +38,6 @@ class KnowledgeRepository:
         Load a partitioned knowledge table.
         """
 
-        log_memory(f"Before loading {table}")
-
         directory = self._root / table
 
         files = sorted(
@@ -64,16 +52,12 @@ class KnowledgeRepository:
                 f"No parquet files found for {table}."
             )
 
-        df = (
+        return (
             pl.scan_parquet(
                 [str(file) for file in files]
             )
             .collect()
         )
-
-        log_memory(f"After loading {table}")
-
-        return df
 
     @property
     def discoveries_table(

@@ -14,23 +14,12 @@ already produced by Zoryn.
 
 from __future__ import annotations
 
-import os
-import psutil
-
 from .citations import CitationRepository
 from .context import ExplanationContext
 from .models import Explanation
 from .prompt_builder import PromptBuilder
 from .provider import ExplanationProvider
 from .version import VERSION
-
-
-_PROCESS = psutil.Process(os.getpid())
-
-
-def log_memory(stage: str) -> None:
-    rss = _PROCESS.memory_info().rss / (1024 * 1024)
-    print(f"[MEM] {stage}: {rss:.1f} MB")
 
 
 class ExplanationService:
@@ -68,11 +57,7 @@ class ExplanationService:
         reasoning.
         """
 
-        log_memory("Start explain")
-
         reasoning = context.reasoning
-
-        log_memory("Reasoning ready")
 
         references = (
             self._citations.references_for(
@@ -81,8 +66,6 @@ class ExplanationService:
             )
         )
 
-        log_memory("References loaded")
-
         prompt = (
             self._prompt_builder.build(
                 context,
@@ -90,15 +73,11 @@ class ExplanationService:
             )
         )
 
-        log_memory("Prompt built")
-
         response = (
             self._provider.generate(
                 prompt,
             )
         )
-
-        log_memory("Provider returned")
 
         explanation = Explanation(
             provider=response.provider,
@@ -115,7 +94,5 @@ class ExplanationService:
             finish_reason=response.finish_reason,
             generated_at=response.generated_at,
         )
-
-        log_memory("Explanation created")
 
         return explanation
