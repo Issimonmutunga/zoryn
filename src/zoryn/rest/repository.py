@@ -7,9 +7,19 @@ Provides read access to the persisted knowledge dataset.
 from __future__ import annotations
 
 import math
+import os
+import psutil
 from pathlib import Path
 
 import polars as pl
+
+
+_PROCESS = psutil.Process(os.getpid())
+
+
+def log_memory(stage: str) -> None:
+    rss = _PROCESS.memory_info().rss / (1024 * 1024)
+    print(f"[MEM] {stage}: {rss:.1f} MB")
 
 
 class KnowledgeRepository:
@@ -29,7 +39,6 @@ class KnowledgeRepository:
         self._patterns: pl.DataFrame | None = None
         self._evidence: pl.DataFrame | None = None
         self._hypothesis_patterns: pl.DataFrame | None = None
-        self._pattern_evidence: pl.DataFrame | None = None
 
     def _load(
         self,
@@ -38,6 +47,8 @@ class KnowledgeRepository:
         """
         Load a partitioned knowledge table.
         """
+
+        log_memory(f"Before loading {table}")
 
         directory = self._root / table
 
@@ -53,12 +64,16 @@ class KnowledgeRepository:
                 f"No parquet files found for {table}."
             )
 
-        return (
+        df = (
             pl.scan_parquet(
                 [str(file) for file in files]
             )
             .collect()
         )
+
+        log_memory(f"After loading {table}")
+
+        return df
 
     @property
     def discoveries_table(
@@ -120,17 +135,55 @@ class KnowledgeRepository:
 
         return self._hypothesis_patterns
 
-    @property
-    def pattern_evidence_table(
+    def _pattern_evidence_files(
         self,
-    ) -> pl.DataFrame:
+    ) -> list[str]:
+        """
+        Return the parquet files backing the
+        pattern_evidence table, without loading
+        or caching them.
+        """
 
-        if self._pattern_evidence is None:
-            self._pattern_evidence = self._load(
-                "pattern_evidence"
+        directory = self._root / "pattern_evidence"
+
+        files = sorted(
+            directory.glob(
+                "*.parquet"
+            )
+        )
+
+        if not files:
+
+            raise FileNotFoundError(
+                "No parquet files found for pattern_evidence."
             )
 
-        return self._pattern_evidence
+        return [str(file) for file in files]
+
+    def _evidence_files(
+        self,
+    ) -> list[str]:
+        """
+        Return the parquet files backing the
+        evidence table, without loading or
+        caching them.
+        """
+
+        directory = self._root / "evidence"
+
+        files = sorted(
+            directory.glob(
+                "*.parquet"
+            )
+        )
+
+        if not files:
+
+            raise FileNotFoundError(
+                "No parquet files found for evidence."
+            )
+
+        return [str(file) for file in files]
 
     def _sanitize(
         self,
@@ -288,10 +341,14 @@ class KnowledgeRepository:
         pattern_id: str,
     ) -> list[dict]:
 
-        links = self.pattern_evidence_table.filter(
-            pl.col(
-                "pattern_id"
-            ) == pattern_id
+        links = (
+            pl.scan_parquet(
+                self._pattern_evidence_files()
+            )
+            .filter(
+                pl.col("pattern_id") == pattern_id
+            )
+            .collect()
         )
 
         if links.is_empty():
@@ -302,10 +359,18 @@ class KnowledgeRepository:
             "evidence_id"
         ].to_list()
 
-        return self._sanitize(
-            self.evidence_table.filter(
+        rows = (
+            pl.scan_parquet(
+                self._evidence_files()
+            )
+            .filter(
                 pl.col("id").is_in(ids)
-            ).to_dicts()
+            )
+            .collect()
+        )
+
+        return self._sanitize(
+            rows.to_dicts()
         )
 
     def reasoning(

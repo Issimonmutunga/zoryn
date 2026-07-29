@@ -1,9 +1,20 @@
-from pathlib import Path
 import polars as pl
+import psutil
+import os
 
-df = pl.read_parquet(
-    Path("data/processed/h3/pilot_nairobi_h3_res10.parquet")
+process = psutil.Process(os.getpid())
+
+def mem():
+    print(process.memory_info().rss / 1024 / 1024)
+
+mem()
+
+df = (
+    pl.scan_parquet("data/processed/knowledge/pattern_evidence/*.parquet")
+    .filter(pl.col("pattern_id") == "<A_REAL_PATTERN_ID>")
+    .collect()
 )
 
-print(df.columns)
-print(df.head())
+mem()
+
+print(df.height)
