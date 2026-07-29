@@ -128,3 +128,44 @@ class ReasoningResponse(
     evidence: list[
         EvidenceResponse
     ]
+
+
+# ------------------------------------------------------------------
+# Explanation responses
+# ------------------------------------------------------------------
+
+
+class ReferenceResponse(BaseModel):
+
+    source: str
+
+    section: str
+
+    title: str
+
+    excerpt: str
+
+
+class ExplanationResponse(BaseModel):
+
+    available: bool
+
+    summary: str
+
+    discovery: str
+
+    hypothesis: str
+
+    confidence: float
+
+    standard: str
+
+    evidence: EvidenceSummaryResponse
+
+    patterns: PatternSummaryResponse
+
+    interpretation: str
+
+    limitations: list[str]
+
+    references: list[ReferenceResponse]

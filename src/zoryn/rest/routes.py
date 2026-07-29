@@ -181,14 +181,13 @@ def explanation(
 
     if graph is None:
 
-        return {
-            "available": False,
-            "message": (
-                "No environmental discovery "
-                "was detected for the selected "
-                "location and month."
+        raise HTTPException(
+            status_code=404,
+            detail=(
+                "No environmental discovery was detected "
+                "for the selected location and month."
             ),
-        }
+        )
 
     discovery = graph["discovery"]
     hypothesis = graph["hypothesis"]
@@ -252,11 +251,11 @@ def explanation(
         "confidence": reasoning.confidence,
         "standard": reasoning.standard,
         "evidence": {
-            "count": reasoning.evidence.evidence_count,
+            "evidence_count": reasoning.evidence.evidence_count,
             "variables": reasoning.evidence.variables,
         },
         "patterns": {
-            "count": reasoning.patterns.pattern_count,
+            "pattern_count": reasoning.patterns.pattern_count,
             "names": reasoning.patterns.names,
         },
         "interpretation": explanation.interpretation,
