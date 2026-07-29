@@ -134,7 +134,14 @@ class ProviderResponse:
 
     model: str
 
-    explanation: str
+    summary: str
+
+    interpretation: str
+
+    limitations: list[str] = field(
+        default_factory=list,
+        kw_only=True,
+    )
 
     latency_ms: float
 
@@ -147,6 +154,7 @@ class ProviderResponse:
     finish_reason: str
 
     generated_at: str
+
 
 # ---------------------------------------------------------
 # Explanation
@@ -166,7 +174,13 @@ class Explanation:
 
     reasoning_version: str
 
-    explanation: str
+    summary: str
+
+    interpretation: str
+
+    limitations: list[str] = field(
+        default_factory=list,
+    )
 
     references: list[
         ScientificReference
