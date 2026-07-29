@@ -18,45 +18,14 @@ from .models import ScientificReference
 
 
 SYSTEM_PROMPT = """
-You are the explanation engine for Zoryn.
+You are the explanation engine for Zoryn, a
+deterministic environmental reasoning system.
 
-Zoryn is a deterministic environmental reasoning
-system.
-
-Your purpose is to explain deterministic
-scientific reasoning in clear language.
-
-You SHALL:
-
-- explain supplied discoveries;
-- explain supplied hypotheses;
-- explain supplied evidence;
-- explain supplied environmental patterns;
-- explain supplied scientific standards;
-- explain supplied confidence values;
-- cite supplied scientific references.
-
-You SHALL NEVER:
-
-- invent observations;
-- invent evidence;
-- invent environmental patterns;
-- invent discoveries;
-- invent hypotheses;
-- invent confidence values;
-- invent scientific references;
-- contradict supplied reasoning;
-- speculate beyond supplied information.
-
-If information has not been supplied, explicitly
-state that it is unavailable.
-
-The deterministic reasoning engine is the
-scientific authority.
-
-You are an explanation engine.
-
-You do not perform environmental reasoning.
+- Explain only the supplied deterministic reasoning.
+- Never invent facts, evidence, patterns, or references.
+- Use only the supplied scientific references.
+- If information is missing, explicitly say so.
+- Return JSON only.
 """.strip()
 
 
@@ -114,42 +83,6 @@ Detected Patterns
 {chr(10).join("- " + pattern for pattern in reasoning.patterns.names) if reasoning.patterns.names else "None supplied."}
 
 ==============================
-EXPLANATION CONTEXT
-==============================
-
-Reasoning Engine
-
-{context.reasoning_engine}
-
-Reasoning Version
-
-{context.reasoning_version}
-
-Knowledge Graph Version
-
-{context.knowledge_graph_version}
-
-Reasoning Hash
-
-{context.reasoning_hash}
-
-Language
-
-{context.language}
-
-Audience
-
-{context.audience}
-
-Explanation Style
-
-{context.explanation_style}
-
-Additional Variables
-
-{self._variables(context)}
-
-==============================
 AUTHORITATIVE REFERENCES
 ==============================
 
@@ -161,80 +94,34 @@ TASK
 
 Using ONLY the supplied deterministic reasoning
 and ONLY the supplied scientific references,
-produce a scientific explanation.
+return EXACTLY the following JSON object and
+nothing else:
 
-Do not invent any information.
+{{
+  "summary": "...",
+  "interpretation": "...",
+  "limitations": [
+    "...",
+    "...",
+    "..."
+  ]
+}}
 
-Do not reinterpret the supplied discovery.
+Rules:
 
-Do not alter confidence values.
-
-Do not create additional evidence.
-
-Do not create additional patterns.
-
-Do not cite references that were not supplied.
-
-If information is unavailable, explicitly state
-that it was not supplied.
-
-Return EXACTLY the following Markdown structure.
-
-# Executive Summary
-
-Provide a concise overview of the environmental
-condition.
-
-# Discovery
-
-Explain the supplied discovery.
-
-# Hypothesis
-
-Explain why the supplied hypothesis supports the
-discovery.
-
-# Supporting Evidence
-
-Explain how the supplied evidence supports the
-hypothesis.
-
-Include the supplied evidence count.
-
-# Detected Environmental Patterns
-
-Explain every supplied environmental pattern.
-
-Include the supplied pattern count.
-
-# Scientific Interpretation
-
-Interpret the supplied reasoning using ONLY the
-supplied scientific references.
-
-# Confidence Assessment
-
-Explain the meaning of the supplied confidence.
-
-Do not reinterpret the confidence.
-
-# Limitations
-
-Clearly explain:
-
-- what the deterministic reasoning supports;
-- what it does not support;
-- what cannot be concluded.
-
-Distinguish evidence from uncertainty.
-
-# Scientific References
-
-List ONLY the supplied scientific references.
-
-Do not create additional references.
-
-End after the Scientific References section.
+- summary: 2-3 concise sentences giving an overview
+  of the environmental condition.
+- interpretation: 2-3 concise sentences interpreting
+  the supplied reasoning using ONLY the supplied
+  references.
+- limitations: 2-3 short bullet items describing what
+  cannot be concluded from the supplied reasoning.
+- Do not restate information that will already be presented
+  separately by the application.
+- Do not invent information. If something is not
+  supplied, state that it was not supplied.
+- Do not cite references that were not supplied.
+- Return valid JSON only, with no surrounding text.
 """.strip()
 
         return PromptPackage(
@@ -253,28 +140,7 @@ End after the Scientific References section.
         if not references:
             return "No references supplied."
 
-        return "\n\n".join(
-            (
-                f"Source: {reference.source}\n"
-                f"Section: {reference.section}\n"
-                f"Title: {reference.title}\n"
-                f"Excerpt:\n"
-                f"{reference.excerpt}"
-            )
-            for reference in references
-        )
-
-    @staticmethod
-    def _variables(
-        context: ExplanationContext,
-    ) -> str:
-
-        if not context.variables:
-            return "None supplied."
-
         return "\n".join(
-            f"- {key}: {value}"
-            for key, value in sorted(
-                context.variables.items()
-            )
+            f"- {reference.source}: {reference.title}"
+            for reference in references
         )
