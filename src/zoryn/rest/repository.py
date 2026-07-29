@@ -314,10 +314,23 @@ class KnowledgeRepository:
             "pattern_id"
         ].to_list()
 
-        return self._sanitize(
-            self.patterns_table.filter(
+        rows = (
+            pl.scan_parquet(
+                [
+                    str(file)
+                    for file in sorted(
+                        (self._root / "patterns").glob("*.parquet")
+                    )
+                ]
+            )
+            .filter(
                 pl.col("id").is_in(ids)
-            ).to_dicts()
+            )
+            .collect()
+        )
+
+        return self._sanitize(
+            rows.to_dicts()
         )
 
     def evidence(
