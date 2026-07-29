@@ -8,15 +8,20 @@ import {
 } from "@/utils/reasoningFormat";
 
 type ExplanationSectionProps = {
-  explanation: string;
+  summary: string;
+  interpretation: string;
+  limitations: string[];
   provider: string;
   model: string;
   latencyMs: number;
   totalTokens: number;
 };
 
+
 export default function ExplanationSection({
-  explanation,
+  summary,
+  interpretation,
+  limitations,
   provider,
   model,
   latencyMs,
@@ -27,9 +32,9 @@ export default function ExplanationSection({
 
   const displayedExplanation =
     expanded
-      ? explanation
+      ? `${summary}\n\n${interpretation}\n\nLimitations:\n${limitations.join("\n")}`
       : firstLines(
-          explanation,
+          `${summary}\n\n${interpretation}`,
           3,
         );
 

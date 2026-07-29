@@ -143,7 +143,9 @@ export default function ReasoningPanel({ h3Id }: ReasoningPanelProps) {
         {explanation && (
           <>
             <ExplanationSection
-              explanation={explanation.explanation}
+              summary={explanation.summary}
+              interpretation={explanation.interpretation}
+              limitations={explanation.limitations}
               provider={explanation.provider}
               model={explanation.model}
               latencyMs={explanation.latency_ms}

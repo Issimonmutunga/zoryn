@@ -1,14 +1,23 @@
 import { apiClient } from "@/services/api/client";
 
 export interface Explanation {
+  available: boolean;
+
+  summary: string;
+
+  interpretation: string;
+
+  limitations: string[];
+
   provider: string;
   model: string;
   reasoning_version: string;
-  explanation: string;
+
   latency_ms: number;
   prompt_tokens: number;
   completion_tokens: number;
   total_tokens: number;
+
   finish_reason: string;
   generated_at: string;
 }
