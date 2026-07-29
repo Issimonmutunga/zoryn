@@ -15,6 +15,8 @@ export interface ExplorerState {
 
   isReasoningPanelOpen: boolean;
 
+  isReasoningLoading: boolean;
+
   setSelectedH3: (
     h3: string | null,
   ) => void;
@@ -35,6 +37,10 @@ export interface ExplorerState {
     open: boolean,
   ) => void;
 
+  setIsReasoningLoading: (
+    loading: boolean,
+  ) => void;
+
   resetSelection: () => void;
 }
 
@@ -50,6 +56,8 @@ export const useExplorerStore =
       searchTarget: null,
 
       isReasoningPanelOpen: true,
+
+      isReasoningLoading: false,
 
       setSelectedH3: (
         selectedH3,
@@ -84,6 +92,13 @@ export const useExplorerStore =
       ) =>
         set({
           isReasoningPanelOpen,
+        }),
+
+      setIsReasoningLoading: (
+        isReasoningLoading,
+      ) =>
+        set({
+          isReasoningLoading,
         }),
 
       resetSelection: () =>

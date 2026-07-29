@@ -1,5 +1,8 @@
+import { useEffect } from "react";
+
 import { useExplanation } from "@/hooks/useExplanation";
 import { useReasoning } from "@/hooks/useReasoning";
+import { useExplorerStore } from "@/stores/explorerStore";
 
 import DiscoveryCard from "@/components/reasoning/DiscoveryCard";
 import CollapsibleSection from "@/components/reasoning/CollapsibleSection";
@@ -24,6 +27,19 @@ export default function ReasoningPanel({ h3Id }: ReasoningPanelProps) {
     isLoading: explanationLoading,
     isError: explanationError,
   } = useExplanation(h3Id, reasoning?.available !== false);
+
+  const setIsReasoningLoading =
+    useExplorerStore(
+      (state) => state.setIsReasoningLoading,
+    );
+
+  const loading =
+    isLoading ||
+    explanationLoading;
+
+  useEffect(() => {
+    setIsReasoningLoading(loading);
+  }, [loading, setIsReasoningLoading]);
 
   if (isLoading) {
     return (
