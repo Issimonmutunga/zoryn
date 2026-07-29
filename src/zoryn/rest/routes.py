@@ -13,6 +13,7 @@ from .repository import KnowledgeRepository
 from .schemas import (
     DiscoveryResponse,
     EvidenceResponse,
+    ExplanationResponse,
     HealthResponse,
     HistoryResponse,
     HypothesisResponse,
@@ -163,6 +164,7 @@ def reasoning(
 @router.get(
     "/reasoning/{h3_id}/explanation",
     tags=["Reasoning"],
+    response_model=ExplanationResponse,
 )
 def explanation(
     h3_id: str,
@@ -238,9 +240,37 @@ def explanation(
         provider=create_provider(),
     )
 
-    return service.explain(
+    explanation = service.explain(
         context,
     )
+
+    return {
+        "available": True,
+        "summary": explanation.summary,
+        "discovery": reasoning.discovery,
+        "hypothesis": reasoning.hypothesis,
+        "confidence": reasoning.confidence,
+        "standard": reasoning.standard,
+        "evidence": {
+            "count": reasoning.evidence.evidence_count,
+            "variables": reasoning.evidence.variables,
+        },
+        "patterns": {
+            "count": reasoning.patterns.pattern_count,
+            "names": reasoning.patterns.names,
+        },
+        "interpretation": explanation.interpretation,
+        "limitations": explanation.limitations,
+        "references": [
+            {
+                "source": reference.source,
+                "section": reference.section,
+                "title": reference.title,
+                "excerpt": reference.excerpt,
+            }
+            for reference in explanation.references
+        ],
+    }
 
 
 @router.get(
