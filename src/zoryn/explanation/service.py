@@ -85,7 +85,7 @@ class ExplanationService:
             reasoning_version=VERSION,
             summary=response.summary,
             interpretation=response.interpretation,
-            limitations=response.limitations,
+            limitations=list(response.limitations),
             references=references,
             latency_ms=response.latency_ms,
             prompt_tokens=response.prompt_tokens,
