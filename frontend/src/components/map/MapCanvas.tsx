@@ -762,7 +762,6 @@ export default function MapCanvas() {
     };
   }, [
     selectedDate,
-    selectedH3,
     highlightedH3,
     setSelectedH3,
   ]);
