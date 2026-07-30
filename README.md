@@ -19,21 +19,21 @@
 
 ## Overview
 
-Zoryn is an environmental intelligence platform that analyzes historical environmental patterns, identifies similar signatures, and explains why a location is changing.
+Zoryn is an environmental intelligence platform that transforms authoritative environmental observations into explainable insights. By combining scientific reasoning, historical environmental signatures, and complete evidence provenance, Zoryn enables users to understand **what is happening, why it is happening, and how similar conditions have evolved in the past.**
 
-Instead of returning only predictions or scores, Zoryn provides transparent reasoning backed by evidence and complete provenance, enabling users to understand **what is happening, why it is happening, and what historical conditions it most closely resembles.**
+Rather than producing opaque predictions, every conclusion is transparent, traceable, and supported by evidence before artificial intelligence explains it.
 
 ---
 
 ## Features
 
-- 🌍 Interactive H3-based environmental map
+- 🌍 Interactive H3-based environmental explorer
 - 🧠 Signature-based environmental reasoning
-- 🔎 Explainable AI with evidence and provenance
-- 📚 Knowledge graph driven analysis
-- 📈 Multi-temporal environmental pattern comparison
-- ⚡ Fast API for environmental reasoning
-- 🛰️ Built on open Earth observation datasets
+- 🔎 Explainable AI with complete evidence provenance
+- 📚 Knowledge graph-driven environmental intelligence
+- 📈 Multi-temporal environmental pattern analysis
+- ⚡ High-performance FastAPI backend
+- 🛰️ Built entirely on open Earth observation datasets
 
 ---
 
@@ -116,7 +116,6 @@ tests/
 
 ```bash
 git clone https://github.com/Issimonmutunga/zoryn.git
-
 cd zoryn
 ```
 
@@ -144,21 +143,27 @@ npm run dev
 
 ## Demo
 
-**Live Demo**
+<p align="center">
+  <a href="https://youtu.be/W6VMQSRtY4w">
+    <img src="docs/images/01-hero-home.png" alt="Watch the Zoryn demo">
+  </a>
+</p>
 
-> https://youtu.be/W6VMQSRtY4w
+<p align="center">
+  <strong>▶ Click the image above to watch the demo</strong>
+</p>
 
 ---
 
 ## Screenshots
 
-### Interactive Environmental Map
+### Interactive Environmental Explorer
 
 <p align="center">
-  <img src="docs/images/08-map-layers.png" alt="Interactive Environmental Map" width="100%">
+  <img src="docs/images/08-map-layers.png" alt="Interactive Environmental Explorer" width="100%">
 </p>
 
-Explore environmental indicators through an interactive H3-based map with configurable data layers.
+Explore environmental observations through an interactive H3-based map with configurable environmental layers.
 
 ### Explainable AI Reasoning
 
@@ -166,23 +171,23 @@ Explore environmental indicators through an interactive H3-based map with config
   <img src="docs/images/05-ai-explanation.png" alt="Explainable AI Reasoning" width="100%">
 </p>
 
-Every environmental insight is accompanied by transparent reasoning, supporting evidence, and complete provenance.
+Every insight is accompanied by transparent reasoning, supporting evidence, confidence, provenance, and historical context.
 
 ---
 
 ## Vision
 
-Zoryn is evolving into a live environmental intelligence system capable of continuously ingesting environmental observations, relating them to historical events, and producing transparent, explainable early warning insights.
+Zoryn is evolving into a live environmental intelligence platform capable of continuously ingesting environmental observations, detecting emerging patterns, retrieving historical analogues, and producing transparent, explainable environmental intelligence.
 
-The long-term goal is to combine:
+Its long-term vision is to unite:
 
 - Environmental signatures
 - Historical analogues
-- Susceptibility analysis
-- Multi-criteria reasoning
+- Explainable reasoning
+- Multi-criteria environmental analysis
 - Knowledge graph intelligence
 
-to support better environmental decision-making.
+to support trusted environmental decision-making across governments, researchers, humanitarian organizations, and industry.
 
 ---
 
@@ -207,7 +212,7 @@ to support better environmental decision-making.
 
 ## Contributing
 
-Contributions, ideas and discussions are welcome.
+Contributions, ideas, and discussions are welcome.
 
 ---
 
