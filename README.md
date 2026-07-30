@@ -1,241 +1,204 @@
-# <p align="center"><img src="assets/logos/zoryn.png" alt="Zoryn" width="140"></p>
+<div align="center">
 
-<h1 align="center">Zoryn</h1>
+<img src="docs/assets/zoryn-logo.png" alt="Zoryn" width="140"/>
 
-<p align="center">
-<b>An Explainable Environmental Reasoning Engine for Early Warning</b>
-</p>
+# Zoryn
 
-<p align="center">
-Observe • Reason • Protect
-</p>
+### Environmental Intelligence Through Explainable Reasoning
+
+[![Python](https://img.shields.io/badge/Python-3.11+-3776AB?logo=python&logoColor=white)]()
+[![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)]()
+[![FastAPI](https://img.shields.io/badge/FastAPI-009688?logo=fastapi&logoColor=white)]()
+[![License](https://img.shields.io/badge/License-MIT-green)]()
+
+*Understanding environmental change through evidence, provenance and reasoning.*
+
+</div>
 
 ---
 
 ## Overview
 
-Zoryn is an environmental reasoning engine designed to infer emerging environmental hazards from scientific observations using transparent, explainable reasoning.
+Zoryn is an environmental intelligence platform that analyzes historical environmental patterns, identifies similar signatures, and explains why a location is changing.
 
-Unlike conventional machine learning systems that produce predictions with limited interpretability, Zoryn constructs an explicit chain of scientific reasoning from observations to environmental discoveries.
-
-Every conclusion can be traced back to the observations, evidence, environmental patterns and scientific standards that produced it.
+Instead of returning only predictions or scores, Zoryn provides transparent reasoning backed by evidence and complete provenance, enabling users to understand **what is happening, why it is happening, and what historical conditions it most closely resembles.**
 
 ---
 
-## Objectives
+## Features
 
-The pilot demonstrates that environmental hazards can be discovered through transparent reasoning rather than opaque prediction.
-
-For every environmental conclusion, Zoryn answers:
-
-* What is happening?
-* Why is it happening?
-* Which observations support the conclusion?
-* Which scientific reasoning rule produced it?
-* Which scientific standard supports the reasoning?
+- 🌍 Interactive H3-based environmental map
+- 🧠 Signature-based environmental reasoning
+- 🔎 Explainable AI with evidence and provenance
+- 📚 Knowledge graph driven analysis
+- 📈 Multi-temporal environmental pattern comparison
+- ⚡ Fast API for environmental reasoning
+- 🛰️ Built on open Earth observation datasets
 
 ---
 
-## Reasoning Pipeline
+## How It Works
 
 ```text
-Observation
-      │
-      ▼
-Environmental Signature
-      │
-      ▼
-Relationship
-      │
-      ▼
-Evidence
-      │
-      ▼
-Pattern
-      │
-      ▼
-Hypothesis
-      │
-      ▼
-Discovery
+Environmental Data
+        │
+        ▼
+Knowledge Graph
+        │
+        ▼
+Signature Retrieval
+        │
+        ▼
+Reasoning Engine
+        │
+        ▼
+Evidence & Provenance
+        │
+        ▼
+Explainable Insights
 ```
-
-The reasoning process is deterministic, explainable and scientifically grounded.
 
 ---
 
-## Current Scientific Rules
+## Technology Stack
 
-The pilot currently includes:
+### Backend
 
-* Persistent Dryness Rule (WMO SPI)
+- Python
+- FastAPI
+- DuckDB
+- Apache Parquet
+- Polars
+- NumPy
 
-The architecture is designed to accommodate additional reasoning rules including:
+### Frontend
 
-* Persistent Wetness
-* Heatwave
-* Vegetation Stress
-* Flood Precursors
-* Compound Hazards
+- React
+- TypeScript
+- Vite
+- Tailwind CSS
+- Zustand
+- TanStack Query
+- MapLibre GL JS
 
----
+### Geospatial
 
-## Scientific References
+- Google Earth Engine
+- H3
+- GeoPandas
+- Rasterio
+- Shapely
 
-Environmental reasoning is supported by internationally recognised standards.
+### AI & Reasoning
 
-Current references include:
-
-* World Meteorological Organization (WMO)
-* Intergovernmental Panel on Climate Change (IPCC)
-* Food and Agriculture Organization (FAO)
-* United States Geological Survey (USGS)
-* United Nations Office for Disaster Risk Reduction (UNDRR)
-
-Reference material is available under:
-
-```text
-references/
-```
+- TinyLlama
+- llama.cpp
+- Knowledge Graph
+- Explainable AI (XAI)
 
 ---
 
 ## Project Structure
 
-```text
-src/
-    zoryn/
-
-scripts/
-
-tests/
-
-references/
-
-docs/
-
+```
+backend/
+frontend/
 data/
+docs/
+tests/
 ```
 
 ---
 
-## Installation
+## Getting Started
 
-Clone the repository:
+### Clone
 
 ```bash
 git clone https://github.com/Issimonmutunga/zoryn.git
+
+cd zoryn
 ```
 
-Create a virtual environment:
+### Backend
 
 ```bash
-python -m venv .venv
+cd backend
+
+pip install -r requirements.txt
+
+uvicorn app.main:app --reload
 ```
 
-Activate it.
-
-Windows
+### Frontend
 
 ```bash
-.venv\Scripts\activate
-```
+cd frontend
 
-Linux/macOS
+npm install
 
-```bash
-source .venv/bin/activate
-```
-
-Install dependencies:
-
-```bash
-pip install -e .
+npm run dev
 ```
 
 ---
 
-## Running the Pipeline
+## Demo
 
-Execute the reasoning engine:
+Live Demo
 
-```bash
-python scripts/export_discoveries.py
-```
-
-Export the complete knowledge dataset:
-
-```bash
-python scripts/export_knowledge.py
-```
+> https://your-demo-url
 
 ---
 
-## Validation
+## Screenshots
 
-Zoryn includes independent validation scripts covering each stage of the reasoning pipeline.
-
-Examples:
-
-```bash
-python scripts/validate_patterns.py
-
-python scripts/validate_hypothesis.py
-
-python scripts/validate_discoverer.py
-
-python scripts/validate_knowledge.py
-```
+| Map | Explainable Reasoning |
+|------|-----------------------|
+| *(Insert Screenshot)* | *(Insert Screenshot)* |
 
 ---
 
-## REST API
+## Vision
 
-Start the API:
+Zoryn is evolving into a live environmental intelligence system capable of continuously ingesting environmental observations, relating them to historical events, and producing transparent, explainable early warning insights.
 
-```bash
-python -m zoryn.rest.main
-```
+The long-term goal is to combine:
 
-The API exposes persisted environmental discoveries for downstream applications and interactive mapping.
+- Environmental signatures
+- Historical analogues
+- Susceptibility analysis
+- Multi-criteria reasoning
+- Knowledge graph intelligence
 
----
-
-## Design Principles
-
-Zoryn is built around a small set of guiding principles:
-
-* Scientific correctness before software convenience.
-* Explainability over opacity.
-* Deterministic reasoning.
-* Modular scientific rules.
-* Streaming, constant-memory execution.
-* Reproducible environmental analysis.
+to support better environmental decision-making.
 
 ---
 
-## Current Status
+## Built With
 
-The pilot currently supports:
+- Python
+- FastAPI
+- React
+- TypeScript
+- Google Earth Engine
+- H3
+- DuckDB
+- Apache Parquet
+- Polars
+- GeoPandas
+- MapLibre GL JS
+- Zustand
+- TinyLlama
+- llama.cpp
 
-* Environmental reasoning pipeline
-* Explainable discoveries
-* Streaming execution
-* Knowledge persistence
-* REST API
-* Validation framework
+---
 
-Future work focuses on expanding the scientific rule library and building interactive decision-support applications.
+## Contributing
+
+Contributions, ideas and discussions are welcome.
 
 ---
 
 ## License
 
-This project is released under the MIT License.
-
----
-
-<p align="center">
-<b>Zoryn</b><br>
-An Explainable Environmental Reasoning Engine for Early Warning
-</p>
+MIT License.
