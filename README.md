@@ -146,7 +146,7 @@ npm run dev
 
 Live Demo
 
-> https://your-demo-url
+> https://-demo-url
 
 ---
 
