@@ -100,7 +100,7 @@ Explainable Insights
 
 ## Project Structure
 
-```
+```text
 backend/
 frontend/
 data/
@@ -144,17 +144,29 @@ npm run dev
 
 ## Demo
 
-Live Demo
+**Live Demo**
 
-> https://-demo-url
+> https://youtu.be/W6VMQSRtY4w
 
 ---
 
 ## Screenshots
 
-| Map | Explainable Reasoning |
-|------|-----------------------|
-| *(Insert Screenshot)* | *(Insert Screenshot)* |
+### Interactive Environmental Map
+
+<p align="center">
+  <img src="docs/images/08-map-layers.png" alt="Interactive Environmental Map" width="100%">
+</p>
+
+Explore environmental indicators through an interactive H3-based map with configurable data layers.
+
+### Explainable AI Reasoning
+
+<p align="center">
+  <img src="docs/images/05-ai-explanation.png" alt="Explainable AI Reasoning" width="100%">
+</p>
+
+Every environmental insight is accompanied by transparent reasoning, supporting evidence, and complete provenance.
 
 ---
 
