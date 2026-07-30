@@ -205,8 +205,7 @@ to support trusted environmental decision-making across governments, researchers
 - GeoPandas
 - MapLibre GL JS
 - Zustand
-- TinyLlama
-- llama.cpp
+- Grok
 
 ---
 
