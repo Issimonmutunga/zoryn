@@ -91,8 +91,7 @@ Explainable Insights
 
 ### AI & Reasoning
 
-- TinyLlama
-- llama.cpp
+- Grok
 - Knowledge Graph
 - Explainable AI (XAI)
 
