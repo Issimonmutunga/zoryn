@@ -2,10 +2,13 @@ import { useEffect, useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import { ArrowRight, Menu, X } from "lucide-react";
 
-import logo from "@/assets/logos/zoryn.png";
-
-const FONT_DISPLAY = "'Fraunces', serif";
-const FONT_MONO = "'IBM Plex Mono', ui-monospace, monospace";
+// UI pass: matched to the rest of the site — moved off the cream/olive
+// palette to the shared grayscale black/white scheme (#1A1A1A on
+// #FAFAFA, borders #E5E5E5), and dropped the dedicated wordmark serif in
+// favor of the same IBM Plex Sans used everywhere else, kept minimal:
+// uppercase, tight, no color tint. The "Pilot · Nairobi" badge is
+// removed and the tagline is replaced with "Evidence-Backed Discovery".
+const FONT_BODY = "'IBM Plex Sans', ui-sans-serif, system-ui, sans-serif";
 
 const navigation = [
   { label: "Home", path: "/" },
@@ -32,29 +35,21 @@ export default function NavigationBar() {
   }, [location.pathname]);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-[#D8CEB8] bg-[#F3EEE2]/90 backdrop-blur-md">
+    <header
+      style={{ fontFamily: FONT_BODY }}
+      className="sticky top-0 z-50 border-b border-[#E5E5E5] bg-[#FAFAFA]/90 backdrop-blur-md"
+    >
       <div className="mx-auto flex h-19 max-w-287.5 items-center justify-between px-6 lg:px-8">
         {/* ------------------------------------------------------------ Logo */}
         <NavLink to="/" className="flex shrink-0 items-center gap-3">
-          <img src={logo} alt="Zoryn" className="h-11 w-11 shrink-0" />
-
           <div className="flex flex-col justify-center">
-            <div className="flex items-center gap-2.5">
-              <p
-                style={{ fontFamily: FONT_DISPLAY }}
-                className="text-[1.85rem] font-black leading-none tracking-widest text-[#2B1B0E]"
-              >
-                ZORYN
-              </p>
-              <span
-                style={{ fontFamily: FONT_MONO }}
-                className="rounded-full border border-[#D8CEB8] bg-[#EDE6D3] px-2 py-0.5 text-[9px] font-medium uppercase tracking-[0.12em] text-[#7C6A45]"
-              >
-                Pilot &middot; Nairobi
-              </span>
-            </div>
-            <p className="mt-1 hidden text-xs font-normal leading-none text-[#8A7B5C] sm:block">
-              Environmental Intelligence Platform
+            <p
+              className="text-xl font-semibold uppercase leading-none tracking-tight text-[#1A1A1A]"
+            >
+              Zoryn
+            </p>
+            <p className="mt-1 hidden text-xs font-normal leading-none text-[#6B6B6B] sm:block">
+              Evidence-Backed Discovery
             </p>
           </div>
         </NavLink>
@@ -68,10 +63,10 @@ export default function NavigationBar() {
               className={({ isActive }) =>
                 [
                   "group relative rounded-md px-3.5 py-2 text-sm transition-colors duration-200",
-                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5B6B45]/40",
+                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1A1A1A]/20",
                   isActive
-                    ? "font-medium text-[#241F14]"
-                    : "text-[#5A5240] hover:bg-[#EDE6D3] hover:text-[#241F14]",
+                    ? "font-medium text-[#1A1A1A]"
+                    : "text-[#6B6B6B] hover:bg-[#F2F2F2] hover:text-[#1A1A1A]",
                 ].join(" ")
               }
             >
@@ -79,7 +74,7 @@ export default function NavigationBar() {
                 <>
                   {item.label}
                   <span
-                    className={`pointer-events-none absolute inset-x-3.5 -bottom-px h-px bg-[#7C6A45] transition-opacity duration-200 ${
+                    className={`pointer-events-none absolute inset-x-3.5 -bottom-px h-px bg-[#1A1A1A] transition-opacity duration-200 ${
                       isActive ? "opacity-100" : "opacity-0"
                     }`}
                   />
@@ -94,7 +89,7 @@ export default function NavigationBar() {
           {primaryNav && (
             <NavLink
               to={primaryNav.path}
-              className="group ml-4 flex items-center gap-2 rounded-lg bg-[#39492F] px-4 py-2.5 text-sm font-medium text-[#F3EEE2] transition-colors duration-200 hover:bg-[#2E3B25] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5B6B45]/40"
+              className="group ml-4 flex items-center gap-2 rounded-lg bg-[#1A1A1A] px-4 py-2.5 text-sm font-medium text-white transition-colors duration-200 hover:bg-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1A1A1A]/20"
             >
               Open Explorer
               <ArrowRight
@@ -109,7 +104,7 @@ export default function NavigationBar() {
         <button
           type="button"
           onClick={() => setMobileOpen((open) => !open)}
-          className="flex h-10 w-10 items-center justify-center rounded-md border border-[#D8CEB8] bg-[#FAF7EF] text-[#4A422F] transition-colors duration-200 hover:bg-[#EDE6D3] lg:hidden"
+          className="flex h-10 w-10 items-center justify-center rounded-md border border-[#E5E5E5] bg-white text-[#5A5A5A] transition-colors duration-200 hover:bg-[#F2F2F2] lg:hidden"
           aria-label={mobileOpen ? "Close menu" : "Open menu"}
           aria-expanded={mobileOpen}
         >
@@ -131,25 +126,21 @@ export default function NavigationBar() {
       )}
 
       <div
-        className={`fixed left-0 top-0 z-50 h-screen w-72 border-r border-[#D8CEB8] bg-[#FAF7EF] shadow-xl transition-transform duration-300 lg:hidden ${
+        className={`fixed left-0 top-0 z-50 h-screen w-72 border-r border-[#E5E5E5] bg-white shadow-xl transition-transform duration-300 lg:hidden ${
           mobileOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
-        <div className="flex items-center justify-between border-b border-[#D8CEB8] px-6 py-4">
+        <div className="flex items-center justify-between border-b border-[#E5E5E5] px-6 py-4">
           <NavLink to="/" className="flex shrink-0 items-center gap-2">
-            <img src={logo} alt="Zoryn" className="h-9 w-9 shrink-0" />
-            <p
-              style={{ fontFamily: FONT_DISPLAY }}
-              className="text-xl font-black leading-none tracking-widest text-[#2B1B0E]"
-            >
-              ZORYN
+            <p className="text-lg font-semibold uppercase leading-none tracking-tight text-[#1A1A1A]">
+              Zoryn
             </p>
           </NavLink>
 
           <button
             type="button"
             onClick={() => setMobileOpen(false)}
-            className="flex h-10 w-10 items-center justify-center rounded-md border border-[#D8CEB8] bg-[#FAF7EF] text-[#4A422F] transition-colors duration-200 hover:bg-[#EDE6D3]"
+            className="flex h-10 w-10 items-center justify-center rounded-md border border-[#E5E5E5] bg-white text-[#5A5A5A] transition-colors duration-200 hover:bg-[#F2F2F2]"
             aria-label="Close menu"
           >
             <X className="h-4.5 w-4.5" strokeWidth={1.75} />
@@ -165,8 +156,8 @@ export default function NavigationBar() {
                 [
                   "rounded-md px-3 py-2.5 text-sm transition-colors duration-200",
                   isActive
-                    ? "bg-[#EDE6D3] font-medium text-[#241F14]"
-                    : "text-[#5A5240] hover:bg-[#EDE6D3] hover:text-[#241F14]",
+                    ? "bg-[#F2F2F2] font-medium text-[#1A1A1A]"
+                    : "text-[#6B6B6B] hover:bg-[#F2F2F2] hover:text-[#1A1A1A]",
                 ].join(" ")
               }
             >
@@ -177,7 +168,7 @@ export default function NavigationBar() {
           {primaryNav && (
             <NavLink
               to={primaryNav.path}
-              className="mt-2 flex items-center justify-center gap-2 rounded-lg bg-[#39492F] px-4 py-2.5 text-sm font-medium text-[#F3EEE2] transition-colors duration-200 hover:bg-[#2E3B25]"
+              className="mt-2 flex items-center justify-center gap-2 rounded-lg bg-[#1A1A1A] px-4 py-2.5 text-sm font-medium text-white transition-colors duration-200 hover:bg-black"
             >
               Open Explorer
               <ArrowRight className="h-3.5 w-3.5" strokeWidth={1.75} />

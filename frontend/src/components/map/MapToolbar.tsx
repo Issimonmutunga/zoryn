@@ -227,11 +227,10 @@ export default function MapToolbar() {
           type="button"
           aria-expanded={timelineOpen}
           aria-haspopup="listbox"
-          onClick={() =>
-            setTimelineOpen(
-              !timelineOpen,
-            )
-          }
+          onClick={() => {
+            setTimelineOpen(!timelineOpen);
+            setLayersOpen(false);
+          }}
           className="flex h-10 shrink-0 items-center gap-2 rounded-xl border border-[#D8CEB8] bg-[#F3EEE2] px-2.5 text-sm text-[#4A422F] transition-colors hover:bg-[#EDE6D3] sm:px-3"
         >
           <CalendarDays className="h-4 w-4" />
@@ -253,11 +252,10 @@ export default function MapToolbar() {
 
         <button
           type="button"
-          onClick={() =>
-            setLayersOpen(
-              !layersOpen,
-            )
-          }
+          onClick={() => {
+            setLayersOpen(!layersOpen);
+            setTimelineOpen(false);
+          }}
           className="hidden h-10 shrink-0 items-center gap-2 rounded-xl border border-[#D8CEB8] bg-[#F3EEE2] px-3 text-sm text-[#4A422F] transition-colors hover:bg-[#EDE6D3] md:flex"
         >
           <Layers className="h-4 w-4" />
@@ -326,7 +324,7 @@ export default function MapToolbar() {
 
       {layersOpen && (
 
-        <div className="absolute right-0 top-14 w-72 animate-in fade-in zoom-in-95 slide-in-from-top-2 rounded-xl border border-[#D8CEB8] bg-[#FAF7EF] p-3 shadow-[0_8px_24px_rgba(43,36,23,0.12)] duration-200">
+        <div className="absolute right-0 top-14 w-72 animate-in fade-in zoom-in-95 slide-in-from-top-2 duration-200">
 
           <LayerSelector />
 

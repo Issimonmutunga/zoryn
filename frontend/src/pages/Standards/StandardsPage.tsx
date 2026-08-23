@@ -9,16 +9,26 @@ import {
   GitBranch,
   MessageSquareText,
   ListTree,
-  FlaskConical,
-  Eye,
-  RefreshCw,
-  BookOpenCheck,
-  SearchCheck,
 } from "lucide-react";
 
 // Fonts are loaded via <link> tags in index.html — see the note that
 // accompanies this file. No next/font here since this is a Vite app.
-const FONT_DISPLAY = "'Fraunces', serif";
+//
+// UI pass: matched to Home/Methodology's palette and type treatment —
+// dropped Fraunces for headings in favor of IBM Plex Sans (font-semibold,
+// uppercase, normal tracking rather than font-black/tight, for smoother
+// edges), moved off the cream/olive scheme to a soft grayscale black/white
+// palette (near-black #1A1A1A on off-white #FAFAFA, not pure black/white),
+// and added `antialiased` at the root. FONT_MONO retained for the data
+// labels (Purpose/Role, code badges, step numbers) as on the Methodology
+// page.
+//
+// Structure pass: removed the "Principles of Scientific Integrity" section
+// (its content overlapped Trust Architecture); condensed "AI Governance"
+// to its core "AI explains. Science decides." message, dropping the four
+// rule cards and closing paragraph that repeated ground already covered
+// by the standards cards and Trust Architecture; condensed "Looking Ahead"
+// to a single short paragraph.
 const FONT_BODY = "'IBM Plex Sans', ui-sans-serif, system-ui, sans-serif";
 const FONT_MONO = "'IBM Plex Mono', ui-monospace, monospace";
 
@@ -51,10 +61,7 @@ function Contours({ className = "" }: { className?: string }) {
 
 function Eyebrow({ children }: { children: ReactNode }) {
   return (
-    <p
-      style={{ fontFamily: FONT_MONO }}
-      className="text-[11px] font-medium uppercase tracking-[0.22em] text-[#7C6A45]"
-    >
+    <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#6B6B6B]">
       {children}
     </p>
   );
@@ -126,44 +133,21 @@ const trustFlow = [
   "Explanation",
 ];
 
-// -------------------------------------------------------------- Principles
-type Principle = { icon: ElementType; title: string; text: string };
-
-const principles: Principle[] = [
-  { icon: FlaskConical, title: "Evidence First", text: "No conclusion is formed without supporting environmental evidence." },
-  { icon: Eye, title: "Transparency", text: "Every reasoning step is visible, not hidden inside a model." },
-  { icon: RefreshCw, title: "Reproducibility", text: "The same observations always regenerate the same discovery." },
-  { icon: BookOpenCheck, title: "Standards Driven", text: "Reasoning applies recognised scientific standards, never invented rules." },
-  { icon: GitBranch, title: "Deterministic", text: "Discoveries are computed, not predicted or guessed at." },
-  { icon: SearchCheck, title: "Explainability", text: "Any conclusion can be inspected down to its evidence." },
-];
-
-// -------------------------------------------------------------- AI governance
-const governanceRules = [
-  "AI never creates discoveries.",
-  "AI never changes evidence.",
-  "AI never modifies confidence.",
-  "AI only communicates deterministic reasoning.",
-];
-
 export default function StandardsPage() {
   return (
     <main
       style={{ fontFamily: FONT_BODY }}
-      className="bg-[#F3EEE2] text-[#2B2417]"
+      className="antialiased bg-[#FAFAFA] text-[#3A3A3A]"
     >
       {/* ------------------------------------------------------------- Hero */}
-      <section className="relative overflow-hidden border-b border-[#D8CEB8]">
-        <Contours className="pointer-events-none absolute inset-x-0 top-0 h-105 w-full text-[#39492F] opacity-[0.35]" />
+      <section className="relative overflow-hidden border-b border-[#E5E5E5]">
+        <Contours className="pointer-events-none absolute inset-x-0 top-0 h-105 w-full text-[#1A1A1A] opacity-[0.06]" />
         <div className="relative mx-auto max-w-287.5 px-8 pb-24 pt-28">
           <Eyebrow>Scientific Standards</Eyebrow>
-          <h1
-            style={{ fontFamily: FONT_DISPLAY }}
-            className="mt-5 max-w-3xl text-5xl font-medium leading-[1.08] tracking-tight text-[#241F14] md:text-6xl"
-          >
+          <h1 className="mt-5 max-w-3xl text-5xl font-semibold uppercase leading-[1.08] tracking-normal text-[#1A1A1A] md:text-6xl">
             Built on science. Designed for trust.
           </h1>
-          <p className="mt-7 max-w-2xl text-lg leading-8 text-[#4A422F]">
+          <p className="mt-7 max-w-2xl text-lg leading-8 text-[#5A5A5A]">
             Every discovery Zoryn produces is grounded in internationally
             recognised scientific methods, transparent deterministic
             reasoning, and authoritative environmental observations — not in
@@ -177,23 +161,20 @@ export default function StandardsPage() {
         <div className="grid gap-10 md:grid-cols-[0.8fr_1.2fr] md:gap-16">
           <div>
             <Eyebrow>Why Standards Matter</Eyebrow>
-            <h2
-              style={{ fontFamily: FONT_DISPLAY }}
-              className="mt-4 text-3xl font-medium leading-tight text-[#241F14]"
-            >
+            <h2 className="mt-4 text-3xl font-semibold uppercase leading-tight tracking-normal text-[#1A1A1A]">
               Trust begins with
               <br />
               scientific standards.
             </h2>
           </div>
           <div className="max-w-xl">
-            <p className="text-base leading-8 text-[#4A422F]">
+            <p className="text-base leading-8 text-[#5A5A5A]">
               Environmental intelligence is only as valuable as the methods
               behind it. A discovery that can't be checked against a
               recognised standard is just an assertion — however confident it
               sounds.
             </p>
-            <p className="mt-5 text-base leading-8 text-[#4A422F]">
+            <p className="mt-5 text-base leading-8 text-[#5A5A5A]">
               Zoryn's reasoning is built to satisfy four requirements at
               once: it has to be repeatable, transparent about its
               evidence, grounded in internationally recognised science, and
@@ -204,7 +185,7 @@ export default function StandardsPage() {
                 <div
                   key={item}
                   style={{ fontFamily: FONT_MONO }}
-                  className="rounded-lg border border-[#D8CEB8] bg-[#FAF7EF] px-3 py-2.5 text-center text-[11px] uppercase tracking-[0.08em] text-[#5B6B45]"
+                  className="rounded-lg border border-[#E5E5E5] bg-white px-3 py-2.5 text-center text-[11px] uppercase tracking-[0.08em] text-[#6B6B6B]"
                 >
                   {item}
                 </div>
@@ -215,13 +196,10 @@ export default function StandardsPage() {
       </section>
 
       {/* --------------------------------------------------- Standards framework */}
-      <section className="border-y border-[#D8CEB8] bg-[#EDE6D3]">
+      <section className="border-y border-[#E5E5E5] bg-[#F2F2F2]">
         <div className="mx-auto max-w-287.5 px-8 py-24">
           <Eyebrow>Standards Framework</Eyebrow>
-          <h2
-            style={{ fontFamily: FONT_DISPLAY }}
-            className="mt-4 max-w-xl text-3xl font-medium leading-tight text-[#241F14]"
-          >
+          <h2 className="mt-4 max-w-xl text-3xl font-semibold uppercase leading-tight tracking-normal text-[#1A1A1A]">
             The standards Zoryn reasons with.
           </h2>
 
@@ -229,39 +207,36 @@ export default function StandardsPage() {
             {standards.map(({ icon: Icon, code, name, purpose, role }) => (
               <div
                 key={code}
-                className="group flex flex-col rounded-2xl border border-[#D8CEB8] bg-[#FAF7EF] p-6 shadow-[0_1px_2px_rgba(43,36,23,0.04)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(43,36,23,0.08)]"
+                className="group flex flex-col rounded-2xl border border-[#E5E5E5] bg-white p-6 shadow-[0_1px_2px_rgba(0,0,0,0.03)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)]"
               >
                 <div className="flex items-center justify-between">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full border border-[#D8CEB8] bg-[#F3EEE2]">
-                    <Icon className="h-4 w-4 text-[#5B6B45]" strokeWidth={1.75} />
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full border border-[#E5E5E5] bg-[#F2F2F2]">
+                    <Icon className="h-4 w-4 text-[#6B6B6B]" strokeWidth={1.75} />
                   </div>
                   <span
                     style={{ fontFamily: FONT_MONO }}
-                    className="rounded-md border border-[#D8CEB8] bg-[#F3EEE2] px-2 py-1 text-[10px] uppercase tracking-[0.14em] text-[#8A7B5C]"
+                    className="rounded-md border border-[#E5E5E5] bg-[#F2F2F2] px-2 py-1 text-[10px] uppercase tracking-[0.14em] text-[#6B6B6B]"
                   >
                     {code}
                   </span>
                 </div>
 
-                <h3
-                  style={{ fontFamily: FONT_DISPLAY }}
-                  className="mt-5 text-lg font-medium leading-snug text-[#241F14]"
-                >
+                <h3 className="mt-5 text-lg font-semibold leading-snug text-[#1A1A1A]">
                   {name}
                 </h3>
 
-                <div className="mt-4 space-y-3 border-t border-[#D8CEB8] pt-4">
+                <div className="mt-4 space-y-3 border-t border-[#E5E5E5] pt-4">
                   <div>
-                    <p style={{ fontFamily: FONT_MONO }} className="text-[10px] uppercase tracking-[0.16em] text-[#8A7B5C]">
+                    <p style={{ fontFamily: FONT_MONO }} className="text-[10px] uppercase tracking-[0.16em] text-[#6B6B6B]">
                       Purpose
                     </p>
-                    <p className="mt-1 text-sm leading-6 text-[#5A5240]">{purpose}</p>
+                    <p className="mt-1 text-sm leading-6 text-[#3A3A3A]">{purpose}</p>
                   </div>
                   <div>
-                    <p style={{ fontFamily: FONT_MONO }} className="text-[10px] uppercase tracking-[0.16em] text-[#8A7B5C]">
+                    <p style={{ fontFamily: FONT_MONO }} className="text-[10px] uppercase tracking-[0.16em] text-[#6B6B6B]">
                       Role in Zoryn
                     </p>
-                    <p className="mt-1 text-sm leading-6 text-[#5A5240]">{role}</p>
+                    <p className="mt-1 text-sm leading-6 text-[#3A3A3A]">{role}</p>
                   </div>
                 </div>
               </div>
@@ -273,20 +248,17 @@ export default function StandardsPage() {
       {/* --------------------------------------------------------- Trust architecture */}
       <section className="mx-auto max-w-287.5 px-8 py-24">
         <Eyebrow>Trust Architecture</Eyebrow>
-        <h2
-          style={{ fontFamily: FONT_DISPLAY }}
-          className="mt-4 max-w-xl text-3xl font-medium leading-tight text-[#241F14]"
-        >
+        <h2 className="mt-4 max-w-xl text-3xl font-semibold uppercase leading-tight tracking-normal text-[#1A1A1A]">
           Where standards enter the reasoning.
         </h2>
-        <p className="mt-5 max-w-2xl text-sm leading-7 text-[#5A5240]">
+        <p className="mt-5 max-w-2xl text-sm leading-7 text-[#6B6B6B]">
           Scientific standards are applied early — before a signature ever
           becomes evidence. Artificial intelligence enters only at the very
           last step, once a discovery already exists.
         </p>
 
         <div className="relative mt-14 flex flex-col items-center">
-          <div className="pointer-events-none absolute left-1/2 top-0 h-full w-px -translate-x-1/2 bg-[#D8CEB8]" />
+          <div className="pointer-events-none absolute left-1/2 top-0 h-full w-px -translate-x-1/2 bg-[#E5E5E5]" />
           {trustFlow.map((step, i) => {
             const isExplanation = step === "Explanation";
             return (
@@ -294,30 +266,28 @@ export default function StandardsPage() {
                 <div
                   className={`relative z-10 flex w-full items-center justify-center rounded-xl border px-6 py-4 text-center ${
                     isExplanation
-                      ? "border-[#5B6B45]/40 bg-[#241F14] text-[#F3EEE2] shadow-[0_8px_24px_rgba(43,36,23,0.15)]"
-                      : "border-[#D8CEB8] bg-[#FAF7EF] text-[#241F14]"
+                      ? "border-white/15 bg-[#1A1A1A] text-white shadow-[0_8px_24px_rgba(0,0,0,0.15)]"
+                      : "border-[#E5E5E5] bg-white text-[#1A1A1A]"
                   }`}
                 >
                   <span
                     style={{ fontFamily: FONT_MONO }}
-                    className={`mr-3 text-[11px] ${isExplanation ? "text-[#B7C79A]" : "text-[#8A7B5C]"}`}
+                    className={`mr-3 text-[11px] ${isExplanation ? "text-[#C9C9C9]" : "text-[#6B6B6B]"}`}
                   >
                     {String(i + 1).padStart(2, "0")}
                   </span>
-                  <span style={{ fontFamily: FONT_DISPLAY }} className="text-base font-medium">
-                    {step}
-                  </span>
+                  <span className="text-base font-semibold">{step}</span>
                   {isExplanation && (
                     <span
                       style={{ fontFamily: FONT_MONO }}
-                      className="ml-3 rounded-full border border-[#5B6B45]/40 px-2 py-0.5 text-[9px] uppercase tracking-[0.12em] text-[#B7C79A]"
+                      className="ml-3 rounded-full border border-white/20 px-2 py-0.5 text-[9px] uppercase tracking-[0.12em] text-[#C9C9C9]"
                     >
                       AI enters here
                     </span>
                   )}
                 </div>
                 {i < trustFlow.length - 1 && (
-                  <div className="relative z-10 py-2 text-[#8A7B5C]">↓</div>
+                  <div className="relative z-10 py-2 text-[#6B6B6B]">↓</div>
                 )}
               </div>
             );
@@ -325,62 +295,17 @@ export default function StandardsPage() {
         </div>
       </section>
 
-      {/* ----------------------------------------------- Principles of integrity */}
-      <section className="border-y border-[#D8CEB8] bg-[#EDE6D3]">
-        <div className="mx-auto max-w-287.5 px-8 py-24">
-          <Eyebrow>Principles of Scientific Integrity</Eyebrow>
-          <h2
-            style={{ fontFamily: FONT_DISPLAY }}
-            className="mt-4 max-w-lg text-3xl font-medium leading-tight text-[#241F14]"
-          >
-            What every discovery is held to.
-          </h2>
-
-          <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {principles.map(({ icon: Icon, title, text }) => (
-              <div key={title} className="rounded-2xl border border-[#D8CEB8] bg-[#FAF7EF] p-6">
-                <Icon className="h-5 w-5 text-[#5B6B45]" strokeWidth={1.75} />
-                <h3 style={{ fontFamily: FONT_DISPLAY }} className="mt-4 text-lg font-medium text-[#241F14]">
-                  {title}
-                </h3>
-                <p className="mt-2 text-sm leading-6 text-[#5A5240]">{text}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* --------------------------------------------------------------- AI governance */}
-      <section className="relative overflow-hidden border-y border-[#D8CEB8] bg-[#241F14] text-[#F3EEE2]">
-        <Contours className="pointer-events-none absolute inset-x-0 bottom-0 h-75 w-full rotate-180 text-[#F3EEE2] opacity-[0.06]" />
-        <div className="relative mx-auto max-w-287.5 px-8 py-24">
+      <section className="relative overflow-hidden border-y border-[#E5E5E5] bg-[#1A1A1A] text-white">
+        <Contours className="pointer-events-none absolute inset-x-0 bottom-0 h-75 w-full rotate-180 text-white opacity-[0.06]" />
+        <div className="relative mx-auto max-w-287.5 px-8 py-24 text-center">
           <Eyebrow>AI Governance</Eyebrow>
-          <h2
-            style={{ fontFamily: FONT_DISPLAY }}
-            className="mt-4 max-w-xl text-3xl font-medium leading-tight text-[#F3EEE2] md:text-4xl"
-          >
+          <ShieldCheck className="mx-auto mt-5 h-6 w-6 text-[#C9C9C9]" strokeWidth={1.5} />
+          <h2 className="mx-auto mt-5 max-w-xl text-3xl font-semibold uppercase leading-tight tracking-normal text-white md:text-4xl">
             AI explains.
             <br />
             Science decides.
           </h2>
-
-          <div className="mt-10 grid gap-4 sm:grid-cols-2">
-            {governanceRules.map((rule) => (
-              <div
-                key={rule}
-                className="flex items-start gap-3 rounded-xl border border-white/10 bg-white/3 p-5"
-              >
-                <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-[#B7C79A]" strokeWidth={1.75} />
-                <p className="text-sm leading-6 text-[#D8CEB8]">{rule}</p>
-              </div>
-            ))}
-          </div>
-
-          <p className="mt-8 max-w-2xl text-sm leading-7 text-[#B9AE8C]">
-            Language models are used exclusively to translate a completed,
-            deterministic discovery into plain language — they hold no
-            authority over what that discovery is.
-          </p>
         </div>
       </section>
 
@@ -389,44 +314,32 @@ export default function StandardsPage() {
         <div className="grid gap-10 md:grid-cols-[0.8fr_1.2fr] md:gap-16">
           <div>
             <Eyebrow>Looking Ahead</Eyebrow>
-            <h2
-              style={{ fontFamily: FONT_DISPLAY }}
-              className="mt-4 text-3xl font-medium leading-tight text-[#241F14]"
-            >
+            <h2 className="mt-4 text-3xl font-semibold uppercase leading-tight tracking-normal text-[#1A1A1A]">
               Committed to scientific evolution.
             </h2>
           </div>
           <div className="max-w-xl">
-            <p className="text-base leading-8 text-[#4A422F]">
+            <p className="text-base leading-8 text-[#5A5A5A]">
               Zoryn will continue adopting internationally recognised
-              scientific standards as the platform matures. Meteorological
-              drought is the current focus — the same evidence-first
-              approach is built to extend to other environmental domains over
-              time.
-            </p>
-            <p className="mt-5 text-base leading-8 text-[#4A422F]">
-              No specific future implementation is promised here. What is
-              guaranteed is the principle behind it: any new domain Zoryn
-              takes on will be held to the same standards-driven, transparent
-              reasoning as the one it applies today.
+              scientific standards as it matures beyond meteorological
+              drought — any new environmental domain it takes on will be
+              held to the same evidence-first, standards-driven reasoning it
+              applies today.
             </p>
           </div>
         </div>
       </section>
 
       {/* ---------------------------------------------------------- Closing */}
-      <section className="border-t border-[#D8CEB8] bg-[#EDE6D3]">
+      <section className="border-t border-[#E5E5E5] bg-[#F2F2F2]">
         <div className="mx-auto max-w-287.5 px-8 py-24">
-          <div className="rounded-2xl border border-[#D8CEB8] bg-[#FAF7EF] p-10 text-center shadow-[0_1px_2px_rgba(43,36,23,0.04)] md:p-14">
-            <ShieldCheck className="mx-auto h-6 w-6 text-[#5B6B45]" strokeWidth={1.5} />
-            <h2
-              style={{ fontFamily: FONT_DISPLAY }}
-              className="mx-auto mt-5 max-w-2xl text-3xl font-medium leading-tight text-[#241F14] md:text-4xl"
-            >
+          <div className="rounded-2xl border border-[#E5E5E5] bg-white p-10 text-center shadow-[0_1px_2px_rgba(0,0,0,0.03)] md:p-14">
+            <ShieldCheck className="mx-auto h-6 w-6 text-[#6B6B6B]" strokeWidth={1.5} />
+            <h2 className="mx-auto mt-5 max-w-2xl text-3xl font-semibold uppercase leading-tight tracking-normal text-[#1A1A1A] md:text-4xl">
               Transparent environmental intelligence begins with transparent
               science.
             </h2>
-            <p className="mx-auto mt-6 max-w-2xl leading-8 text-[#5A5240]">
+            <p className="mx-auto mt-6 max-w-2xl leading-8 text-[#5A5A5A]">
               Every environmental discovery should remain understandable,
               reproducible and scientifically defensible — from the first
               observation to the final decision.
@@ -435,7 +348,7 @@ export default function StandardsPage() {
             <div className="mt-9 flex flex-wrap items-center justify-center gap-4">
               <Link
                 to="/methodology"
-                className="group flex items-center gap-2 rounded-lg bg-[#39492F] px-6 py-3 text-sm font-semibold text-[#F3EEE2] transition hover:bg-[#2E3B25]"
+                className="group flex items-center gap-2 rounded-lg bg-[#1A1A1A] px-6 py-3 text-sm font-semibold text-white transition hover:bg-black"
               >
                 Explore Methodology
                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" strokeWidth={1.75} />
@@ -443,7 +356,7 @@ export default function StandardsPage() {
 
               <Link
                 to="/explorer"
-                className="rounded-lg border border-[#D8CEB8] bg-[#F3EEE2] px-6 py-3 text-sm font-semibold text-[#3A3221] transition hover:bg-[#EDE6D3]"
+                className="rounded-lg border border-[#E5E5E5] bg-[#FAFAFA] px-6 py-3 text-sm font-semibold text-[#3A3A3A] transition hover:bg-[#F2F2F2]"
               >
                 Open Explorer
               </Link>
