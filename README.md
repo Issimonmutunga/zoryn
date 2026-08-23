@@ -125,7 +125,7 @@ cd backend
 
 pip install -r requirements.txt
 
-uvicorn zoryn.rest.app:app --reload
+uvicorn app.main:app --reload
 ```
 
 ### Frontend
@@ -205,7 +205,6 @@ to support trusted environmental decision-making across governments, researchers
 - MapLibre GL JS
 - Zustand
 - Grok
-
 ---
 
 ## Contributing
