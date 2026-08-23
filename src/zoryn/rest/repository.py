@@ -1,7 +1,10 @@
 """
 Knowledge repository.
 
-Provides read access to the persisted knowledge dataset.
+Local development repository.
+
+This branch intentionally loads the complete persisted
+knowledge dataset into memory for faster local access.
 """
 
 from __future__ import annotations
@@ -15,6 +18,10 @@ import polars as pl
 class KnowledgeRepository:
     """
     Read persisted knowledge.
+
+    Local branch implementation:
+    all knowledge tables are loaded into RAM when the
+    repository is initialized.
     """
 
     def __init__(
@@ -24,18 +31,36 @@ class KnowledgeRepository:
 
         self._root = root
 
-        self._discoveries: pl.DataFrame | None = None
-        self._hypotheses: pl.DataFrame | None = None
-        self._patterns: pl.DataFrame | None = None
-        self._evidence: pl.DataFrame | None = None
-        self._hypothesis_patterns: pl.DataFrame | None = None
+        self._discoveries = self._load(
+            "discoveries"
+        )
+
+        self._hypotheses = self._load(
+            "hypotheses"
+        )
+
+        self._patterns = self._load(
+            "patterns"
+        )
+
+        self._evidence = self._load(
+            "evidence"
+        )
+
+        self._hypothesis_patterns = self._load(
+            "hypothesis_patterns"
+        )
+
+        self._pattern_evidence = self._load(
+            "pattern_evidence"
+        )
 
     def _load(
         self,
         table: str,
     ) -> pl.DataFrame:
         """
-        Load a partitioned knowledge table.
+        Load an entire knowledge table into memory.
         """
 
         directory = self._root / table
@@ -52,122 +77,9 @@ class KnowledgeRepository:
                 f"No parquet files found for {table}."
             )
 
-        return (
-            pl.scan_parquet(
-                [str(file) for file in files]
-            )
-            .collect()
+        return pl.read_parquet(
+            files
         )
-
-    @property
-    def discoveries_table(
-        self,
-    ) -> pl.DataFrame:
-
-        if self._discoveries is None:
-            self._discoveries = self._load(
-                "discoveries"
-            )
-
-        return self._discoveries
-
-    @property
-    def hypotheses_table(
-        self,
-    ) -> pl.DataFrame:
-
-        if self._hypotheses is None:
-            self._hypotheses = self._load(
-                "hypotheses"
-            )
-
-        return self._hypotheses
-
-    @property
-    def patterns_table(
-        self,
-    ) -> pl.DataFrame:
-
-        if self._patterns is None:
-            self._patterns = self._load(
-                "patterns"
-            )
-
-        return self._patterns
-
-    @property
-    def evidence_table(
-        self,
-    ) -> pl.DataFrame:
-
-        if self._evidence is None:
-            self._evidence = self._load(
-                "evidence"
-            )
-
-        return self._evidence
-
-    @property
-    def hypothesis_patterns_table(
-        self,
-    ) -> pl.DataFrame:
-
-        if self._hypothesis_patterns is None:
-            self._hypothesis_patterns = self._load(
-                "hypothesis_patterns"
-            )
-
-        return self._hypothesis_patterns
-
-    def _pattern_evidence_files(
-        self,
-    ) -> list[str]:
-        """
-        Return the parquet files backing the
-        pattern_evidence table, without loading
-        or caching them.
-        """
-
-        directory = self._root / "pattern_evidence"
-
-        files = sorted(
-            directory.glob(
-                "*.parquet"
-            )
-        )
-
-        if not files:
-
-            raise FileNotFoundError(
-                "No parquet files found for pattern_evidence."
-            )
-
-        return [str(file) for file in files]
-
-    def _evidence_files(
-        self,
-    ) -> list[str]:
-        """
-        Return the parquet files backing the
-        evidence table, without loading or
-        caching them.
-        """
-
-        directory = self._root / "evidence"
-
-        files = sorted(
-            directory.glob(
-                "*.parquet"
-            )
-        )
-
-        if not files:
-
-            raise FileNotFoundError(
-                "No parquet files found for evidence."
-            )
-
-        return [str(file) for file in files]
 
     def _sanitize(
         self,
@@ -203,7 +115,7 @@ class KnowledgeRepository:
         timestamp: str | None = None,
     ) -> list[dict]:
 
-        rows = self.discoveries_table
+        rows = self._discoveries
 
         if timestamp is not None:
             rows = rows.filter(
@@ -220,18 +132,16 @@ class KnowledgeRepository:
         timestamp: str | None = None,
     ) -> dict | None:
 
-        rows = self.discoveries_table.filter(
+        rows = self._discoveries.filter(
             pl.col("h3_id") == h3_id
         )
 
         if timestamp is not None:
-
             rows = rows.filter(
                 pl.col("timestamp") == timestamp
             )
 
         if rows.is_empty():
-
             return None
 
         return self._sanitize(
@@ -241,13 +151,9 @@ class KnowledgeRepository:
     def discovery_timeline(
         self,
     ) -> list[dict]:
-        """
-        Return the number of discoveries
-        available for each timestamp.
-        """
 
         return (
-            self.discoveries_table
+            self._discoveries
             .group_by("timestamp")
             .len()
             .rename(
@@ -261,12 +167,8 @@ class KnowledgeRepository:
         self,
         timestamp: str,
     ) -> list[dict]:
-        """
-        Return H3 cells that contain discoveries for
-        the selected timestamp.
-        """
 
-        rows = self.discoveries_table.filter(
+        rows = self._discoveries.filter(
             pl.col("timestamp") == timestamp,
         )
 
@@ -283,12 +185,11 @@ class KnowledgeRepository:
         hypothesis_id: str,
     ) -> dict | None:
 
-        rows = self.hypotheses_table.filter(
+        rows = self._hypotheses.filter(
             pl.col("id") == hypothesis_id
         )
 
         if rows.is_empty():
-
             return None
 
         return self._sanitize(
@@ -300,33 +201,19 @@ class KnowledgeRepository:
         hypothesis_id: str,
     ) -> list[dict]:
 
-        links = self.hypothesis_patterns_table.filter(
-            pl.col(
-                "hypothesis_id"
-            ) == hypothesis_id
+        links = self._hypothesis_patterns.filter(
+            pl.col("hypothesis_id") == hypothesis_id
         )
 
         if links.is_empty():
-
             return []
 
         ids = links[
             "pattern_id"
         ].to_list()
 
-        rows = (
-            pl.scan_parquet(
-                [
-                    str(file)
-                    for file in sorted(
-                        (self._root / "patterns").glob("*.parquet")
-                    )
-                ]
-            )
-            .filter(
-                pl.col("id").is_in(ids)
-            )
-            .collect()
+        rows = self._patterns.filter(
+            pl.col("id").is_in(ids)
         )
 
         return self._sanitize(
@@ -338,32 +225,19 @@ class KnowledgeRepository:
         pattern_id: str,
     ) -> list[dict]:
 
-        links = (
-            pl.scan_parquet(
-                self._pattern_evidence_files()
-            )
-            .filter(
-                pl.col("pattern_id") == pattern_id
-            )
-            .collect()
+        links = self._pattern_evidence.filter(
+            pl.col("pattern_id") == pattern_id
         )
 
         if links.is_empty():
-
             return []
 
         ids = links[
             "evidence_id"
         ].to_list()
 
-        rows = (
-            pl.scan_parquet(
-                self._evidence_files()
-            )
-            .filter(
-                pl.col("id").is_in(ids)
-            )
-            .collect()
+        rows = self._evidence.filter(
+            pl.col("id").is_in(ids)
         )
 
         return self._sanitize(
@@ -386,17 +260,13 @@ class KnowledgeRepository:
         )
 
         if discovery is None:
-
             return None
 
         hypothesis = self.hypothesis(
-            discovery[
-                "hypothesis_id"
-            ]
+            discovery["hypothesis_id"]
         )
 
         if hypothesis is None:
-
             return None
 
         patterns = self.patterns(
@@ -406,7 +276,6 @@ class KnowledgeRepository:
         evidence: list[dict] = []
 
         for pattern in patterns:
-
             evidence.extend(
                 self.evidence(
                     pattern["id"]

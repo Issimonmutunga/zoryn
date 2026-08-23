@@ -31,9 +31,9 @@ export default function ExplorerPage() {
   }, [setAvailableDates]);
 
   return (
-    <main className="flex h-[calc(100vh-64px)] flex-col overflow-hidden bg-[#F3EEE2] lg:flex-row">
+    <main className="antialiased flex h-[calc(100vh-64px)] flex-col overflow-hidden bg-[#FAFAFA] lg:flex-row">
       {/* --------------------------------------------------------- Map */}
-      <section className="relative flex-1 overflow-hidden border-[#D8CEB8] lg:border-r">
+      <section className="relative flex-1 overflow-hidden border-[#E5E5E5] lg:border-r">
         <MapCanvas />
         <MapToolbar />
         <MapLegend />
@@ -42,7 +42,7 @@ export default function ExplorerPage() {
         <button
           type="button"
           onClick={() => setMobileDrawerOpen(true)}
-          className={`absolute inset-x-0 bottom-0 z-10 flex items-center justify-center gap-2 border-t border-[#D8CEB8] bg-[#FAF7EF]/90 py-2.5 text-xs font-medium text-[#4A422F] backdrop-blur-sm transition-opacity duration-200 lg:hidden ${
+          className={`absolute inset-x-0 bottom-0 z-10 flex items-center justify-center gap-2 border-t border-[#E5E5E5] bg-white/90 py-2.5 text-xs font-medium text-[#5A5A5A] backdrop-blur-sm transition-opacity duration-200 lg:hidden ${
             mobileDrawerOpen ? "pointer-events-none opacity-0" : "opacity-100"
           }`}
           aria-label="Open reasoning panel"
@@ -63,9 +63,9 @@ export default function ExplorerPage() {
       <section
         className={`
           flex flex-col
-          border-t border-[#D8CEB8]
-          bg-[#FAF7EF]
-          shadow-[0_-1px_2px_rgba(43,36,23,0.04)]
+          border-t border-[#E5E5E5]
+          bg-white
+          shadow-[0_-1px_2px_rgba(0,0,0,0.03)]
           transition-[height] duration-300 ease-out
 
           ${mobileDrawerOpen ? "h-[70vh]" : "h-[15vh]"}
@@ -91,7 +91,7 @@ export default function ExplorerPage() {
           className="flex items-center justify-center py-2 lg:hidden"
           aria-label={mobileDrawerOpen ? "Collapse reasoning panel" : "Expand reasoning panel"}
         >
-          <span className="h-1 w-10 rounded-full bg-[#D8CEB8]" />
+          <span className="h-1 w-10 rounded-full bg-[#E5E5E5]" />
         </button>
 
         <div className="min-h-0 flex-1 overflow-y-auto">

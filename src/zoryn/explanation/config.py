@@ -6,7 +6,7 @@ from __future__ import annotations
 
 import os
 from dataclasses import dataclass
-
+from dotenv import load_dotenv
 
 @dataclass(slots=True, frozen=True)
 class GroqConfiguration:
@@ -30,7 +30,7 @@ def load_groq_configuration() -> GroqConfiguration:
     Load Groq configuration from environment
     variables.
     """
-
+    load_dotenv()
     return GroqConfiguration(
         api_key=os.getenv(
             "GROQ_API_KEY",

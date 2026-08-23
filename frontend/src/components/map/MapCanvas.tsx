@@ -499,23 +499,10 @@ export default function MapCanvas() {
 
   <div
     style="
-      font-size:8px;
-      letter-spacing:.14em;
-      text-transform:uppercase;
-      color:#7C6A45;
-      font-weight:600;
-      margin-bottom:5px;
-    "
-  >
-    Location
-  </div>
-
-  <div
-    style="
       font-size:13px;
       font-weight:600;
       line-height:1.15;
-      margin-bottom:3px;
+      margin-bottom:5px;
     "
   >
     ${category}
@@ -523,45 +510,11 @@ export default function MapCanvas() {
 
   <div
     style="
-      font-size:9px;
-      color:#6B6354;
-      margin-bottom:5px;
-    "
-  >
-    SPI-3 Classification
-  </div>
-
-  <div
-    style="
       font-size:10px;
       font-weight:500;
-      margin-bottom:5px;
     "
   >
     ${properties.timestamp}
-  </div>
-
-  <div
-    style="
-      font-size:8px;
-      text-transform:uppercase;
-      letter-spacing:.1em;
-      color:#8A806C;
-      margin-bottom:2px;
-    "
-  >
-    H3 Cell
-  </div>
-
-  <div
-    style="
-      font-family:monospace;
-      font-size:8px;
-      word-break:break-all;
-      color:#555;
-    "
-  >
-    ${properties.h3_id}
   </div>
 
 </div>
