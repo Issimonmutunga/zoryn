@@ -29,6 +29,14 @@ import {
 // rule cards and closing paragraph that repeated ground already covered
 // by the standards cards and Trust Architecture; condensed "Looking Ahead"
 // to a single short paragraph.
+//
+// Sourcing pass: WMO, IPCC and ISO 14091 cards now link out to their
+// official documentation (WMO SPI User Guide on the WMO e-Library, the
+// IPCC AR6 glossary, and the ISO 14091:2021 standard page on iso.org).
+// DER, AI and TRACE are Zoryn's own frameworks and remain unlinked.
+// ISO 14091's purpose/role copy was corrected — the standard provides
+// guidelines for vulnerability, impacts and risk assessment; it does not
+// prescribe a universal risk-scoring formula.
 const FONT_BODY = "'IBM Plex Sans', ui-sans-serif, system-ui, sans-serif";
 const FONT_MONO = "'IBM Plex Mono', ui-monospace, monospace";
 
@@ -74,6 +82,7 @@ type StandardCard = {
   name: string;
   purpose: string;
   role: string;
+  href?: string;
 };
 
 const standards: StandardCard[] = [
@@ -83,6 +92,7 @@ const standards: StandardCard[] = [
     name: "World Meteorological Organization",
     purpose: "Standardized Precipitation Index (SPI) methodology.",
     role: "Governs how meteorological drought severity is classified.",
+    href: "https://library.wmo.int/records/item/39629-standardized-precipitation-index-user-guide",
   },
   {
     icon: Globe2,
@@ -90,13 +100,16 @@ const standards: StandardCard[] = [
     name: "Intergovernmental Panel on Climate Change",
     purpose: "Shared climate risk terminology and hazard framing.",
     role: "Anchors how climate conditions are interpreted and named.",
+    href: "https://apps.ipcc.ch/glossary/",
   },
   {
     icon: ShieldAlert,
     code: "ISO 14091",
     name: "Climate Adaptation Assessment",
-    purpose: "International risk assessment framework.",
-    role: "Structures how environmental risk is scored.",
+    purpose:
+      "International framework for climate vulnerability, impacts and risk assessment.",
+    role: "Guides how climate-related risk assessment is structured.",
+    href: "https://www.iso.org/standard/68508.html",
   },
   {
     icon: GitBranch,
@@ -204,43 +217,58 @@ export default function StandardsPage() {
           </h2>
 
           <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {standards.map(({ icon: Icon, code, name, purpose, role }) => (
-              <div
-                key={code}
-                className="group flex flex-col rounded-2xl border border-[#E5E5E5] bg-white p-6 shadow-[0_1px_2px_rgba(0,0,0,0.03)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)]"
-              >
-                <div className="flex items-center justify-between">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full border border-[#E5E5E5] bg-[#F2F2F2]">
-                    <Icon className="h-4 w-4 text-[#6B6B6B]" strokeWidth={1.75} />
+            {standards.map(({ icon: Icon, code, name, purpose, role, href }) => {
+              const CardTag = href ? "a" : "div";
+              const cardProps = href
+                ? { href, target: "_blank", rel: "noopener noreferrer" }
+                : {};
+              return (
+                <CardTag
+                  key={code}
+                  {...cardProps}
+                  className={`group flex flex-col rounded-2xl border border-[#E5E5E5] bg-white p-6 shadow-[0_1px_2px_rgba(0,0,0,0.03)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)] ${
+                    href ? "cursor-pointer" : ""
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-full border border-[#E5E5E5] bg-[#F2F2F2]">
+                      <Icon className="h-4 w-4 text-[#6B6B6B]" strokeWidth={1.75} />
+                    </div>
+                    <span
+                      style={{ fontFamily: FONT_MONO }}
+                      className="rounded-md border border-[#E5E5E5] bg-[#F2F2F2] px-2 py-1 text-[10px] uppercase tracking-[0.14em] text-[#6B6B6B]"
+                    >
+                      {code}
+                    </span>
                   </div>
-                  <span
-                    style={{ fontFamily: FONT_MONO }}
-                    className="rounded-md border border-[#E5E5E5] bg-[#F2F2F2] px-2 py-1 text-[10px] uppercase tracking-[0.14em] text-[#6B6B6B]"
-                  >
-                    {code}
-                  </span>
-                </div>
 
-                <h3 className="mt-5 text-lg font-semibold leading-snug text-[#1A1A1A]">
-                  {name}
-                </h3>
+                  <h3 className="mt-5 flex items-center gap-2 text-lg font-semibold leading-snug text-[#1A1A1A]">
+                    {name}
+                    {href && (
+                      <ArrowRight
+                        className="h-3.5 w-3.5 -rotate-45 text-[#9A9A9A] transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                        strokeWidth={2}
+                      />
+                    )}
+                  </h3>
 
-                <div className="mt-4 space-y-3 border-t border-[#E5E5E5] pt-4">
-                  <div>
-                    <p style={{ fontFamily: FONT_MONO }} className="text-[10px] uppercase tracking-[0.16em] text-[#6B6B6B]">
-                      Purpose
-                    </p>
-                    <p className="mt-1 text-sm leading-6 text-[#3A3A3A]">{purpose}</p>
+                  <div className="mt-4 space-y-3 border-t border-[#E5E5E5] pt-4">
+                    <div>
+                      <p style={{ fontFamily: FONT_MONO }} className="text-[10px] uppercase tracking-[0.16em] text-[#6B6B6B]">
+                        Purpose
+                      </p>
+                      <p className="mt-1 text-sm leading-6 text-[#3A3A3A]">{purpose}</p>
+                    </div>
+                    <div>
+                      <p style={{ fontFamily: FONT_MONO }} className="text-[10px] uppercase tracking-[0.16em] text-[#6B6B6B]">
+                        Role in Zoryn
+                      </p>
+                      <p className="mt-1 text-sm leading-6 text-[#3A3A3A]">{role}</p>
+                    </div>
                   </div>
-                  <div>
-                    <p style={{ fontFamily: FONT_MONO }} className="text-[10px] uppercase tracking-[0.16em] text-[#6B6B6B]">
-                      Role in Zoryn
-                    </p>
-                    <p className="mt-1 text-sm leading-6 text-[#3A3A3A]">{role}</p>
-                  </div>
-                </div>
-              </div>
-            ))}
+                </CardTag>
+              );
+            })}
           </div>
         </div>
       </section>
