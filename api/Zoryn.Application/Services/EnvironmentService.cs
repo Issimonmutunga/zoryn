@@ -1,11 +1,15 @@
-namespace Zoryn.Application.Services;
-
+using Zoryn.Application.DTOs;
 using Zoryn.Application.Interfaces;
+
+namespace Zoryn.Application.Services;
 
 public sealed class EnvironmentService : IEnvironmentService
 {
-    public Task<string> GetStatusAsync()
+    public Task<EnvironmentStatusDto> GetStatusAsync()
     {
-        return Task.FromResult("Environmental service operational.");
+        var result = new EnvironmentStatusDto(
+            "Environmental service operational.");
+
+        return Task.FromResult(result);
     }
 }

@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Zoryn.Application.DTOs;
 using Zoryn.Application.Interfaces;
 
 namespace Zoryn.Api.Controllers;
@@ -15,7 +16,7 @@ public sealed class EnvironmentController : ControllerBase
     }
 
     [HttpGet("status")]
-    public async Task<ActionResult<string>> GetStatus()
+    public async Task<ActionResult<EnvironmentStatusDto>> GetStatus()
     {
         var status = await _environmentService.GetStatusAsync();
 
