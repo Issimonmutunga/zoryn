@@ -10,6 +10,7 @@ public static class DependencyInjection
         this IServiceCollection services)
     {
         services.AddScoped<IEnvironmentService, EnvironmentService>();
+        services.AddScoped<IMonitoringRegionService, MonitoringRegionService>();
 
         return services;
     }
