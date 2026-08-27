@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zoryn.Api", "Zoryn.Api\Zoryn.Api.csproj", "{D7B782AE-94DD-48D6-B203-EDC13431DFC7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zoryn.Application", "Zoryn.Application\Zoryn.Application.csproj", "{7783696E-978B-4D33-9A4F-73DD2123E0D4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zoryn.Domain", "Zoryn.Domain\Zoryn.Domain.csproj", "{E36474C8-3218-4384-9D6D-542E94BE8EBD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D7B782AE-94DD-48D6-B203-EDC13431DFC7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D7B782AE-94DD-48D6-B203-EDC13431DFC7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D7B782AE-94DD-48D6-B203-EDC13431DFC7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D7B782AE-94DD-48D6-B203-EDC13431DFC7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7783696E-978B-4D33-9A4F-73DD2123E0D4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7783696E-978B-4D33-9A4F-73DD2123E0D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7783696E-978B-4D33-9A4F-73DD2123E0D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7783696E-978B-4D33-9A4F-73DD2123E0D4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E36474C8-3218-4384-9D6D-542E94BE8EBD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E36474C8-3218-4384-9D6D-542E94BE8EBD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E36474C8-3218-4384-9D6D-542E94BE8EBD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E36474C8-3218-4384-9D6D-542E94BE8EBD}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
