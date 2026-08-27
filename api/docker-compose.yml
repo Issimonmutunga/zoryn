@@ -1,0 +1,25 @@
+services:
+  postgres:
+    image: postgis/postgis:16-3.4
+    container_name: zoryn-postgres
+    restart: unless-stopped
+
+    environment:
+      POSTGRES_DB: zoryn
+      POSTGRES_USER: zoryn
+      POSTGRES_PASSWORD: zoryn_dev
+
+    ports:
+      - "5432:5432"
+
+    volumes:
+      - zoryn_postgres_data:/var/lib/postgresql/data
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U zoryn -d zoryn"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  zoryn_postgres_data:
