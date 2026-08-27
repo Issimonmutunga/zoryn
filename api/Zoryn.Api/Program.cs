@@ -1,3 +1,4 @@
+using Zoryn.Application;
 using Zoryn.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -6,10 +7,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddScoped<
-    Zoryn.Application.Interfaces.IEnvironmentService,
-    Zoryn.Application.Services.EnvironmentService>();
-
+builder.Services.AddApplication();
 builder.Services.AddInfrastructure();
 
 var app = builder.Build();
