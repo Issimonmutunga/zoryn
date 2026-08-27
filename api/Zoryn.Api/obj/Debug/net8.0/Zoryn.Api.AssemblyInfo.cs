@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Zoryn.Api")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c7fa5554acc6a2912dcc1b6055863177ecb3f0a9")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ec8cb050b64d707683adc9d76317df42d95f0139")]
 [assembly: System.Reflection.AssemblyProductAttribute("Zoryn.Api")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Zoryn.Api")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

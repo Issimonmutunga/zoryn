@@ -31,3 +31,7 @@ C:\Projects\ews\zoryn\api\Zoryn.Api\obj\Debug\net8.0\refint\Zoryn.Api.dll
 C:\Projects\ews\zoryn\api\Zoryn.Api\obj\Debug\net8.0\Zoryn.Api.pdb
 C:\Projects\ews\zoryn\api\Zoryn.Api\obj\Debug\net8.0\Zoryn.Api.genruntimeconfig.cache
 C:\Projects\ews\zoryn\api\Zoryn.Api\obj\Debug\net8.0\ref\Zoryn.Api.dll
+C:\Projects\ews\zoryn\api\Zoryn.Api\bin\Debug\net8.0\Zoryn.Application.dll
+C:\Projects\ews\zoryn\api\Zoryn.Api\bin\Debug\net8.0\Zoryn.Domain.dll
+C:\Projects\ews\zoryn\api\Zoryn.Api\bin\Debug\net8.0\Zoryn.Application.pdb
+C:\Projects\ews\zoryn\api\Zoryn.Api\bin\Debug\net8.0\Zoryn.Domain.pdb

@@ -1,0 +1,12 @@
+C:\Projects\ews\zoryn\api\Zoryn.Application\bin\Debug\net8.0\Zoryn.Application.deps.json
+C:\Projects\ews\zoryn\api\Zoryn.Application\bin\Debug\net8.0\Zoryn.Application.dll
+C:\Projects\ews\zoryn\api\Zoryn.Application\bin\Debug\net8.0\Zoryn.Application.pdb
+C:\Projects\ews\zoryn\api\Zoryn.Application\obj\Debug\net8.0\Zoryn.Application.GeneratedMSBuildEditorConfig.editorconfig
+C:\Projects\ews\zoryn\api\Zoryn.Application\obj\Debug\net8.0\Zoryn.Application.AssemblyInfoInputs.cache
+C:\Projects\ews\zoryn\api\Zoryn.Application\obj\Debug\net8.0\Zoryn.Application.AssemblyInfo.cs
+C:\Projects\ews\zoryn\api\Zoryn.Application\obj\Debug\net8.0\Zoryn.Application.csproj.CoreCompileInputs.cache
+C:\Projects\ews\zoryn\api\Zoryn.Application\obj\Debug\net8.0\Zoryn.Application.sourcelink.json
+C:\Projects\ews\zoryn\api\Zoryn.Application\obj\Debug\net8.0\Zoryn.Application.dll
+C:\Projects\ews\zoryn\api\Zoryn.Application\obj\Debug\net8.0\refint\Zoryn.Application.dll
+C:\Projects\ews\zoryn\api\Zoryn.Application\obj\Debug\net8.0\Zoryn.Application.pdb
+C:\Projects\ews\zoryn\api\Zoryn.Application\obj\Debug\net8.0\ref\Zoryn.Application.dll

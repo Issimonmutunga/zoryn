@@ -98,6 +98,16 @@
         "runtime": {
           "bin/placeholder/Zoryn.Application.dll": {}
         }
+      },
+      "Zoryn.Domain/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v8.0",
+        "compile": {
+          "bin/placeholder/Zoryn.Domain.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/Zoryn.Domain.dll": {}
+        }
       }
     }
   },
@@ -454,12 +464,18 @@
       "type": "project",
       "path": "../Zoryn.Application/Zoryn.Application.csproj",
       "msbuildProject": "../Zoryn.Application/Zoryn.Application.csproj"
+    },
+    "Zoryn.Domain/1.0.0": {
+      "type": "project",
+      "path": "../Zoryn.Domain/Zoryn.Domain.csproj",
+      "msbuildProject": "../Zoryn.Domain/Zoryn.Domain.csproj"
     }
   },
   "projectFileDependencyGroups": {
     "net8.0": [
       "Swashbuckle.AspNetCore >= 6.6.2",
-      "Zoryn.Application >= 1.0.0"
+      "Zoryn.Application >= 1.0.0",
+      "Zoryn.Domain >= 1.0.0"
     ]
   },
   "packageFolders": {
@@ -492,8 +508,11 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "projectReferences": {
-            "c:\\Projects\\ews\\zoryn\\api\\Zoryn.Application\\Zoryn.Application.csproj": {
-              "projectPath": "c:\\Projects\\ews\\zoryn\\api\\Zoryn.Application\\Zoryn.Application.csproj"
+            "C:\\Projects\\ews\\zoryn\\api\\Zoryn.Application\\Zoryn.Application.csproj": {
+              "projectPath": "C:\\Projects\\ews\\zoryn\\api\\Zoryn.Application\\Zoryn.Application.csproj"
+            },
+            "C:\\Projects\\ews\\zoryn\\api\\Zoryn.Domain\\Zoryn.Domain.csproj": {
+              "projectPath": "C:\\Projects\\ews\\zoryn\\api\\Zoryn.Domain\\Zoryn.Domain.csproj"
             }
           }
         }

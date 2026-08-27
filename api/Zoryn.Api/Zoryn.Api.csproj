@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Zoryn.Application\Zoryn.Application.csproj" />
+    <ProjectReference Include="..\Zoryn.Domain\Zoryn.Domain.csproj" />
   </ItemGroup>
 
 </Project>
