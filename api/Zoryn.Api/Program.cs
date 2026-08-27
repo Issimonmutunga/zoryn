@@ -4,6 +4,10 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddScoped<
+    Zoryn.Application.Interfaces.IEnvironmentService,
+    Zoryn.Application.Services.EnvironmentService>();
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
