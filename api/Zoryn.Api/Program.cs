@@ -1,3 +1,5 @@
+using Zoryn.Infrastructure;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
@@ -8,6 +10,8 @@ builder.Services.AddScoped<
     Zoryn.Application.Interfaces.IEnvironmentService,
     Zoryn.Application.Services.EnvironmentService>();
 
+builder.Services.AddInfrastructure();
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -17,9 +21,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
 app.UseAuthorization();
-
 app.MapControllers();
 
 app.Run();

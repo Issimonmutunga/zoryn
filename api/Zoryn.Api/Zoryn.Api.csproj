@@ -12,7 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Zoryn.Application\Zoryn.Application.csproj" />
-    <ProjectReference Include="..\Zoryn.Domain\Zoryn.Domain.csproj" />
+    <ProjectReference Include="..\Zoryn.Infrastructure\Zoryn.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
