@@ -9,7 +9,7 @@ using Zoryn.Application.Interfaces;
 using Zoryn.Infrastructure.Data;
 using Zoryn.Infrastructure.Identity;
 using Zoryn.Infrastructure.Repositories;
-
+using Zoryn.Infrastructure.Authentication;
 namespace Zoryn.Infrastructure;
 
 public static class DependencyInjection
@@ -47,7 +47,7 @@ public static class DependencyInjection
                         Encoding.UTF8.GetBytes(jwtKey))
                 };
             });
-
+        services.AddScoped<IAuthenticationService, AuthenticationService>();
         services.AddSingleton<IMonitoringRegionRepository, MonitoringRegionRepository>();
 
         return services;
