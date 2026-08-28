@@ -1,7 +1,9 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Zoryn.Application.Interfaces;
 using Zoryn.Infrastructure.Data;
+using Zoryn.Infrastructure.Identity;
 using Zoryn.Infrastructure.Repositories;
 
 namespace Zoryn.Infrastructure;
@@ -16,6 +18,10 @@ public static class DependencyInjection
             options.UseNpgsql(
                 connectionString,
                 npgsqlOptions => npgsqlOptions.UseNetTopologySuite()));
+
+        services.AddIdentityCore<ApplicationUser>()
+            .AddRoles<IdentityRole<Guid>>()
+            .AddEntityFrameworkStores<ApplicationDbContext>();
 
         services.AddSingleton<IMonitoringRegionRepository, MonitoringRegionRepository>();
 
