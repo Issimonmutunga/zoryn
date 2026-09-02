@@ -10,10 +10,6 @@ export type ScientificReference = {
 
 type ExplanationCardProps = {
   explanation: string;
-  provider: string;
-  model: string;
-  latencyMs: number;
-  totalTokens: number;
   reasoningVersion: string;
   generatedAt: string;
   references: ScientificReference[];
@@ -21,10 +17,6 @@ type ExplanationCardProps = {
 
 export default function ExplanationCard({
   explanation,
-  provider,
-  model,
-  latencyMs,
-  totalTokens,
   reasoningVersion,
   generatedAt,
   references,
@@ -43,26 +35,6 @@ export default function ExplanationCard({
           the scientific reasoning but never changes discoveries,
           evidence, confidence or conclusions.
         </p>
-
-        <div className="mt-5 flex flex-wrap gap-2">
-
-          <span className="rounded-full border border-border bg-background px-3 py-1 text-xs font-medium">
-            {provider}
-          </span>
-
-          <span className="rounded-full border border-border bg-background px-3 py-1 text-xs font-medium">
-            {model}
-          </span>
-
-          <span className="rounded-full border border-border bg-background px-3 py-1 text-xs font-medium">
-            {Math.round(latencyMs)} ms
-          </span>
-
-          <span className="rounded-full border border-border bg-background px-3 py-1 text-xs font-medium">
-            {totalTokens.toLocaleString()} tokens
-          </span>
-
-        </div>
       </header>
 
       <article className="prose prose-slate dark:prose-invert max-w-none px-6 py-6">

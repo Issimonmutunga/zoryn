@@ -11,10 +11,6 @@ type ExplanationSectionProps = {
   summary: string;
   interpretation: string;
   limitations: string[];
-  provider: string;
-  model: string;
-  latencyMs: number;
-  totalTokens: number;
 };
 
 
@@ -22,10 +18,6 @@ export default function ExplanationSection({
   summary,
   interpretation,
   limitations,
-  provider,
-  model,
-  latencyMs,
-  totalTokens,
 }: ExplanationSectionProps) {
   const [expanded, setExpanded] =
     useState(false);
@@ -61,29 +53,6 @@ export default function ExplanationSection({
           <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#7C6A45]">
             AI Scientific Explanation
           </p>
-
-          <div className="mt-2 flex flex-wrap gap-1.5">
-
-            <span className="rounded-full border border-[#D8CEB8] bg-[#F3EEE2] px-2 py-0.5 text-[11px] text-[#4A422F]">
-              {provider}
-            </span>
-
-            <span className="rounded-full border border-[#D8CEB8] bg-[#F3EEE2] px-2 py-0.5 text-[11px] text-[#4A422F]">
-              {model}
-            </span>
-
-            <span className="rounded-full border border-[#D8CEB8] bg-[#F3EEE2] px-2 py-0.5 text-[11px] text-[#4A422F]">
-              {Math.round(
-                latencyMs,
-              )}{" "}
-              ms
-            </span>
-
-            <span className="rounded-full border border-[#D8CEB8] bg-[#F3EEE2] px-2 py-0.5 text-[11px] text-[#4A422F]">
-              {totalTokens} tokens
-            </span>
-
-          </div>
 
         </div>
 
