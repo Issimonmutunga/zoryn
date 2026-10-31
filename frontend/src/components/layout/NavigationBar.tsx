@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
-import { ArrowRight, Menu, X } from "lucide-react";
+import { ArrowRight, LogOut, Menu, UserRound, X } from "lucide-react";
+
+import { useAuthStore, useCurrentUser } from "@/stores/authStore";
 
 // UI pass: matched to the rest of the site — moved off the cream/olive
 // palette to the shared grayscale black/white scheme (#1A1A1A on
@@ -26,6 +28,12 @@ const primaryNav = navigation.find((item) => item.primary);
 export default function NavigationBar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const location = useLocation();
+  const currentUser = useCurrentUser();
+  const signOut = useAuthStore((state) => state.signOut);
+
+  // Return to the current page after signing in (but not to the auth pages).
+  const isAuthRoute = ["/login", "/signup"].includes(location.pathname);
+  const signInState = isAuthRoute ? undefined : { from: location.pathname };
 
   // Presentation-only: close the mobile drawer on route change. Doesn't
   // touch routing or app state, just keeps the drawer from staying open
@@ -84,8 +92,44 @@ export default function NavigationBar() {
           ))}
         </nav>
 
-        {/* ---------------------------------------------------- Explorer CTA */}
+        {/* ---------------------------------------------- Account + Explorer CTA */}
         <div className="hidden items-center lg:flex">
+          {currentUser ? (
+            <div className="flex items-center gap-1">
+              <span
+                className="flex max-w-44 items-center gap-2 px-2 text-sm text-[#1A1A1A]"
+                title={currentUser.email}
+              >
+                <UserRound className="h-4 w-4 shrink-0 text-[#6B6B6B]" strokeWidth={1.75} />
+                <span className="truncate">{currentUser.displayName}</span>
+              </span>
+              <button
+                type="button"
+                onClick={signOut}
+                className="flex items-center gap-1.5 rounded-md px-3 py-2 text-sm text-[#6B6B6B] transition-colors duration-200 hover:bg-[#F2F2F2] hover:text-[#1A1A1A] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1A1A1A]/20"
+              >
+                <LogOut className="h-3.5 w-3.5" strokeWidth={1.75} />
+                Sign out
+              </button>
+            </div>
+          ) : (
+            <NavLink
+              to="/login"
+              state={signInState}
+              className={({ isActive }) =>
+                [
+                  "rounded-md px-3.5 py-2 text-sm transition-colors duration-200",
+                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1A1A1A]/20",
+                  isActive
+                    ? "font-medium text-[#1A1A1A]"
+                    : "text-[#6B6B6B] hover:bg-[#F2F2F2] hover:text-[#1A1A1A]",
+                ].join(" ")
+              }
+            >
+              Sign in
+            </NavLink>
+          )}
+
           {primaryNav && (
             <NavLink
               to={primaryNav.path}
@@ -174,6 +218,44 @@ export default function NavigationBar() {
               <ArrowRight className="h-3.5 w-3.5" strokeWidth={1.75} />
             </NavLink>
           )}
+
+          <div className="mt-4 border-t border-[#E5E5E5] pt-4">
+            {currentUser ? (
+              <>
+                <div className="px-3 pb-2">
+                  <p className="truncate text-sm font-medium text-[#1A1A1A]">
+                    {currentUser.displayName}
+                  </p>
+                  <p className="truncate text-xs text-[#6B6B6B]">{currentUser.email}</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={signOut}
+                  className="flex w-full items-center gap-2 rounded-md px-3 py-2.5 text-sm text-[#6B6B6B] transition-colors duration-200 hover:bg-[#F2F2F2] hover:text-[#1A1A1A]"
+                >
+                  <LogOut className="h-3.5 w-3.5" strokeWidth={1.75} />
+                  Sign out
+                </button>
+              </>
+            ) : (
+              <div className="flex flex-col gap-1">
+                <NavLink
+                  to="/login"
+                  state={signInState}
+                  className="rounded-md px-3 py-2.5 text-sm text-[#6B6B6B] transition-colors duration-200 hover:bg-[#F2F2F2] hover:text-[#1A1A1A]"
+                >
+                  Sign in
+                </NavLink>
+                <NavLink
+                  to="/signup"
+                  state={signInState}
+                  className="rounded-md px-3 py-2.5 text-sm text-[#6B6B6B] transition-colors duration-200 hover:bg-[#F2F2F2] hover:text-[#1A1A1A]"
+                >
+                  Create account
+                </NavLink>
+              </div>
+            )}
+          </div>
         </nav>
       </div>
     </header>

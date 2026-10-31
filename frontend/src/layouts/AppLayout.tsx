@@ -1,8 +1,11 @@
 import { Outlet } from "react-router-dom";
 
 import NavigationBar from "@/components/layout/NavigationBar";
+import { useSessionCheck } from "@/hooks/useAuth";
 
 export default function AppLayout() {
+  useSessionCheck();
+
   return (
     <div className="flex min-h-screen flex-col bg-[#F3EEE2] text-[#2B2417]">
       <NavigationBar />
