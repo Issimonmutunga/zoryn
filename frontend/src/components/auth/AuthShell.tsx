@@ -22,10 +22,10 @@ export default function AuthShell({
   return (
     <div
       style={{ fontFamily: FONT_BODY }}
-      className="flex min-h-[calc(100vh-7rem)] items-center justify-center bg-[#FAFAFA] px-4 py-12 antialiased text-[#3A3A3A]"
+      className="flex min-h-[calc(100dvh-7.5rem)] items-start justify-center bg-[#FAFAFA] px-4 py-6 antialiased sm:items-center sm:py-12 text-[#3A3A3A]"
     >
       <div className="w-full max-w-md">
-        <div className="rounded-2xl border border-[#E5E5E5] bg-white px-6 py-8 shadow-sm sm:px-8">
+        <div className="rounded-2xl border border-[#E5E5E5] bg-white px-5 py-6 shadow-sm sm:px-8 sm:py-8">
           <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#6B6B6B]">
             {eyebrow}
           </p>
@@ -36,7 +36,7 @@ export default function AuthShell({
             {description}
           </p>
 
-          <div className="mt-8">{children}</div>
+          <div className="mt-6 sm:mt-8">{children}</div>
         </div>
 
         <p className="mt-6 text-center text-sm text-[#6B6B6B]">{footer}</p>

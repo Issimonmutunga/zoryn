@@ -39,7 +39,7 @@ export default function AuthField({
           id={id}
           type={isPassword && revealed ? "text" : type}
           aria-describedby={hint ? hintId : undefined}
-          className={`h-11 w-full rounded-lg border border-[#E5E5E5] bg-white px-3.5 text-sm text-[#1A1A1A] placeholder:text-[#A3A3A3] transition-colors duration-200 hover:border-[#D4D4D4] focus:border-[#1A1A1A] focus:outline-none focus:ring-2 focus:ring-[#1A1A1A]/10 disabled:bg-[#F5F5F5] ${
+          className={`h-11 w-full rounded-lg border border-[#E5E5E5] bg-white px-3.5 text-base text-[#1A1A1A] placeholder:text-[#A3A3A3] sm:text-sm transition-colors duration-200 hover:border-[#D4D4D4] focus:border-[#1A1A1A] focus:outline-none focus:ring-2 focus:ring-[#1A1A1A]/10 disabled:bg-[#F5F5F5] ${
             isPassword ? "pr-11" : ""
           }`}
           {...inputProps}

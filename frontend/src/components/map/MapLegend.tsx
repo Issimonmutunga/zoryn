@@ -38,13 +38,13 @@ export default function MapLegend() {
   ];
 
   return (
-    <aside className="absolute bottom-6 left-6 z-20 w-64 overflow-hidden rounded-2xl border border-[#D8CEB8] bg-[#FAF7EF]/85 shadow-[0_8px_24px_rgba(43,36,23,0.10)] backdrop-blur-md transition-all duration-300 sm:w-72 lg:w-80">
+    <aside className="absolute bottom-3 left-3 z-20 w-[calc(100%-1.5rem)] max-w-64 overflow-hidden sm:bottom-6 sm:left-6 sm:max-w-none rounded-2xl border border-[#D8CEB8] bg-[#FAF7EF]/85 shadow-[0_8px_24px_rgba(43,36,23,0.10)] backdrop-blur-md transition-all duration-300 sm:w-72 lg:w-80">
 
       <button
         type="button"
         aria-expanded={!collapsed}
         onClick={() => setCollapsed((prev) => !prev)}
-        className="flex w-full items-center justify-between p-4 text-left"
+        className="flex w-full items-center justify-between px-4 py-3 text-left sm:p-4"
       >
         <h3 className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#7C6A45]">
           SPI-3 Classification
@@ -59,7 +59,7 @@ export default function MapLegend() {
 
       <div
         className={`overflow-y-auto px-4 transition-all duration-300 ${
-          collapsed ? "max-h-0" : "max-h-[42vh] pb-4"
+          collapsed ? "max-h-0" : "max-h-[40vh] pb-4"
         }`}
       >
 

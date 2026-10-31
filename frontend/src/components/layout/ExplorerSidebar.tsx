@@ -39,7 +39,7 @@ export default function ExplorerSidebar() {
 
   if (!selectedH3) {
     return (
-      <aside className="flex h-full w-full flex-col justify-center bg-[#FAF7EF] px-6 py-8 sm:px-8">
+      <aside className="flex min-h-full w-full flex-col justify-center bg-[#FAF7EF] px-5 py-6 sm:px-8 sm:py-8">
 
         <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#7C6A45]">
           Explorer

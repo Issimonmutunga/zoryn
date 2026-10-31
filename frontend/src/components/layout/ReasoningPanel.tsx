@@ -64,7 +64,7 @@ export default function ReasoningPanel({ h3Id }: ReasoningPanelProps) {
   if (reasoning.available === false) {
     return (
       <aside className="flex h-full w-full flex-col bg-background">
-        <header className="border-b border-border px-6 py-5">
+        <header className="shrink-0 border-b border-border px-4 py-4 sm:px-6 sm:py-5">
           <p className="text-primary text-xs font-semibold uppercase tracking-[0.2em]">
             Reasoning Workspace
           </p>
@@ -105,7 +105,7 @@ export default function ReasoningPanel({ h3Id }: ReasoningPanelProps) {
 
   return (
     <aside className="flex h-full w-full flex-col bg-background">
-      <header className="border-b border-border px-6 py-5">
+      <header className="shrink-0 border-b border-border px-4 py-4 sm:px-6 sm:py-5">
         <p className="text-primary text-xs font-semibold uppercase tracking-[0.2em]">
           Reasoning Workspace
         </p>
@@ -114,14 +114,14 @@ export default function ReasoningPanel({ h3Id }: ReasoningPanelProps) {
           Environmental Reasoning
         </h2>
 
-        <p className="mt-2 text-sm leading-6 text-muted-foreground">
+        <p className="mt-2 hidden text-sm leading-6 text-muted-foreground sm:block">
           Inspect the deterministic reasoning and AI-generated
           scientific explanation for the selected environmental
           discovery.
         </p>
       </header>
 
-      <div className="flex-1 space-y-6 overflow-y-auto p-6 md:space-y-8">
+      <div className="min-h-0 flex-1 space-y-6 overflow-y-auto p-4 sm:p-6 md:space-y-8">
         <DiscoveryCard
           discovery={discovery.name}
           confidence={discovery.confidence}

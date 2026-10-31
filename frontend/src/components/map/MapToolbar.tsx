@@ -256,16 +256,18 @@ export default function MapToolbar() {
             setLayersOpen(!layersOpen);
             setTimelineOpen(false);
           }}
-          className="hidden h-10 shrink-0 items-center gap-2 rounded-xl border border-[#D8CEB8] bg-[#F3EEE2] px-3 text-sm text-[#4A422F] transition-colors hover:bg-[#EDE6D3] md:flex"
+          aria-label="Layers"
+          aria-expanded={layersOpen}
+          className="flex h-10 shrink-0 items-center gap-2 rounded-xl border border-[#D8CEB8] bg-[#F3EEE2] px-2.5 text-sm text-[#4A422F] transition-colors hover:bg-[#EDE6D3] sm:px-3"
         >
           <Layers className="h-4 w-4" />
-          Layers
+          <span className="hidden sm:inline">Layers</span>
         </button>
 
       </div>
 
       {timelineOpen && (
-        <div className="absolute right-0 top-14 max-h-80 w-56 overflow-y-auto rounded-xl border border-[#D8CEB8] bg-[#FAF7EF] p-1.5 shadow-[0_8px_24px_rgba(43,36,23,0.12)]">
+        <div className="absolute right-0 top-14 max-h-80 w-56 max-w-full overflow-y-auto rounded-xl border border-[#D8CEB8] bg-[#FAF7EF] p-1.5 shadow-[0_8px_24px_rgba(43,36,23,0.12)]">
 
           {availableDates.length === 0 && (
             <div className="p-2 text-sm text-[#8A7B5C]">
@@ -324,7 +326,7 @@ export default function MapToolbar() {
 
       {layersOpen && (
 
-        <div className="absolute right-0 top-14 w-72 animate-in fade-in zoom-in-95 slide-in-from-top-2 duration-200">
+        <div className="absolute right-0 top-14 w-72 max-w-full animate-in fade-in zoom-in-95 slide-in-from-top-2 duration-200">
 
           <LayerSelector />
 

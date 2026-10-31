@@ -47,7 +47,7 @@ export default function NavigationBar() {
       style={{ fontFamily: FONT_BODY }}
       className="sticky top-0 z-50 border-b border-[#E5E5E5] bg-[#FAFAFA]/90 backdrop-blur-md"
     >
-      <div className="mx-auto flex h-19 max-w-287.5 items-center justify-between px-6 lg:px-8">
+      <div className="mx-auto flex h-16 max-w-287.5 items-center justify-between gap-3 px-4 sm:px-6 lg:h-19 lg:px-8">
         {/* ------------------------------------------------------------ Logo */}
         <NavLink to="/" className="flex shrink-0 items-center gap-3">
           <div className="flex flex-col justify-center">
@@ -144,20 +144,51 @@ export default function NavigationBar() {
           )}
         </div>
 
-        {/* ------------------------------------------------- Mobile trigger */}
-        <button
-          type="button"
-          onClick={() => setMobileOpen((open) => !open)}
-          className="flex h-10 w-10 items-center justify-center rounded-md border border-[#E5E5E5] bg-white text-[#5A5A5A] transition-colors duration-200 hover:bg-[#F2F2F2] lg:hidden"
-          aria-label={mobileOpen ? "Close menu" : "Open menu"}
-          aria-expanded={mobileOpen}
-        >
-          {mobileOpen ? (
-            <X className="h-4.5 w-4.5" strokeWidth={1.75} />
-          ) : (
-            <Menu className="h-4.5 w-4.5" strokeWidth={1.75} />
+        {/* ------------------------------------- Mobile account + menu trigger */}
+        <div className="flex items-center gap-2 lg:hidden">
+          {!currentUser && !isAuthRoute && (
+            <>
+              <NavLink
+                to="/login"
+                state={signInState}
+                className="rounded-md px-2.5 py-2 text-sm text-[#5A5A5A] transition-colors duration-200 hover:bg-[#F2F2F2] hover:text-[#1A1A1A]"
+              >
+                Sign in
+              </NavLink>
+              <NavLink
+                to="/signup"
+                state={signInState}
+                className="rounded-lg bg-[#1A1A1A] px-3 py-2 text-sm font-medium text-white transition-colors duration-200 hover:bg-black"
+              >
+                Sign up
+              </NavLink>
+            </>
           )}
-        </button>
+
+          {currentUser && (
+            <span
+              className="flex h-9 w-9 items-center justify-center rounded-full bg-[#1A1A1A] text-sm font-medium uppercase text-white"
+              title={currentUser.email}
+              aria-label={`Signed in as ${currentUser.displayName}`}
+            >
+              {currentUser.displayName.charAt(0) || currentUser.email.charAt(0)}
+            </span>
+          )}
+
+          <button
+            type="button"
+            onClick={() => setMobileOpen((open) => !open)}
+            className="flex h-10 w-10 items-center justify-center rounded-md border border-[#E5E5E5] bg-white text-[#5A5A5A] transition-colors duration-200 hover:bg-[#F2F2F2] lg:hidden"
+            aria-label={mobileOpen ? "Close menu" : "Open menu"}
+            aria-expanded={mobileOpen}
+          >
+            {mobileOpen ? (
+              <X className="h-4.5 w-4.5" strokeWidth={1.75} />
+            ) : (
+              <Menu className="h-4.5 w-4.5" strokeWidth={1.75} />
+            )}
+          </button>
+        </div>
       </div>
 
       {/* ------------------------------------------------------- Mobile drawer */}
