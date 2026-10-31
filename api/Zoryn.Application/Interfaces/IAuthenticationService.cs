@@ -1,8 +1,15 @@
+using Zoryn.Application.Authentication;
+
 namespace Zoryn.Application.Interfaces;
 
 public interface IAuthenticationService
 {
-    Task<string> RegisterAsync(string email, string password);
+    Task<RegistrationResult> RegisterAsync(RegisterRequest request);
 
-    Task<string?> LoginAsync(string email, string password);
+    /// <summary>
+    /// Returns null when the credentials are invalid or the account is locked out.
+    /// </summary>
+    Task<AuthenticationResponse?> LoginAsync(LoginRequest request);
+
+    Task<CurrentUserDto?> GetCurrentUserAsync(Guid userId);
 }

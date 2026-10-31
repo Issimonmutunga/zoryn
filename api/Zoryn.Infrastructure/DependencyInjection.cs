@@ -1,3 +1,4 @@
+using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -24,27 +25,40 @@ public static class DependencyInjection
                 connectionString,
                 npgsqlOptions => npgsqlOptions.UseNetTopologySuite()));
 
-        services.AddIdentityCore<ApplicationUser>()
+        services.AddIdentityCore<ApplicationUser>(options =>
+            {
+                options.User.RequireUniqueEmail = true;
+            })
             .AddRoles<IdentityRole<Guid>>()
             .AddEntityFrameworkStores<ApplicationDbContext>();
 
-        var jwtKey = configuration["Jwt:Key"]
-            ?? throw new InvalidOperationException(
-                "JWT signing key 'Jwt:Key' was not found.");
+        var jwtSection = configuration.GetSection(JwtOptions.SectionName);
+        var jwtOptions = jwtSection.Get<JwtOptions>() ?? new JwtOptions();
+
+        if (Encoding.UTF8.GetByteCount(jwtOptions.Key) < JwtOptions.MinimumKeyBytes)
+            throw new InvalidOperationException(
+                $"JWT signing key 'Jwt:Key' must be at least {JwtOptions.MinimumKeyBytes} bytes.");
+
+        services.Configure<JwtOptions>(jwtSection);
 
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
             {
+                // Keep standard JWT claim names (sub, email) instead of mapping to ClaimTypes URIs.
+                options.MapInboundClaims = false;
+
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuer = true,
                     ValidateAudience = true,
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
-                    ValidIssuer = "Zoryn",
-                    ValidAudience = "Zoryn",
+                    ValidIssuer = jwtOptions.Issuer,
+                    ValidAudience = jwtOptions.Audience,
                     IssuerSigningKey = new SymmetricSecurityKey(
-                        Encoding.UTF8.GetBytes(jwtKey))
+                        Encoding.UTF8.GetBytes(jwtOptions.Key)),
+                    NameClaimType = JwtRegisteredClaimNames.Email,
+                    ClockSkew = TimeSpan.FromMinutes(1)
                 };
             });
         services.AddScoped<IAuthenticationService, AuthenticationService>();

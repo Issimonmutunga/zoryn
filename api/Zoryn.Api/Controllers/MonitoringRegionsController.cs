@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Zoryn.Application.DTOs;
 using Zoryn.Application.Interfaces;
@@ -29,6 +30,7 @@ public sealed class MonitoringRegionsController : ControllerBase
         return region is null ? NotFound() : Ok(region);
     }
 
+    [Authorize]
     [HttpPost]
     public async Task<ActionResult<MonitoringRegionDto>> Create(
         [FromBody] string name)
@@ -41,6 +43,7 @@ public sealed class MonitoringRegionsController : ControllerBase
             region);
     }
 
+    [Authorize]
     [HttpPut("{id:guid}")]
     public async Task<IActionResult> Update(
         Guid id,
@@ -51,6 +54,7 @@ public sealed class MonitoringRegionsController : ControllerBase
         return updated ? NoContent() : NotFound();
     }
 
+    [Authorize]
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> Delete(Guid id)
     {
