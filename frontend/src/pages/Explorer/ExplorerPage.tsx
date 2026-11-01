@@ -1,29 +1,84 @@
 import { useEffect, useState } from "react";
-import { ChevronUp } from "lucide-react";
+import { Layers, PanelRightOpen, X } from "lucide-react";
 
 import ExplorerSidebar from "@/components/layout/ExplorerSidebar";
 
+import LayerSelector from "@/components/map/LayerSelector";
 import MapCanvas from "@/components/map/MapCanvas";
 import MapToolbar from "@/components/map/MapToolbar";
-import MapLegend from "@/components/map/MapLegend";
+import MapLegend, { LegendKey } from "@/components/map/MapLegend";
 import { useExplorerStore } from "@/stores/explorerStore";
 import { useTimelineStore } from "@/stores/timelineStore";
 
+// Below 1024px the map takes the whole workspace and everything else
+// lives in side panels that slide over it: the map key on the left and
+// the reasoning on the right. From 1024px the reasoning is a fixed right
+// sidebar and the map key floats over the map.
+type Panel = "map" | "reasoning";
+
+interface PanelHeaderProps {
+  title: string;
+  subtitle: string;
+  onClose: () => void;
+  className?: string;
+}
+
+function PanelHeader({ title, subtitle, onClose, className = "" }: PanelHeaderProps) {
+  return (
+    <div
+      className={`flex h-14 shrink-0 items-center gap-3 border-b border-[#E5E5E5] bg-white px-4 ${className}`}
+    >
+      <div className="min-w-0 flex-1">
+        <p className="text-sm font-medium text-[#1A1A1A]">{title}</p>
+        <p className="truncate text-xs text-[#6B6B6B]">{subtitle}</p>
+      </div>
+
+      <button
+        type="button"
+        onClick={onClose}
+        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-[#E5E5E5] text-[#5A5A5A] transition-colors duration-200 hover:bg-[#F2F2F2]"
+        aria-label={`Close ${title.toLowerCase()} panel`}
+      >
+        <X className="h-4 w-4" strokeWidth={1.75} />
+      </button>
+    </div>
+  );
+}
+
+const launcherClass =
+  "pointer-events-auto flex h-11 items-center gap-2 rounded-full border border-[#E5E5E5] bg-white/95 px-4 text-sm font-medium text-[#1A1A1A] shadow-[0_4px_16px_rgba(0,0,0,0.12)] backdrop-blur-sm transition-colors duration-200 hover:bg-[#F2F2F2]";
+
 export default function ExplorerPage() {
   const setAvailableDates = useTimelineStore((state) => state.setAvailableDates);
-
-  // Presentation-only: whether the sidebar drawer is expanded on mobile.
-  // Does not touch reasoning selection, timeline, or any app state.
-  const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
-
-  // Open the drawer when a cell is picked, so its reasoning is in view.
   const selectedH3 = useExplorerStore((state) => state.selectedH3);
 
+  // Presentation-only: which side panel is open below 1024px.
+  const [openPanel, setOpenPanel] = useState<Panel | null>(null);
+
+  const closePanel = () => setOpenPanel(null);
+
+  // Show the reasoning as soon as a cell is picked.
   useEffect(() => {
     if (selectedH3) {
-      setMobileDrawerOpen(true);
+      setOpenPanel("reasoning");
     }
   }, [selectedH3]);
+
+  useEffect(() => {
+    if (!openPanel) {
+      return;
+    }
+
+    function handleEscape(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        setOpenPanel(null);
+      }
+    }
+
+    document.addEventListener("keydown", handleEscape);
+
+    return () => document.removeEventListener("keydown", handleEscape);
+  }, [openPanel]);
 
   useEffect(() => {
     // TODO: replace with real data source (e.g. backend endpoint
@@ -41,37 +96,103 @@ export default function ExplorerPage() {
   }, [setAvailableDates]);
 
   return (
-    <div className="antialiased flex h-full flex-col overflow-hidden bg-[#FAFAFA] lg:flex-row">
+    <div className="antialiased relative flex h-full overflow-hidden bg-[#FAFAFA]">
       {/* --------------------------------------------------------- Map */}
-      <section className="relative min-h-0 flex-1 overflow-hidden border-[#E5E5E5] lg:border-r">
+      <section className="explorer-map relative min-w-0 flex-1 overflow-hidden">
         <MapCanvas />
         <MapToolbar />
         <MapLegend />
+
+        {/* Panel launchers, below 1024px */}
+        <div className="pointer-events-none absolute inset-x-3 bottom-3 z-10 flex items-center justify-between gap-3 lg:hidden">
+          <button
+            type="button"
+            onClick={() => setOpenPanel("map")}
+            className={launcherClass}
+            aria-controls="explorer-map-panel"
+            aria-expanded={openPanel === "map"}
+          >
+            <Layers className="h-4 w-4 text-[#6B6B6B]" strokeWidth={1.75} />
+            Map key
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setOpenPanel("reasoning")}
+            className={launcherClass}
+            aria-controls="explorer-reasoning-panel"
+            aria-expanded={openPanel === "reasoning"}
+          >
+            Reasoning
+            {selectedH3 && (
+              <span className="h-2 w-2 rounded-full bg-[#1A1A1A]" aria-hidden="true" />
+            )}
+            <PanelRightOpen className="h-4 w-4 text-[#6B6B6B]" strokeWidth={1.75} />
+          </button>
+        </div>
       </section>
 
-      {/* -------------------------------------------------------- Sidebar */}
+      {/* ---------------------------------------------------- Backdrop */}
+      <div
+        className={`absolute inset-0 z-30 bg-black/30 transition-opacity duration-300 lg:hidden ${
+          openPanel ? "opacity-100" : "pointer-events-none opacity-0"
+        }`}
+        onClick={closePanel}
+        aria-hidden="true"
+      />
+
+      {/* ------------------------------------------ Left panel: map key */}
+      <aside
+        id="explorer-map-panel"
+        aria-label="Map key"
+        className={`absolute inset-y-0 left-0 z-40 flex w-[min(22rem,calc(100%-3rem))] flex-col bg-[#FAF7EF] shadow-2xl transition-[translate,visibility] duration-300 ease-out lg:hidden ${
+          openPanel === "map" ? "visible translate-x-0" : "invisible -translate-x-full"
+        }`}
+      >
+        <PanelHeader
+          title="Map"
+          subtitle="Layers and SPI-3 classes"
+          onClose={closePanel}
+        />
+
+        <div className="min-h-0 flex-1 space-y-6 overflow-y-auto p-4">
+          <LayerSelector embedded />
+
+          <section className="border-t border-[#D8CEB8] pt-5">
+            <h2 className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-[#7C6A45]">
+              SPI-3 Classification
+            </h2>
+            <LegendKey />
+          </section>
+        </div>
+      </aside>
+
+      {/* ----------------------------------------- Right panel: reasoning */}
       {/*
-        Below 1024px: bottom drawer under the map. Collapsed it shows only
-        its header bar, so the map gets the screen; expanded it takes 65% of
-        a phone screen or half of a tablet one.
+        Below 1024px: slide-over from the right.
         Desktop (1024px+):  fixed right sidebar, 420px wide.
         Large monitors (1280px+): 460px wide.
         Very large monitors (1536px+): 500px wide.
       */}
       <section
+        id="explorer-reasoning-panel"
+        aria-label="Reasoning"
         className={`
-          flex shrink-0 flex-col
-          border-t border-[#E5E5E5]
-          bg-white
-          shadow-[0_-4px_16px_rgba(0,0,0,0.06)]
-          transition-[height] duration-300 ease-out
+          absolute inset-y-0 right-0 z-40
+          flex w-[min(26rem,calc(100%-3rem))] flex-col
+          bg-white shadow-2xl
+          transition-[translate,visibility] duration-300 ease-out
 
-          ${mobileDrawerOpen ? "h-[65%] md:h-1/2" : "h-14"}
+          ${openPanel === "reasoning" ? "visible translate-x-0" : "invisible translate-x-full"}
 
-          lg:h-full
+          lg:visible
+          lg:static
+          lg:z-auto
           lg:w-105
-          lg:border-t-0
+          lg:shrink-0
+          lg:translate-x-0
           lg:border-l
+          lg:border-[#E5E5E5]
           lg:shadow-none
           lg:transition-none
 
@@ -79,36 +200,14 @@ export default function ExplorerPage() {
           2xl:w-125
         `}
       >
-        {/* Drawer header: always visible below 1024px, toggles the panel */}
-        <button
-          type="button"
-          onClick={() => setMobileDrawerOpen((open) => !open)}
-          className="flex h-14 shrink-0 items-center gap-3 border-b border-[#E5E5E5] px-4 text-left lg:hidden"
-          aria-expanded={mobileDrawerOpen}
-          aria-label={mobileDrawerOpen ? "Collapse reasoning panel" : "Expand reasoning panel"}
-        >
-          <span className="min-w-0 flex-1">
-            <span className="block text-sm font-medium text-[#1A1A1A]">
-              Reasoning
-            </span>
-            <span className="block truncate text-xs text-[#6B6B6B]">
-              {selectedH3 ? `Cell ${selectedH3}` : "Tap a hexagon on the map to begin"}
-            </span>
-          </span>
+        <PanelHeader
+          className="lg:hidden"
+          title="Reasoning"
+          subtitle={selectedH3 ? `Cell ${selectedH3}` : "Tap a hexagon on the map to begin"}
+          onClose={closePanel}
+        />
 
-          <ChevronUp
-            className={`h-5 w-5 shrink-0 text-[#6B6B6B] transition-transform duration-300 ${
-              mobileDrawerOpen ? "rotate-180" : ""
-            }`}
-            strokeWidth={1.75}
-          />
-        </button>
-
-        <div
-          className={`min-h-0 flex-1 overflow-y-auto ${
-            mobileDrawerOpen ? "" : "hidden lg:block"
-          }`}
-        >
+        <div className="min-h-0 flex-1 overflow-y-auto">
           <ExplorerSidebar />
         </div>
       </section>

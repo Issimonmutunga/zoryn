@@ -151,18 +151,18 @@ const standards: Standard[] = [
 
 export default function MethodologyPage() {
   return (
-    <main
+    <div
       style={{ fontFamily: FONT_BODY }}
       className="antialiased bg-[#FAFAFA] text-[#3A3A3A]"
     >
       {/* ------------------------------------------------------------- Hero */}
       <section className="relative overflow-hidden border-b border-[#E5E5E5]">
-        <div className="relative mx-auto max-w-287.5 px-8 pb-20 pt-24">
+        <div className="relative mx-auto max-w-287.5 px-4 pb-14 pt-14 sm:px-6 sm:pb-16 sm:pt-20 lg:px-8 lg:pb-20 lg:pt-24">
           <Eyebrow>Scientific Methodology</Eyebrow>
-          <h1 className="mt-5 max-w-3xl text-5xl font-semibold uppercase leading-[1.08] tracking-normal text-[#1A1A1A] md:text-6xl">
+          <h1 className="mt-5 max-w-3xl text-[2rem] font-semibold uppercase leading-[1.08] tracking-normal [overflow-wrap:anywhere] sm:text-5xl text-[#1A1A1A] md:text-6xl">
             Science decides. AI explains.
           </h1>
-          <p className="mt-7 max-w-2xl text-lg leading-8 text-[#5A5A5A]">
+          <p className="mt-7 max-w-2xl text-base leading-7 sm:text-lg sm:leading-8 text-[#5A5A5A]">
             Every discovery is produced by a deterministic reasoning engine,
             not inferred by a language model. AI is used only afterward, to
             put the finished, evidence-backed conclusion into plain language.
@@ -175,9 +175,9 @@ export default function MethodologyPage() {
         id="reasoning-pipeline"
         className="border-y border-[#E5E5E5] bg-[#F2F2F2]"
       >
-        <div className="mx-auto max-w-287.5 px-8 py-24">
+        <div className="mx-auto max-w-287.5 px-4 py-14 sm:px-6 sm:py-20 lg:px-8 lg:py-24">
           <Eyebrow>The Reasoning Pipeline</Eyebrow>
-          <h2 className="mt-4 max-w-lg text-3xl font-semibold uppercase leading-tight tracking-normal text-[#1A1A1A]">
+          <h2 className="mt-4 max-w-lg text-2xl font-semibold uppercase leading-tight sm:text-3xl tracking-normal text-[#1A1A1A]">
             Eight steps, and every one of them is visible.
           </h2>
 
@@ -200,7 +200,7 @@ export default function MethodologyPage() {
                       <h3 className="text-base font-semibold uppercase tracking-normal text-[#1A1A1A]">
                         {step.title}
                       </h3>
-                      <p className="mt-1 max-w-40 text-xs leading-5 text-[#6B6B6B] lg:mx-auto lg:text-center">
+                      <p className="mt-1 text-xs leading-5 text-[#6B6B6B] lg:mx-auto lg:max-w-40 lg:text-center">
                         {step.text}
                       </p>
                     </div>
@@ -216,9 +216,9 @@ export default function MethodologyPage() {
       </section>
 
       {/* --------------------------------------------------- Stage-by-stage */}
-      <section className="mx-auto max-w-287.5 px-8 py-24">
+      <section className="mx-auto max-w-287.5 px-4 py-14 sm:px-6 sm:py-20 lg:px-8 lg:py-24">
         <Eyebrow>What Happens at Each Stage</Eyebrow>
-        <h2 className="mt-4 max-w-xl text-3xl font-semibold uppercase leading-tight tracking-normal text-[#1A1A1A]">
+        <h2 className="mt-4 max-w-xl text-2xl font-semibold uppercase leading-tight sm:text-3xl tracking-normal text-[#1A1A1A]">
           Every transformation, laid out plainly.
         </h2>
 
@@ -276,9 +276,9 @@ export default function MethodologyPage() {
 
       {/* --------------------------------------------- Principles behind the engine */}
       <section className="border-y border-[#E5E5E5] bg-[#F2F2F2]">
-        <div className="mx-auto max-w-287.5 px-8 py-24">
+        <div className="mx-auto max-w-287.5 px-4 py-14 sm:px-6 sm:py-20 lg:px-8 lg:py-24">
           <Eyebrow>Principles Behind the Engine</Eyebrow>
-          <h2 className="mt-4 max-w-lg text-3xl font-semibold uppercase leading-tight tracking-normal text-[#1A1A1A]">
+          <h2 className="mt-4 max-w-lg text-2xl font-semibold uppercase leading-tight sm:text-3xl tracking-normal text-[#1A1A1A]">
             What every discovery has to satisfy.
           </h2>
 
@@ -297,9 +297,9 @@ export default function MethodologyPage() {
       </section>
 
       {/* -------------------------------------------------------- Scientific standards */}
-      <section className="mx-auto max-w-287.5 px-8 py-24">
+      <section className="mx-auto max-w-287.5 px-4 py-14 sm:px-6 sm:py-20 lg:px-8 lg:py-24">
         <Eyebrow>Scientific Standards</Eyebrow>
-        <h2 className="mt-4 max-w-xl text-3xl font-semibold uppercase leading-tight tracking-normal text-[#1A1A1A]">
+        <h2 className="mt-4 max-w-xl text-2xl font-semibold uppercase leading-tight sm:text-3xl tracking-normal text-[#1A1A1A]">
           Zoryn doesn't invent rules. It applies recognised ones.
         </h2>
         <p className="mt-5 max-w-2xl text-sm leading-7 text-[#6B6B6B]">
@@ -326,9 +326,9 @@ export default function MethodologyPage() {
       </section>
 
       {/* ---------------------------------------------------------- Closing */}
-      <section className="mx-auto max-w-287.5 px-8 py-24">
-        <div className="rounded-2xl border border-[#E5E5E5] bg-white p-10 text-center shadow-[0_1px_2px_rgba(0,0,0,0.03)] md:p-14">
-          <h2 className="text-3xl font-semibold uppercase leading-tight tracking-normal text-[#1A1A1A] md:text-4xl">
+      <section className="mx-auto max-w-287.5 px-4 py-14 sm:px-6 sm:py-20 lg:px-8 lg:py-24">
+        <div className="rounded-2xl border border-[#E5E5E5] bg-white p-6 text-center sm:p-10 shadow-[0_1px_2px_rgba(0,0,0,0.03)] md:p-14">
+          <h2 className="text-2xl font-semibold uppercase leading-tight sm:text-3xl tracking-normal text-[#1A1A1A] md:text-4xl">
             Environmental reasoning should always be understandable.
           </h2>
 
@@ -350,6 +350,6 @@ export default function MethodologyPage() {
           </div>
         </div>
       </section>
-    </main>
+    </div>
   );
 }

@@ -75,18 +75,18 @@ const discovery: Card[] = [
 
 export default function AboutPage() {
   return (
-    <main
+    <div
       style={{ fontFamily: FONT_BODY }}
       className="antialiased bg-[#FAFAFA] text-[#3A3A3A]"
     >
       {/* --------------------------------------------------- 1. What Zoryn Is */}
       <section className="relative overflow-hidden border-b border-[#E5E5E5]">
-        <div className="relative mx-auto max-w-287.5 px-8 pb-24 pt-28">
+        <div className="relative mx-auto max-w-287.5 px-4 pb-16 pt-14 sm:px-6 sm:pb-20 sm:pt-20 lg:px-8 lg:pb-24 lg:pt-28">
           <Eyebrow>What Zoryn Is</Eyebrow>
-          <h1 className="mt-5 max-w-3xl text-5xl font-semibold uppercase leading-[1.08] tracking-normal text-[#1A1A1A] md:text-6xl">
+          <h1 className="mt-5 max-w-3xl text-[2rem] font-semibold uppercase leading-[1.08] tracking-normal [overflow-wrap:anywhere] sm:text-5xl text-[#1A1A1A] md:text-6xl">
             A system built to understand the Earth, not just observe it.
           </h1>
-          <p className="mt-7 max-w-2xl text-lg leading-8 text-[#5A5A5A]">
+          <p className="mt-7 max-w-2xl text-base leading-7 sm:text-lg sm:leading-8 text-[#5A5A5A]">
             Zoryn reads authoritative environmental data and builds a
             traceable reasoning chain from it — observations become
             signatures, signatures become relationships, relationships
@@ -98,11 +98,11 @@ export default function AboutPage() {
       </section>
 
       {/* ------------------------------------------------- 2. Why Zoryn Exists */}
-      <section className="mx-auto max-w-287.5 px-8 py-24">
+      <section className="mx-auto max-w-287.5 px-4 py-14 sm:px-6 sm:py-20 lg:px-8 lg:py-24">
         <div className="grid gap-10 md:grid-cols-[0.8fr_1.2fr] md:gap-16">
           <div>
             <Eyebrow>Why Zoryn Exists</Eyebrow>
-            <h2 className="mt-4 text-3xl font-semibold uppercase leading-tight tracking-normal text-[#1A1A1A]">
+            <h2 className="mt-4 text-2xl font-semibold uppercase leading-tight sm:text-3xl tracking-normal text-[#1A1A1A]">
               The Earth is changing faster than our ability to understand it.
             </h2>
           </div>
@@ -125,14 +125,14 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <div className="mx-auto max-w-287.5 px-8">
+      <div className="mx-auto max-w-287.5 px-4 sm:px-6 lg:px-8">
         <Divider />
       </div>
 
       {/* ------------------------------------------------- 3. How Zoryn Thinks */}
-      <section className="mx-auto max-w-287.5 px-8 py-24">
+      <section className="mx-auto max-w-287.5 px-4 py-14 sm:px-6 sm:py-20 lg:px-8 lg:py-24">
         <Eyebrow>How Zoryn Thinks</Eyebrow>
-        <h2 className="mt-4 max-w-lg text-3xl font-semibold uppercase leading-tight tracking-normal text-[#1A1A1A]">
+        <h2 className="mt-4 max-w-lg text-2xl font-semibold uppercase leading-tight sm:text-3xl tracking-normal text-[#1A1A1A]">
           Understanding comes from relationships, not isolated numbers.
         </h2>
 
@@ -151,9 +151,9 @@ export default function AboutPage() {
       </section>
 
       {/* ----------------------------------- 4. What Zoryn Is Trying to Discover */}
-      <section className="mx-auto max-w-287.5 px-8 py-24">
+      <section className="mx-auto max-w-287.5 px-4 py-14 sm:px-6 sm:py-20 lg:px-8 lg:py-24">
         <Eyebrow>What Zoryn Is Trying to Discover</Eyebrow>
-        <h2 className="mt-4 max-w-lg text-3xl font-semibold uppercase leading-tight tracking-normal text-[#1A1A1A]">
+        <h2 className="mt-4 max-w-lg text-2xl font-semibold uppercase leading-tight sm:text-3xl tracking-normal text-[#1A1A1A]">
           The earliest signs, before they become obvious impacts.
         </h2>
 
@@ -169,10 +169,10 @@ export default function AboutPage() {
       </section>
 
       {/* ---------------------------------------------------- 5. Long-Term Vision */}
-      <section className="relative overflow-hidden border-t border-[#E5E5E5] bg-[#1A1A1A] py-28 text-center">
-        <div className="relative mx-auto max-w-2xl px-8">
+      <section className="relative overflow-hidden border-t border-[#E5E5E5] bg-[#1A1A1A] py-16 text-center sm:py-24 lg:py-28">
+        <div className="relative mx-auto max-w-2xl px-4 sm:px-6 lg:px-8">
           <Eyebrow>The Long-Term Vision</Eyebrow>
-          <p className="mt-6 text-3xl italic leading-tight text-white md:text-4xl">
+          <p className="mt-6 text-2xl italic leading-tight sm:text-3xl text-white md:text-4xl">
             "The goal is a reasoning system that keeps learning alongside
             scientists, extending their work rather than standing in for
             it."
@@ -186,6 +186,6 @@ export default function AboutPage() {
           </p>
         </div>
       </section>
-    </main>
+    </div>
   );
 }

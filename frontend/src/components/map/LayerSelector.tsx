@@ -14,7 +14,12 @@ const icons = {
   basemap: Map,
 };
 
-export default function LayerSelector() {
+interface LayerSelectorProps {
+  // Drop the card frame when shown inside a panel rather than a popover.
+  embedded?: boolean;
+}
+
+export default function LayerSelector({ embedded = false }: LayerSelectorProps) {
 
   const visibleLayers =
     useLayerStore(
@@ -28,7 +33,13 @@ export default function LayerSelector() {
 
   return (
 
-    <section className="rounded-xl border border-[#DDD2BE] bg-[#FAF7EF] p-4 shadow-xl">
+    <section
+      className={
+        embedded
+          ? ""
+          : "rounded-xl border border-[#DDD2BE] bg-[#FAF7EF] p-4 shadow-xl"
+      }
+    >
 
       <h2 className="text-xs font-semibold uppercase tracking-[0.2em] text-[#7C6A45]">
         Map Layers
@@ -54,6 +65,9 @@ export default function LayerSelector() {
 
           <button
             type="button"
+            role="switch"
+            aria-checked={visibleLayers.spi}
+            aria-label="SPI Layer"
             onClick={() => toggleLayer("spi")}
             className={`relative inline-flex h-6 w-10 items-center rounded-full transition-colors duration-200 ${
               visibleLayers.spi
@@ -86,6 +100,9 @@ export default function LayerSelector() {
 
           <button
             type="button"
+            role="switch"
+            aria-checked={visibleLayers.discoveryHighlights}
+            aria-label="Discovery Highlights"
             onClick={() => toggleLayer("discoveryHighlights")}
             className={`relative inline-flex h-6 w-10 items-center rounded-full transition-colors duration-200 ${
               visibleLayers.discoveryHighlights

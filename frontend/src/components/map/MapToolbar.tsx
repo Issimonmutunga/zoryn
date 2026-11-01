@@ -256,12 +256,11 @@ export default function MapToolbar() {
             setLayersOpen(!layersOpen);
             setTimelineOpen(false);
           }}
-          aria-label="Layers"
           aria-expanded={layersOpen}
-          className="flex h-10 shrink-0 items-center gap-2 rounded-xl border border-[#D8CEB8] bg-[#F3EEE2] px-2.5 text-sm text-[#4A422F] transition-colors hover:bg-[#EDE6D3] sm:px-3"
+          className="hidden h-10 shrink-0 items-center gap-2 rounded-xl border border-[#D8CEB8] bg-[#F3EEE2] px-3 text-sm text-[#4A422F] transition-colors hover:bg-[#EDE6D3] lg:flex"
         >
           <Layers className="h-4 w-4" />
-          <span className="hidden sm:inline">Layers</span>
+          Layers
         </button>
 
       </div>

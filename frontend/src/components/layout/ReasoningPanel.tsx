@@ -74,8 +74,8 @@ export default function ReasoningPanel({ h3Id }: ReasoningPanelProps) {
           </h2>
         </header>
 
-        <div className="p-6">
-          <div className="rounded-xl border border-border bg-card p-6 shadow-sm">
+        <div className="p-4 sm:p-6">
+          <div className="rounded-xl border border-border bg-card p-5 shadow-sm sm:p-6">
             <p className="text-sm text-muted-foreground">
               {reasoning.message}
             </p>
@@ -105,7 +105,8 @@ export default function ReasoningPanel({ h3Id }: ReasoningPanelProps) {
 
   return (
     <aside className="flex h-full w-full flex-col bg-background">
-      <header className="shrink-0 border-b border-border px-4 py-4 sm:px-6 sm:py-5">
+      {/* Below 1024px the side panel's own header names the panel. */}
+      <header className="hidden shrink-0 border-b border-border px-6 py-5 lg:block">
         <p className="text-primary text-xs font-semibold uppercase tracking-[0.2em]">
           Reasoning Workspace
         </p>
@@ -114,7 +115,7 @@ export default function ReasoningPanel({ h3Id }: ReasoningPanelProps) {
           Environmental Reasoning
         </h2>
 
-        <p className="mt-2 hidden text-sm leading-6 text-muted-foreground sm:block">
+        <p className="mt-2 text-sm leading-6 text-muted-foreground">
           Inspect the deterministic reasoning and AI-generated
           scientific explanation for the selected environmental
           discovery.
@@ -162,10 +163,6 @@ export default function ReasoningPanel({ h3Id }: ReasoningPanelProps) {
               summary={explanation.summary}
               interpretation={explanation.interpretation}
               limitations={explanation.limitations}
-              provider={explanation.provider}
-              model={explanation.model}
-              latencyMs={explanation.latency_ms}
-              totalTokens={explanation.total_tokens}
             />
 
             <CollapsibleSection

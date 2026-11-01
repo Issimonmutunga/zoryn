@@ -63,3 +63,11 @@ body {
 
   box-sizing: border-box;
 }
+/* Explorer: lift MapLibre's bottom controls (attribution) above the
+   side-panel launchers shown below 1024px. */
+@media (max-width: 1023.98px) {
+  .explorer-map .maplibregl-ctrl-bottom-left,
+  .explorer-map .maplibregl-ctrl-bottom-right {
+    bottom: 3.75rem;
+  }
+}

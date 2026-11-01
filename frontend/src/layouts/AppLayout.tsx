@@ -26,7 +26,7 @@ export default function AppLayout() {
 
       {!isWorkspace && (
         <footer className="border-t border-[#D8CEB8] bg-[#F3EEE2]">
-          <div className="mx-auto flex max-w-287.5 items-center px-8 py-3">
+          <div className="mx-auto flex max-w-287.5 items-center px-4 py-3 sm:px-6 lg:px-8">
             <p className="text-xs text-[#8A7B5C]">
               &copy; 2026 Zoryn
             </p>

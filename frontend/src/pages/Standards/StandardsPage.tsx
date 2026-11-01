@@ -148,19 +148,19 @@ const trustFlow = [
 
 export default function StandardsPage() {
   return (
-    <main
+    <div
       style={{ fontFamily: FONT_BODY }}
       className="antialiased bg-[#FAFAFA] text-[#3A3A3A]"
     >
       {/* ------------------------------------------------------------- Hero */}
       <section className="relative overflow-hidden border-b border-[#E5E5E5]">
         <Contours className="pointer-events-none absolute inset-x-0 top-0 h-105 w-full text-[#1A1A1A] opacity-[0.06]" />
-        <div className="relative mx-auto max-w-287.5 px-8 pb-24 pt-28">
+        <div className="relative mx-auto max-w-287.5 px-4 pb-16 pt-14 sm:px-6 sm:pb-20 sm:pt-20 lg:px-8 lg:pb-24 lg:pt-28">
           <Eyebrow>Scientific Standards</Eyebrow>
-          <h1 className="mt-5 max-w-3xl text-5xl font-semibold uppercase leading-[1.08] tracking-normal text-[#1A1A1A] md:text-6xl">
+          <h1 className="mt-5 max-w-3xl text-[2rem] font-semibold uppercase leading-[1.08] tracking-normal [overflow-wrap:anywhere] sm:text-5xl text-[#1A1A1A] md:text-6xl">
             Built on science. Designed for trust.
           </h1>
-          <p className="mt-7 max-w-2xl text-lg leading-8 text-[#5A5A5A]">
+          <p className="mt-7 max-w-2xl text-base leading-7 sm:text-lg sm:leading-8 text-[#5A5A5A]">
             Every discovery Zoryn produces is grounded in internationally
             recognised scientific methods, transparent deterministic
             reasoning, and authoritative environmental observations — not in
@@ -170,11 +170,11 @@ export default function StandardsPage() {
       </section>
 
       {/* --------------------------------------------------- Why standards matter */}
-      <section className="mx-auto max-w-287.5 px-8 py-24">
+      <section className="mx-auto max-w-287.5 px-4 py-14 sm:px-6 sm:py-20 lg:px-8 lg:py-24">
         <div className="grid gap-10 md:grid-cols-[0.8fr_1.2fr] md:gap-16">
           <div>
             <Eyebrow>Why Standards Matter</Eyebrow>
-            <h2 className="mt-4 text-3xl font-semibold uppercase leading-tight tracking-normal text-[#1A1A1A]">
+            <h2 className="mt-4 text-2xl font-semibold uppercase leading-tight sm:text-3xl tracking-normal text-[#1A1A1A]">
               Trust begins with
               <br />
               scientific standards.
@@ -210,9 +210,9 @@ export default function StandardsPage() {
 
       {/* --------------------------------------------------- Standards framework */}
       <section className="border-y border-[#E5E5E5] bg-[#F2F2F2]">
-        <div className="mx-auto max-w-287.5 px-8 py-24">
+        <div className="mx-auto max-w-287.5 px-4 py-14 sm:px-6 sm:py-20 lg:px-8 lg:py-24">
           <Eyebrow>Standards Framework</Eyebrow>
-          <h2 className="mt-4 max-w-xl text-3xl font-semibold uppercase leading-tight tracking-normal text-[#1A1A1A]">
+          <h2 className="mt-4 max-w-xl text-2xl font-semibold uppercase leading-tight sm:text-3xl tracking-normal text-[#1A1A1A]">
             The standards Zoryn reasons with.
           </h2>
 
@@ -274,9 +274,9 @@ export default function StandardsPage() {
       </section>
 
       {/* --------------------------------------------------------- Trust architecture */}
-      <section className="mx-auto max-w-287.5 px-8 py-24">
+      <section className="mx-auto max-w-287.5 px-4 py-14 sm:px-6 sm:py-20 lg:px-8 lg:py-24">
         <Eyebrow>Trust Architecture</Eyebrow>
-        <h2 className="mt-4 max-w-xl text-3xl font-semibold uppercase leading-tight tracking-normal text-[#1A1A1A]">
+        <h2 className="mt-4 max-w-xl text-2xl font-semibold uppercase leading-tight sm:text-3xl tracking-normal text-[#1A1A1A]">
           Where standards enter the reasoning.
         </h2>
         <p className="mt-5 max-w-2xl text-sm leading-7 text-[#6B6B6B]">
@@ -326,10 +326,10 @@ export default function StandardsPage() {
       {/* --------------------------------------------------------------- AI governance */}
       <section className="relative overflow-hidden border-y border-[#E5E5E5] bg-[#1A1A1A] text-white">
         <Contours className="pointer-events-none absolute inset-x-0 bottom-0 h-75 w-full rotate-180 text-white opacity-[0.06]" />
-        <div className="relative mx-auto max-w-287.5 px-8 py-24 text-center">
+        <div className="relative mx-auto max-w-287.5 px-4 py-14 sm:px-6 sm:py-20 lg:px-8 lg:py-24 text-center">
           <Eyebrow>AI Governance</Eyebrow>
           <ShieldCheck className="mx-auto mt-5 h-6 w-6 text-[#C9C9C9]" strokeWidth={1.5} />
-          <h2 className="mx-auto mt-5 max-w-xl text-3xl font-semibold uppercase leading-tight tracking-normal text-white md:text-4xl">
+          <h2 className="mx-auto mt-5 max-w-xl text-2xl font-semibold uppercase leading-tight sm:text-3xl tracking-normal text-white md:text-4xl">
             AI explains.
             <br />
             Science decides.
@@ -338,11 +338,11 @@ export default function StandardsPage() {
       </section>
 
       {/* ----------------------------------------------- Commitment to evolution */}
-      <section className="mx-auto max-w-287.5 px-8 py-24">
+      <section className="mx-auto max-w-287.5 px-4 py-14 sm:px-6 sm:py-20 lg:px-8 lg:py-24">
         <div className="grid gap-10 md:grid-cols-[0.8fr_1.2fr] md:gap-16">
           <div>
             <Eyebrow>Looking Ahead</Eyebrow>
-            <h2 className="mt-4 text-3xl font-semibold uppercase leading-tight tracking-normal text-[#1A1A1A]">
+            <h2 className="mt-4 text-2xl font-semibold uppercase leading-tight sm:text-3xl tracking-normal text-[#1A1A1A]">
               Committed to scientific evolution.
             </h2>
           </div>
@@ -360,10 +360,10 @@ export default function StandardsPage() {
 
       {/* ---------------------------------------------------------- Closing */}
       <section className="border-t border-[#E5E5E5] bg-[#F2F2F2]">
-        <div className="mx-auto max-w-287.5 px-8 py-24">
-          <div className="rounded-2xl border border-[#E5E5E5] bg-white p-10 text-center shadow-[0_1px_2px_rgba(0,0,0,0.03)] md:p-14">
+        <div className="mx-auto max-w-287.5 px-4 py-14 sm:px-6 sm:py-20 lg:px-8 lg:py-24">
+          <div className="rounded-2xl border border-[#E5E5E5] bg-white p-6 text-center sm:p-10 shadow-[0_1px_2px_rgba(0,0,0,0.03)] md:p-14">
             <ShieldCheck className="mx-auto h-6 w-6 text-[#6B6B6B]" strokeWidth={1.5} />
-            <h2 className="mx-auto mt-5 max-w-2xl text-3xl font-semibold uppercase leading-tight tracking-normal text-[#1A1A1A] md:text-4xl">
+            <h2 className="mx-auto mt-5 max-w-2xl text-2xl font-semibold uppercase leading-tight sm:text-3xl tracking-normal text-[#1A1A1A] md:text-4xl">
               Transparent environmental intelligence begins with transparent
               science.
             </h2>
@@ -392,6 +392,6 @@ export default function StandardsPage() {
           </div>
         </div>
       </section>
-    </main>
+    </div>
   );
 }

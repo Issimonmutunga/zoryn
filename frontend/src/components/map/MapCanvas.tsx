@@ -13,21 +13,21 @@ import { useExplorerStore } from "@/stores/explorerStore";
 import { useDiscoveryHighlights } from "@/hooks/useDiscoveries";
 import { useLayerStore } from "@/stores/layerStore";
 
-const spiFillColor = [
-  "interpolate",
-  ["linear"],
-  ["to-number", ["get", "spi3"]],
-  -2,
-  "#7f1d1d",
-  -1,
-  "#fb923c",
-  0,
-  "#d4d4d4",
-  1,
-  "#93c5fd",
-  2,
-  "#1e3a8a",
-] as any;
+import {
+  SPI_FILL_COLOR,
+  SPI_FILL_OPACITY,
+} from "@/components/map/spiClasses";
+
+// MapTiler when a key is configured; otherwise OpenFreeMap's keyless
+// Positron style, so the map never fails to load for want of a key.
+const MAPTILER_API_KEY =
+  import.meta.env.VITE_MAPTILER_API_KEY;
+
+const BASEMAP_STYLE_URL =
+  MAPTILER_API_KEY
+    ? `https://api.maptiler.com/maps/basic-v2/style.json?key=${MAPTILER_API_KEY}`
+    : "https://tiles.openfreemap.org/styles/positron";
+
 
 export default function MapCanvas() {
 
@@ -146,10 +146,12 @@ export default function MapCanvas() {
         container:
           containerRef.current,
 
-        style:
-          `https://api.maptiler.com/maps/basic-v2/style.json?key=${
-            import.meta.env.VITE_MAPTILER_API_KEY
-          }`,
+        style: BASEMAP_STYLE_URL,
+
+        // Collapsed to an (i) button so it doesn't cover the map on phones.
+        attributionControl: {
+          compact: true,
+        },
 
         center: [
           37.073878,
@@ -259,7 +261,7 @@ export default function MapCanvas() {
           source: "discoveries",
 
           paint: {
-            "fill-color": spiFillColor,
+            "fill-color": SPI_FILL_COLOR,
             "fill-opacity": [
               "case",
               [
@@ -268,7 +270,7 @@ export default function MapCanvas() {
                 "",
               ],
               0.9,
-              0.55,
+              SPI_FILL_OPACITY,
             ],
             "fill-outline-color": [
               "case",
@@ -545,9 +547,12 @@ export default function MapCanvas() {
     mapRef.current =
       map;
 
+    const popup =
+      popupRef.current;
+
     return () => {
 
-      popupRef.current.remove();
+      popup.remove();
 
       map.remove();
 
@@ -740,7 +745,7 @@ export default function MapCanvas() {
       return;
     }
 
-    const selectedFilter: any = [
+    const selectedFilter: maplibregl.ExpressionSpecification = [
       "==",
       [
         "get",
@@ -774,7 +779,7 @@ export default function MapCanvas() {
           "case",
           selectedFilter,
           0.9,
-          0.55,
+          SPI_FILL_OPACITY,
         ],
       );
 

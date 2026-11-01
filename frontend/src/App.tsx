@@ -1,3 +1,4 @@
+import { lazy, Suspense } from "react";
 import {
   Navigate,
   Route,
@@ -7,12 +8,25 @@ import {
 import AppLayout from "./layouts/AppLayout";
 
 import HomePage from "./pages/Home/HomePage";
-import ExplorerPage from "./pages/Explorer/ExplorerPage";
 import MethodologyPage from "./pages/Methodology/MethodologyPage";
 import StandardsPage from "./pages/Standards/StandardsPage";
 import AboutPage from "./pages/About/AboutPage";
 import LoginPage from "./pages/Auth/LoginPage";
 import SignupPage from "./pages/Auth/SignupPage";
+
+// The explorer pulls in MapLibre (most of the bundle), so it loads only
+// when the explorer is opened.
+const ExplorerPage = lazy(
+  () => import("./pages/Explorer/ExplorerPage"),
+);
+
+function WorkspaceLoading() {
+  return (
+    <div className="flex h-full items-center justify-center bg-[#FAFAFA]">
+      <p className="text-sm text-[#6B6B6B]">Loading explorer…</p>
+    </div>
+  );
+}
 
 export default function App() {
   return (
@@ -25,7 +39,11 @@ export default function App() {
 
         <Route
           path="explorer"
-          element={<ExplorerPage />}
+          element={
+            <Suspense fallback={<WorkspaceLoading />}>
+              <ExplorerPage />
+            </Suspense>
+          }
         />
 
         <Route
