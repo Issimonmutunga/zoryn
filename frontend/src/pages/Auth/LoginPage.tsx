@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { FormEvent } from "react";
+import type { ChangeEvent, FormEvent } from "react";
 import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
 
 import AuthShell from "@/components/auth/AuthShell";
@@ -8,6 +8,7 @@ import AuthSubmit, { AuthError } from "@/components/auth/AuthSubmit";
 import { useLogin } from "@/hooks/useAuth";
 import { useCurrentUser } from "@/stores/authStore";
 
+import { fieldErrorsOf } from "./formErrors";
 import { getRedirectTarget } from "./redirect";
 
 export default function LoginPage() {
@@ -23,6 +24,19 @@ export default function LoginPage() {
 
   if (currentUser && !login.isSuccess) {
     return <Navigate replace to={redirectTo} />;
+  }
+
+  const fieldErrors = fieldErrorsOf(login.error);
+
+  // Editing a field clears the previous attempt's errors.
+  function edit(setter: (value: string) => void) {
+    return (event: ChangeEvent<HTMLInputElement>) => {
+      setter(event.target.value);
+
+      if (login.isError) {
+        login.reset();
+      }
+    };
   }
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -53,7 +67,13 @@ export default function LoginPage() {
       }
     >
       <form className="space-y-5" onSubmit={handleSubmit}>
-        <AuthError message={login.error?.message ?? null} />
+        <AuthError
+          message={
+            login.error && Object.keys(fieldErrors).length === 0
+              ? login.error.message
+              : null
+          }
+        />
 
         <AuthField
           label="Email"
@@ -63,7 +83,8 @@ export default function LoginPage() {
           placeholder="you@organisation.org"
           required
           value={email}
-          onChange={(event) => setEmail(event.target.value)}
+          error={fieldErrors.email}
+          onChange={edit(setEmail)}
           disabled={login.isPending}
         />
 
@@ -74,7 +95,8 @@ export default function LoginPage() {
           autoComplete="current-password"
           required
           value={password}
-          onChange={(event) => setPassword(event.target.value)}
+          error={fieldErrors.password}
+          onChange={edit(setPassword)}
           disabled={login.isPending}
         />
 

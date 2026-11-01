@@ -27,7 +27,7 @@ public sealed class AuthenticationController : ControllerBase
         if (!result.Succeeded)
         {
             foreach (var error in result.Errors)
-                ModelState.AddModelError(string.Empty, error);
+                ModelState.AddModelError(error.Field, error.Message);
 
             return ValidationProblem(ModelState);
         }

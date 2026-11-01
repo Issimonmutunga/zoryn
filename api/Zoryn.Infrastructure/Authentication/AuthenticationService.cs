@@ -41,10 +41,26 @@ public sealed class AuthenticationService : IAuthenticationService
 
         if (!result.Succeeded)
             return RegistrationResult.Failure(
-                result.Errors.Select(error => error.Description));
+                result.Errors.Select(ToRegistrationError).Distinct());
 
         return RegistrationResult.Success(CreateResponse(user));
     }
+
+    // The email doubles as the user name, so Identity reports a taken or
+    // malformed address twice; collapse each pair into one message on Email.
+    private static RegistrationError ToRegistrationError(IdentityError error) => error.Code switch
+    {
+        nameof(IdentityErrorDescriber.DuplicateEmail) or nameof(IdentityErrorDescriber.DuplicateUserName)
+            => new(nameof(RegisterRequest.Email), "An account with this email already exists."),
+
+        nameof(IdentityErrorDescriber.InvalidEmail) or nameof(IdentityErrorDescriber.InvalidUserName)
+            => new(nameof(RegisterRequest.Email), "Enter a valid email address."),
+
+        _ when error.Code.StartsWith("Password", StringComparison.Ordinal)
+            => new(nameof(RegisterRequest.Password), error.Description),
+
+        _ => new(string.Empty, error.Description)
+    };
 
     public async Task<AuthenticationResponse?> LoginAsync(LoginRequest request)
     {

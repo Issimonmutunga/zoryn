@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { FormEvent } from "react";
+import type { ChangeEvent, FormEvent } from "react";
 import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
 
 import AuthShell from "@/components/auth/AuthShell";
@@ -8,6 +8,7 @@ import AuthSubmit, { AuthError } from "@/components/auth/AuthSubmit";
 import { useRegister } from "@/hooks/useAuth";
 import { useCurrentUser } from "@/stores/authStore";
 
+import { fieldErrorsOf } from "./formErrors";
 import { getRedirectTarget } from "./redirect";
 
 // Mirrors ASP.NET Identity's default password policy, so most problems are
@@ -25,7 +26,7 @@ export default function SignupPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [formError, setFormError] = useState<string | null>(null);
+  const [mismatch, setMismatch] = useState(false);
 
   const redirectTo = getRedirectTarget(location.state);
 
@@ -33,15 +34,28 @@ export default function SignupPage() {
     return <Navigate replace to={redirectTo} />;
   }
 
+  const fieldErrors = fieldErrorsOf(register.error);
+
+  // Editing a field clears the previous attempt's errors.
+  function edit(setter: (value: string) => void) {
+    return (event: ChangeEvent<HTMLInputElement>) => {
+      setter(event.target.value);
+
+      if (register.isError) {
+        register.reset();
+      }
+    };
+  }
+
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     if (password !== confirmPassword) {
-      setFormError("Passwords do not match.");
+      setMismatch(true);
       return;
     }
 
-    setFormError(null);
+    setMismatch(false);
 
     register.mutate(
       {
@@ -72,7 +86,13 @@ export default function SignupPage() {
       }
     >
       <form className="space-y-5" onSubmit={handleSubmit}>
-        <AuthError message={formError ?? register.error?.message ?? null} />
+        <AuthError
+          message={
+            register.error && Object.keys(fieldErrors).length === 0
+              ? register.error.message
+              : null
+          }
+        />
 
         <AuthField
           label="Name"
@@ -82,7 +102,8 @@ export default function SignupPage() {
           optional
           maxLength={100}
           value={displayName}
-          onChange={(event) => setDisplayName(event.target.value)}
+          error={fieldErrors.displayname}
+          onChange={edit(setDisplayName)}
           disabled={register.isPending}
         />
 
@@ -94,7 +115,8 @@ export default function SignupPage() {
           placeholder="you@organisation.org"
           required
           value={email}
-          onChange={(event) => setEmail(event.target.value)}
+          error={fieldErrors.email}
+          onChange={edit(setEmail)}
           disabled={register.isPending}
         />
 
@@ -107,7 +129,8 @@ export default function SignupPage() {
           required
           minLength={6}
           value={password}
-          onChange={(event) => setPassword(event.target.value)}
+          error={fieldErrors.password}
+          onChange={edit(setPassword)}
           disabled={register.isPending}
         />
 
@@ -118,7 +141,11 @@ export default function SignupPage() {
           autoComplete="new-password"
           required
           value={confirmPassword}
-          onChange={(event) => setConfirmPassword(event.target.value)}
+          error={mismatch ? ["Passwords do not match."] : undefined}
+          onChange={(event) => {
+            setConfirmPassword(event.target.value);
+            setMismatch(false);
+          }}
           disabled={register.isPending}
         />
 

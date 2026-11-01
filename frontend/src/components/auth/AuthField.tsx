@@ -6,18 +6,25 @@ interface AuthFieldProps
   extends Omit<InputHTMLAttributes<HTMLInputElement>, "id"> {
   label: string;
   hint?: string;
+  error?: string[];
   optional?: boolean;
 }
 
 export default function AuthField({
   label,
   hint,
+  error = [],
   optional = false,
   type = "text",
   ...inputProps
 }: AuthFieldProps) {
   const id = useId();
   const hintId = `${id}-hint`;
+  const errorId = `${id}-error`;
+  const invalid = error.length > 0;
+
+  const describedBy =
+    [invalid && errorId, hint && hintId].filter(Boolean).join(" ") || undefined;
   const [revealed, setRevealed] = useState(false);
 
   const isPassword = type === "password";
@@ -38,10 +45,13 @@ export default function AuthField({
         <input
           id={id}
           type={isPassword && revealed ? "text" : type}
-          aria-describedby={hint ? hintId : undefined}
-          className={`h-11 w-full rounded-lg border border-[#E5E5E5] bg-white px-3.5 text-base text-[#1A1A1A] placeholder:text-[#A3A3A3] sm:text-sm transition-colors duration-200 hover:border-[#D4D4D4] focus:border-[#1A1A1A] focus:outline-none focus:ring-2 focus:ring-[#1A1A1A]/10 disabled:bg-[#F5F5F5] ${
-            isPassword ? "pr-11" : ""
-          }`}
+          aria-describedby={describedBy}
+          aria-invalid={invalid || undefined}
+          className={`h-11 w-full rounded-lg border bg-white px-3.5 text-base text-[#1A1A1A] placeholder:text-[#A3A3A3] sm:text-sm transition-colors duration-200 focus:outline-none focus:ring-2 disabled:bg-[#F5F5F5] ${
+            invalid
+              ? "border-[#D9534F] focus:border-[#9B2C20] focus:ring-[#9B2C20]/10"
+              : "border-[#E5E5E5] hover:border-[#D4D4D4] focus:border-[#1A1A1A] focus:ring-[#1A1A1A]/10"
+          } ${isPassword ? "pr-11" : ""}`}
           {...inputProps}
         />
 
@@ -60,6 +70,14 @@ export default function AuthField({
           </button>
         )}
       </div>
+
+      {invalid && (
+        <ul id={errorId} className="mt-1.5 space-y-0.5 text-xs leading-relaxed text-[#9B2C20]">
+          {error.map((message) => (
+            <li key={message}>{message}</li>
+          ))}
+        </ul>
+      )}
 
       {hint && (
         <p id={hintId} className="mt-1.5 text-xs leading-relaxed text-[#8A8A8A]">

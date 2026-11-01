@@ -5,15 +5,22 @@ const API_BASE_URL =
 export class ApiError extends Error {
   readonly status: number;
 
+  // Validation messages keyed by lower-cased request field ("email",
+  // "password"); empty when the error isn't about a particular field.
+  readonly fieldErrors: Record<string, string[]>;
+
   constructor(
     message: string,
     status: number,
+    fieldErrors: Record<string, string[]> = {},
   ) {
     super(message);
 
     this.name = "ApiError";
 
     this.status = status;
+
+    this.fieldErrors = fieldErrors;
   }
 }
 

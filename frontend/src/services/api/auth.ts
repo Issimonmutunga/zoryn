@@ -18,41 +18,55 @@ interface ProblemDetails {
   errors?: Record<string, string[]>;
 }
 
-// ASP.NET returns RFC 7807 problem details; collect every message so
-// Identity's password rules can all be shown at once.
+// ASP.NET returns RFC 7807 problem details. Messages tied to a request
+// field are kept apart so forms can show them beside that field; the rest
+// form the error's message.
 async function readProblem(
   response: Response,
-): Promise<string> {
+): Promise<ApiError> {
 
   if (response.status >= 500) {
-    return "Something went wrong on our side. Please try again shortly.";
+    return new ApiError(
+      "Something went wrong on our side. Please try again shortly.",
+      response.status,
+    );
   }
+
+  let body: ProblemDetails = {};
 
   try {
-
-    const body: ProblemDetails =
-      await response.json();
-
-    const messages = Object.values(
-      body.errors ?? {},
-    ).flat();
-
-    if (messages.length > 0) {
-      return messages.join(" ");
-    }
-
-    if (body.title) {
-      return body.title;
-    }
-
+    body = await response.json();
   } catch {
     //
-    // Ignore.
+    // Not JSON; fall back to the status text.
     //
   }
 
-  return response.statusText ||
-    "Request failed.";
+  const fieldErrors: Record<string, string[]> = {};
+  const generalErrors: string[] = [];
+
+  for (const [key, messages] of Object.entries(body.errors ?? {})) {
+    // Model binding may report JSON paths such as "$.email".
+    const field = key.replace(/^\$\./, "").toLowerCase();
+
+    if (field) {
+      fieldErrors[field] = [...(fieldErrors[field] ?? []), ...messages];
+    } else {
+      generalErrors.push(...messages);
+    }
+  }
+
+  const message =
+    generalErrors.join(" ") ||
+    (Object.keys(fieldErrors).length > 0
+      ? "Please correct the highlighted fields."
+      : body.title || response.statusText || "Request failed.");
+
+  return new ApiError(
+    message,
+    response.status,
+    fieldErrors,
+  );
 }
 
 async function request<T>(
@@ -88,10 +102,7 @@ async function request<T>(
   }
 
   if (!response.ok) {
-    throw new ApiError(
-      await readProblem(response),
-      response.status,
-    );
+    throw await readProblem(response);
   }
 
   return response.json();
