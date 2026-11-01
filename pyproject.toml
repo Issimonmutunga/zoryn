@@ -33,6 +33,12 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+# Ad-hoc tools under scripts/ (ClimateSERV prototype, parquet checks).
+scripts = [
+    "requests>=2.31",
+    "psutil>=5.9"
+]
+
 dev = [
     "pytest>=8",
     "pytest-cov",

@@ -100,11 +100,13 @@ Explainable Insights
 ## Project Structure
 
 ```text
-backend/
-frontend/
-data/
-docs/
-tests/
+src/zoryn/   Python reasoning engine and REST API (FastAPI)
+api/         .NET 8 account API: sign-up, sign-in, monitoring regions
+frontend/    React + Vite web app
+data/        Pilot datasets (H3 grid, observations, SPI, discoveries)
+scripts/     Data preparation and prototyping tools
+notebooks/   Earth Engine export and pilot generation notebooks
+tests/       Python tests
 ```
 
 ---
@@ -118,24 +120,49 @@ git clone https://github.com/Issimonmutunga/zoryn.git
 cd zoryn
 ```
 
-### Backend
+### Reasoning API (Python 3.11+)
 
 ```bash
-cd backend
-
-pip install -r requirements.txt
-
+pip install -e .
+cp .env.example .env
 uvicorn zoryn.rest.app:app --reload
 ```
+
+Serves on http://127.0.0.1:8000. Explanations use a placeholder until
+`ZORYN_EXPLANATION_PROVIDER=groq` and `GROQ_API_KEY` are set in `.env`.
+
+### Account API (.NET 8 + PostgreSQL)
+
+```bash
+cd api
+docker compose up -d
+
+dotnet user-secrets set "ConnectionStrings:DefaultConnection" "Host=localhost;Port=5432;Database=zoryn;Username=zoryn;Password=zoryn_dev" --project Zoryn.Api
+dotnet user-secrets set "Jwt:Key" "<at least 32 random bytes>" --project Zoryn.Api
+
+dotnet ef database update --project Zoryn.Infrastructure --startup-project Zoryn.Api
+dotnet run --project Zoryn.Api --launch-profile http
+```
+
+Serves on http://localhost:5202. `Zoryn.Api/Zoryn.Api.http` has example
+requests.
 
 ### Frontend
 
 ```bash
 cd frontend
-
 npm install
-
 npm run dev
+```
+
+Opens on http://127.0.0.1:5173. Optional settings are listed in
+`frontend/.env.example`.
+
+### Tests
+
+```bash
+pip install -e ".[dev]"
+pytest
 ```
 
 ---
