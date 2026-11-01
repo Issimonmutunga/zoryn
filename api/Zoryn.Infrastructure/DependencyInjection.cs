@@ -62,7 +62,7 @@ public static class DependencyInjection
                 };
             });
         services.AddScoped<IAuthenticationService, AuthenticationService>();
-        services.AddSingleton<IMonitoringRegionRepository, MonitoringRegionRepository>();
+        services.AddScoped<IMonitoringRegionRepository, MonitoringRegionRepository>();
 
         return services;
     }

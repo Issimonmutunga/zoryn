@@ -1,38 +1,40 @@
+using Microsoft.EntityFrameworkCore;
 using Zoryn.Application.Interfaces;
 using Zoryn.Domain.Entities;
+using Zoryn.Infrastructure.Data;
 
 namespace Zoryn.Infrastructure.Repositories;
 
 public sealed class MonitoringRegionRepository : IMonitoringRegionRepository
 {
-    private readonly List<MonitoringRegion> _regions = [];
+    private readonly ApplicationDbContext _context;
 
-    public Task<MonitoringRegion?> GetByIdAsync(Guid id)
+    public MonitoringRegionRepository(ApplicationDbContext context)
     {
-        var region = _regions.FirstOrDefault(x => x.Id == id);
-        return Task.FromResult(region);
+        _context = context;
     }
 
-    public Task<IReadOnlyList<MonitoringRegion>> GetAllAsync()
+    public Task<MonitoringRegion?> GetByIdAsync(Guid id) =>
+        _context.MonitoringRegions.FirstOrDefaultAsync(region => region.Id == id);
+
+    public async Task<IReadOnlyList<MonitoringRegion>> GetAllAsync() =>
+        await _context.MonitoringRegions
+            .AsNoTracking()
+            .OrderBy(region => region.Name)
+            .ToListAsync();
+
+    public async Task AddAsync(MonitoringRegion region)
     {
-        IReadOnlyList<MonitoringRegion> regions = _regions;
-        return Task.FromResult(regions);
+        _context.MonitoringRegions.Add(region);
+        await _context.SaveChangesAsync();
     }
 
-    public Task AddAsync(MonitoringRegion region)
-    {
-        _regions.Add(region);
-        return Task.CompletedTask;
-    }
+    // The region was loaded through this context, so its changes are tracked.
+    public Task UpdateAsync(MonitoringRegion region) =>
+        _context.SaveChangesAsync();
 
-    public Task UpdateAsync(MonitoringRegion region)
-    {
-        return Task.CompletedTask;
-    }
-
-    public Task DeleteAsync(Guid id)
-    {
-        _regions.RemoveAll(x => x.Id == id);
-        return Task.CompletedTask;
-    }
+    public Task DeleteAsync(Guid id) =>
+        _context.MonitoringRegions
+            .Where(region => region.Id == id)
+            .ExecuteDeleteAsync();
 }

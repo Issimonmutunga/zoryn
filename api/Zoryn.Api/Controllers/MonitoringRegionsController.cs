@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Zoryn.Application.DTOs;
 using Zoryn.Application.Interfaces;
+using Zoryn.Domain.Entities;
 
 namespace Zoryn.Api.Controllers;
 
@@ -35,6 +36,9 @@ public sealed class MonitoringRegionsController : ControllerBase
     public async Task<ActionResult<MonitoringRegionDto>> Create(
         [FromBody] string name)
     {
+        if (!IsValidName(name))
+            return ValidationProblem(ModelState);
+
         var region = await _service.CreateAsync(name);
 
         return CreatedAtAction(
@@ -49,6 +53,9 @@ public sealed class MonitoringRegionsController : ControllerBase
         Guid id,
         [FromBody] string name)
     {
+        if (!IsValidName(name))
+            return ValidationProblem(ModelState);
+
         var updated = await _service.UpdateAsync(id, name);
 
         return updated ? NoContent() : NotFound();
@@ -61,5 +68,18 @@ public sealed class MonitoringRegionsController : ControllerBase
         var deleted = await _service.DeleteAsync(id);
 
         return deleted ? NoContent() : NotFound();
+    }
+
+    // Checked here so bad input is a 400, not an exception from the domain.
+    private bool IsValidName(string? name)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+            ModelState.AddModelError(nameof(name), "Region name is required.");
+        else if (name.Trim().Length > MonitoringRegion.MaxNameLength)
+            ModelState.AddModelError(
+                nameof(name),
+                $"Region name cannot exceed {MonitoringRegion.MaxNameLength} characters.");
+
+        return ModelState.IsValid;
     }
 }

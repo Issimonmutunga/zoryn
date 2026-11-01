@@ -153,6 +153,21 @@ namespace Zoryn.Infrastructure.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("Zoryn.Domain.Entities.MonitoringRegion", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("MonitoringRegions");
+                });
+
             modelBuilder.Entity("Zoryn.Infrastructure.Identity.ApplicationUser", b =>
                 {
                     b.Property<Guid>("Id")
