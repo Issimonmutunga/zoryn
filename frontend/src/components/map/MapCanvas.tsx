@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef } from "react";
 
 import maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
+import "@/styles/map.css";
 import { useTimelineStore } from "@/stores/timelineStore";
 import {
   mapApi,
@@ -16,7 +17,31 @@ import { useLayerStore } from "@/stores/layerStore";
 import {
   SPI_FILL_COLOR,
   SPI_FILL_OPACITY,
+  spiClassOf,
 } from "@/components/map/spiClasses";
+
+// "2024-08" -> "Aug 2024"; anything else is shown as is.
+function formatMonth(
+  value: unknown,
+): string {
+
+  if (
+    typeof value !== "string" ||
+    !/^\d{4}-\d{2}$/.test(value)
+  ) {
+    return "";
+  }
+
+  const [year, month] =
+    value.split("-").map(Number);
+
+  return new Date(year, month - 1, 1)
+    .toLocaleString("en", {
+      month: "short",
+      year: "numeric",
+    });
+
+}
 
 // MapTiler when a key is configured; otherwise OpenFreeMap's keyless
 // Positron style, so the map never fails to load for want of a key.
@@ -100,6 +125,21 @@ export default function MapCanvas() {
     [discoveryHighlights],
   );
 
+  // Latest values for map event handlers and effects that must not re-run
+  // when these change (re-running would rebuild the map or refetch SPI).
+  const highlightedH3Ref = useRef(highlightedH3);
+  const selectedH3Ref = useRef(selectedH3);
+
+  useEffect(() => {
+    highlightedH3Ref.current = highlightedH3;
+    selectedH3Ref.current = selectedH3;
+  }, [highlightedH3, selectedH3]);
+
+  // Set once the user has moved the map (by hand or by searching), so the
+  // initial fit to the pilot area, which waits for the geometry to load,
+  // doesn't undo it.
+  const navigatedRef = useRef(false);
+
   useEffect(() => {
 
     const map =
@@ -111,6 +151,8 @@ export default function MapCanvas() {
     ) {
       return;
     }
+
+    navigatedRef.current = true;
 
     map.flyTo({
       center: [
@@ -165,6 +207,18 @@ export default function MapCanvas() {
     map.addControl(
       new maplibregl.NavigationControl(),
       "top-left",
+    );
+
+    // Only user gestures carry an originalEvent; programmatic moves don't.
+    map.on(
+      "movestart",
+      (event) => {
+
+        if (event.originalEvent) {
+          navigatedRef.current = true;
+        }
+
+      },
     );
 
     map.on(
@@ -223,15 +277,13 @@ export default function MapCanvas() {
                     ...feature.properties,
 
                     spi3:
-                      Number(
-                        values?.spi3 ?? 0,
-                      ),
+                      values?.spi3 ?? null,
 
                     timestamp:
                       values?.timestamp ?? "",
 
                     highlight:
-                      highlightedH3.has(
+                      highlightedH3Ref.current.has(
                         properties.h3_id,
                       ),
 
@@ -380,13 +432,17 @@ export default function MapCanvas() {
 
         }
 
-        map.fitBounds(
-          bounds,
-          {
-            padding: 80,
-            maxZoom: 16,
-          },
-        );
+        if (!navigatedRef.current) {
+
+          map.fitBounds(
+            bounds,
+            {
+              padding: 80,
+              maxZoom: 16,
+            },
+          );
+
+        }
 
         map.on(
           "click",
@@ -450,36 +506,25 @@ export default function MapCanvas() {
             const properties =
               feature.properties ?? {};
 
-            const spi =
-              Number(
-                properties.spi3,
+            const value =
+              properties.spi3;
+
+            const spiClass =
+              spiClassOf(
+                typeof value === "number"
+                  ? value
+                  : null,
               );
 
-            let category =
-              "Near Normal";
+            const category =
+              spiClass?.name ??
+              "No SPI data";
 
-            if (spi < -2.0) {
-              category =
-                "Extreme Drought";
-            } else if (spi < -1.5) {
-              category =
-                "Severe Drought";
-            } else if (spi < -1.0) {
-              category =
-                "Moderate Drought";
-            } else if (spi < 1.0) {
-              category =
-                "Near Normal";
-            } else if (spi < 1.5) {
-              category =
-                "Moderately Wet";
-            } else if (spi < 2.0) {
-              category =
-                "Very Wet";
-            } else {
-              category =
-                "Extremely Wet";
-            }
+            const detail =
+              typeof value === "number" &&
+              Number.isFinite(value)
+                ? `SPI-3 ${value.toFixed(2)} · ${formatMonth(properties.timestamp)}`
+                : formatMonth(properties.timestamp);
 
             popupRef.current
               .setLngLat(
@@ -489,12 +534,12 @@ export default function MapCanvas() {
                 `
 <div
   style="
-    width:150px;
+    min-width:150px;
     padding:8px;
     border-radius:8px;
     background:#FAF7EF;
     border:1px solid #D8CEB8;
-    font-family:Inter,sans-serif;
+    font-family:'IBM Plex Sans',ui-sans-serif,system-ui,sans-serif;
     color:#2B2417;
   "
 >
@@ -516,7 +561,7 @@ export default function MapCanvas() {
       font-weight:500;
     "
   >
-    ${properties.timestamp}
+    ${detail}
   </div>
 
 </div>
@@ -624,9 +669,7 @@ export default function MapCanvas() {
             );
 
           properties.spi3 =
-            Number(
-              values?.spi3 ?? 0,
-            );
+            values?.spi3 ?? null;
 
           properties.timestamp =
             values?.timestamp ?? "";
@@ -677,6 +720,9 @@ export default function MapCanvas() {
         }
 
       }
+
+      const selectedH3 =
+        selectedH3Ref.current;
 
       if (
         selectedH3 &&

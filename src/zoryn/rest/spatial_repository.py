@@ -29,6 +29,7 @@ class SpatialRepository:
     _h3: pl.DataFrame | None = None
     _geojson_cache: dict | None = None
     _geometry_cache: dict | None = None
+    _months_cache: list[str] | None = None
 
     def __init__(
         self,
@@ -191,6 +192,45 @@ class SpatialRepository:
 
         cls._geojson_cache = None
         cls._geometry_cache = None
+        cls._months_cache = None
+
+    def map_months(
+        self,
+    ) -> list[str]:
+        """
+        Months, oldest first, for which at least one cell
+        has a defined SPI-3 value.
+        """
+
+        if SpatialRepository._months_cache is not None:
+
+            return SpatialRepository._months_cache
+
+        root = Path(__file__).resolve().parents[3]
+
+        months = (
+            pl.scan_parquet(
+                root
+                / "data"
+                / "processed"
+                / "spi"
+                / "spi3.parquet"
+            )
+            .filter(
+                pl.col("spi3").is_not_null()
+                & pl.col("spi3").is_not_nan()
+            )
+            .select(
+                pl.col("timestamp").unique().sort()
+            )
+            .collect()
+        )
+
+        SpatialRepository._months_cache = (
+            months["timestamp"].to_list()
+        )
+
+        return SpatialRepository._months_cache
 
     def map_spi(
         self,

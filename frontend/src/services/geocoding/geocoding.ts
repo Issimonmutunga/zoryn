@@ -43,6 +43,16 @@ export async function searchLocation(
     "1",
   );
 
+  url.searchParams.set(
+    "countrycodes",
+    "ke",
+  );
+
+  //
+  // Browsers don't let pages set User-Agent; the
+  // Nominatim usage policy accepts the Referer
+  // they send instead.
+  //
   const response =
     await fetch(
       url.toString(),
@@ -50,13 +60,6 @@ export async function searchLocation(
         headers: {
           Accept:
             "application/json",
-
-          //
-          // Required by the
-          // Nominatim usage policy.
-          //
-          "User-Agent":
-            "Zoryn Environmental Reasoning Engine",
         },
       },
     );

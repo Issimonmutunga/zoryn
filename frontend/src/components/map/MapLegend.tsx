@@ -19,7 +19,7 @@ export function LegendKey() {
 
         {SPI_CLASSES.map((item) => (
           <div
-            key={item.label}
+            key={item.name}
             className="flex items-center gap-3"
           >
             <span
@@ -31,11 +31,19 @@ export function LegendKey() {
             />
 
             <span className="text-sm text-[#2B2417]">
-              {item.label}
+              {item.name} ({item.range})
             </span>
 
           </div>
         ))}
+
+        <div className="flex items-center gap-3">
+          <span className="h-4 w-4 shrink-0 rounded border border-dashed border-[#8A7B5C]" />
+
+          <span className="text-sm text-[#2B2417]">
+            No data (unfilled)
+          </span>
+        </div>
 
       </div>
 

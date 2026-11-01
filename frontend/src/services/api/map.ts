@@ -27,6 +27,13 @@ export const mapApi = {
     );
   },
 
+  // Months with a defined SPI-3 value, oldest first.
+  getMonths() {
+    return apiClient.get<string[]>(
+      "/map/months",
+    );
+  },
+
   getSpi(
     timestamp: string,
   ) {

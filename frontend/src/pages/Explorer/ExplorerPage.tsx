@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Layers, PanelRightOpen, X } from "lucide-react";
 
 import ExplorerSidebar from "@/components/layout/ExplorerSidebar";
@@ -7,6 +8,7 @@ import LayerSelector from "@/components/map/LayerSelector";
 import MapCanvas from "@/components/map/MapCanvas";
 import MapToolbar from "@/components/map/MapToolbar";
 import MapLegend, { LegendKey } from "@/components/map/MapLegend";
+import { mapApi } from "@/services/api/map";
 import { useExplorerStore } from "@/stores/explorerStore";
 import { useTimelineStore } from "@/stores/timelineStore";
 
@@ -45,6 +47,32 @@ function PanelHeader({ title, subtitle, onClose, className = "" }: PanelHeaderPr
   );
 }
 
+// Below 1024px the panels overlay the map; above it the reasoning panel is
+// a sidebar and the map key isn't a panel at all.
+const COMPACT_QUERY = "(max-width: 1023.98px)";
+
+function useIsCompact() {
+  const [compact, setCompact] = useState(
+    () => window.matchMedia(COMPACT_QUERY).matches,
+  );
+
+  useEffect(() => {
+    const query = window.matchMedia(COMPACT_QUERY);
+    const update = () => setCompact(query.matches);
+
+    query.addEventListener("change", update);
+
+    return () => query.removeEventListener("change", update);
+  }, []);
+
+  return compact;
+}
+
+// Panels become visible as soon as they start sliding in (so they can take
+// focus straight away) and hidden only once they have slid out.
+const PANEL_OPEN = "visible translate-x-0 [transition:translate_300ms_ease-out,visibility_0s]";
+const PANEL_CLOSED = "invisible [transition:translate_300ms_ease-out,visibility_0s_linear_300ms]";
+
 const launcherClass =
   "pointer-events-auto flex h-11 items-center gap-2 rounded-full border border-[#E5E5E5] bg-white/95 px-4 text-sm font-medium text-[#1A1A1A] shadow-[0_4px_16px_rgba(0,0,0,0.12)] backdrop-blur-sm transition-colors duration-200 hover:bg-[#F2F2F2]";
 
@@ -54,8 +82,46 @@ export default function ExplorerPage() {
 
   // Presentation-only: which side panel is open below 1024px.
   const [openPanel, setOpenPanel] = useState<Panel | null>(null);
+  const isCompact = useIsCompact();
 
-  const closePanel = () => setOpenPanel(null);
+  const mapSectionRef = useRef<HTMLElement>(null);
+  const mapPanelRef = useRef<HTMLElement>(null);
+  const reasoningPanelRef = useRef<HTMLElement>(null);
+
+  // The control that opened a panel gets focus back when it closes.
+  const returnFocusRef = useRef<HTMLElement | null>(null);
+
+  function openPanelFrom(panel: Panel) {
+    returnFocusRef.current = document.activeElement as HTMLElement | null;
+    setOpenPanel(panel);
+  }
+
+  function closePanel() {
+    setOpenPanel(null);
+  }
+
+  // An open panel works like a dialog over the map: focus moves into it
+  // and the map behind it can't be reached. On close, focus goes back to
+  // whatever opened it once the map is reachable again.
+  useEffect(() => {
+    const overlaid = isCompact && openPanel !== null;
+
+    if (overlaid) {
+      const panel =
+        openPanel === "map" ? mapPanelRef.current : reasoningPanelRef.current;
+
+      panel?.focus({ preventScroll: true });
+    }
+
+    if (mapSectionRef.current) {
+      mapSectionRef.current.inert = overlaid;
+    }
+
+    if (!overlaid && returnFocusRef.current) {
+      returnFocusRef.current.focus({ preventScroll: true });
+      returnFocusRef.current = null;
+    }
+  }, [isCompact, openPanel]);
 
   // Show the reasoning as soon as a cell is picked.
   useEffect(() => {
@@ -71,7 +137,7 @@ export default function ExplorerPage() {
 
     function handleEscape(event: KeyboardEvent) {
       if (event.key === "Escape") {
-        setOpenPanel(null);
+        closePanel();
       }
     }
 
@@ -80,25 +146,25 @@ export default function ExplorerPage() {
     return () => document.removeEventListener("keydown", handleEscape);
   }, [openPanel]);
 
+  const { data: months } = useQuery({
+    queryKey: ["map", "months"],
+    queryFn: () => mapApi.getMonths(),
+    staleTime: Infinity,
+  });
+
   useEffect(() => {
-    // TODO: replace with real data source (e.g. backend endpoint
-    // exposing the months for which imagery/data actually exists).
-    // Placeholder range below is not derived from real coverage data.
-    const dates: string[] = [];
-
-    for (let year = 2002; year <= 2024; year++) {
-      for (let month = 1; month <= 12; month++) {
-        dates.push(`${year}-${String(month).padStart(2, "0")}`);
-      }
+    if (months) {
+      setAvailableDates(months);
     }
-
-    setAvailableDates(dates);
-  }, [setAvailableDates]);
+  }, [months, setAvailableDates]);
 
   return (
     <div className="antialiased relative flex h-full overflow-hidden bg-[#FAFAFA]">
       {/* --------------------------------------------------------- Map */}
-      <section className="explorer-map relative min-w-0 flex-1 overflow-hidden">
+      <section
+        ref={mapSectionRef}
+        className="explorer-map relative min-w-0 flex-1 overflow-hidden"
+      >
         <MapCanvas />
         <MapToolbar />
         <MapLegend />
@@ -107,7 +173,7 @@ export default function ExplorerPage() {
         <div className="pointer-events-none absolute inset-x-3 bottom-3 z-10 flex items-center justify-between gap-3 lg:hidden">
           <button
             type="button"
-            onClick={() => setOpenPanel("map")}
+            onClick={() => openPanelFrom("map")}
             className={launcherClass}
             aria-controls="explorer-map-panel"
             aria-expanded={openPanel === "map"}
@@ -118,7 +184,7 @@ export default function ExplorerPage() {
 
           <button
             type="button"
-            onClick={() => setOpenPanel("reasoning")}
+            onClick={() => openPanelFrom("reasoning")}
             className={launcherClass}
             aria-controls="explorer-reasoning-panel"
             aria-expanded={openPanel === "reasoning"}
@@ -143,10 +209,12 @@ export default function ExplorerPage() {
 
       {/* ------------------------------------------ Left panel: map key */}
       <aside
+        ref={mapPanelRef}
         id="explorer-map-panel"
         aria-label="Map key"
-        className={`absolute inset-y-0 left-0 z-40 flex w-[min(22rem,calc(100%-3rem))] flex-col bg-[#FAF7EF] shadow-2xl transition-[translate,visibility] duration-300 ease-out lg:hidden ${
-          openPanel === "map" ? "visible translate-x-0" : "invisible -translate-x-full"
+        tabIndex={-1}
+        className={`absolute inset-y-0 left-0 z-40 flex w-[min(22rem,calc(100%-3rem))] flex-col bg-[#FAF7EF] shadow-2xl outline-none lg:hidden ${
+          openPanel === "map" ? PANEL_OPEN : `${PANEL_CLOSED} -translate-x-full`
         }`}
       >
         <PanelHeader
@@ -175,15 +243,16 @@ export default function ExplorerPage() {
         Very large monitors (1536px+): 500px wide.
       */}
       <section
+        ref={reasoningPanelRef}
         id="explorer-reasoning-panel"
         aria-label="Reasoning"
+        tabIndex={-1}
         className={`
           absolute inset-y-0 right-0 z-40
           flex w-[min(26rem,calc(100%-3rem))] flex-col
-          bg-white shadow-2xl
-          transition-[translate,visibility] duration-300 ease-out
+          bg-white shadow-2xl outline-none
 
-          ${openPanel === "reasoning" ? "visible translate-x-0" : "invisible translate-x-full"}
+          ${openPanel === "reasoning" ? PANEL_OPEN : `${PANEL_CLOSED} translate-x-full`}
 
           lg:visible
           lg:static
@@ -194,7 +263,7 @@ export default function ExplorerPage() {
           lg:border-l
           lg:border-[#E5E5E5]
           lg:shadow-none
-          lg:transition-none
+          lg:[transition:none]
 
           xl:w-115
           2xl:w-125

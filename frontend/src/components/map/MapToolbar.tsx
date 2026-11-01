@@ -39,6 +39,14 @@ function formatMonth(
 
 }
 
+type SearchStatus = "idle" | "searching" | "not-found" | "error";
+
+const searchMessages: Partial<Record<SearchStatus, string>> = {
+  searching: "Searching…",
+  "not-found": "No matching place in Nairobi.",
+  error: "Location search is unavailable right now.",
+};
+
 export default function MapToolbar() {
   const searchQuery =
     useExplorerStore(
@@ -79,6 +87,11 @@ export default function MapToolbar() {
     layersOpen,
     setLayersOpen,
   ] = useState(false);
+
+  const [
+    searchStatus,
+    setSearchStatus,
+  ] = useState<SearchStatus>("idle");
 
   const toolbarRef = useRef<HTMLElement>(null);
 
@@ -162,6 +175,12 @@ export default function MapToolbar() {
   }, [timelineOpen]);
 
   async function handleSearch() {
+    if (searchQuery.trim().length === 0) {
+      return;
+    }
+
+    setSearchStatus("searching");
+
     try {
       const result =
         await searchLocation(
@@ -169,11 +188,11 @@ export default function MapToolbar() {
         );
 
       if (!result) {
-        alert(
-          "Location not found.",
-        );
+        setSearchStatus("not-found");
         return;
       }
+
+      setSearchStatus("idle");
 
       setSearchTarget(
         result,
@@ -184,9 +203,7 @@ export default function MapToolbar() {
         error,
       );
 
-      alert(
-        "Unable to search for the requested location.",
-      );
+      setSearchStatus("error");
     }
   }
 
@@ -197,31 +214,34 @@ export default function MapToolbar() {
     >
       <div className="flex items-center gap-1.5 rounded-2xl border border-[#D8CEB8] bg-[#FAF7EF]/90 p-1.5 shadow-[0_8px_24px_rgba(43,36,23,0.10)] backdrop-blur-md sm:gap-2 sm:p-2">
 
-        <div className="relative min-w-0 flex-1">
+        <form
+          role="search"
+          className="relative min-w-0 flex-1"
+          onSubmit={(event) => {
+            event.preventDefault();
+            void handleSearch();
+          }}
+        >
 
           <Search className="pointer-events-none absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[#8A7B5C]" />
 
           <input
-            type="text"
+            type="search"
+            enterKeyHint="search"
+            aria-label="Search for a place in Nairobi"
+            aria-describedby="map-search-status"
             value={searchQuery}
             placeholder="Search Nairobi location..."
-            onChange={(event) =>
+            onChange={(event) => {
               setSearchQuery(
                 event.target.value,
-              )
-            }
-            onKeyDown={(event) => {
-              if (
-                event.key ===
-                "Enter"
-              ) {
-                void handleSearch();
-              }
+              );
+              setSearchStatus("idle");
             }}
-            className="h-10 w-full rounded-xl border border-[#D8CEB8] bg-[#F3EEE2] pl-9 pr-3 text-sm text-[#2B2417] outline-none transition-colors placeholder:text-[#8A7B5C] focus:border-[#5B6B45]"
+            className="h-10 w-full rounded-xl border border-[#D8CEB8] bg-[#F3EEE2] pl-9 pr-3 text-base text-[#2B2417] outline-none transition-colors placeholder:text-[#8A7B5C] focus:border-[#5B6B45] sm:text-sm [&::-webkit-search-cancel-button]:hidden"
           />
 
-        </div>
+        </form>
 
         <button
           type="button"
@@ -264,6 +284,16 @@ export default function MapToolbar() {
         </button>
 
       </div>
+
+      <p
+        id="map-search-status"
+        role="status"
+        className={`mt-2 w-fit rounded-lg border border-[#D8CEB8] bg-[#FAF7EF]/95 px-3 py-1.5 text-xs text-[#5A5240] shadow-sm ${
+          searchMessages[searchStatus] ? "" : "sr-only"
+        }`}
+      >
+        {searchMessages[searchStatus] ?? ""}
+      </p>
 
       {timelineOpen && (
         <div className="absolute right-0 top-14 max-h-80 w-56 max-w-full overflow-y-auto rounded-xl border border-[#D8CEB8] bg-[#FAF7EF] p-1.5 shadow-[0_8px_24px_rgba(43,36,23,0.12)]">

@@ -290,6 +290,24 @@ def map_geometry(
 
 
 @router.get(
+    "/map/months",
+    tags=["Map"],
+    response_model=list[str],
+)
+def map_months(
+    repository: KnowledgeRepository = Depends(
+        get_repository,
+    ),
+):
+
+    spatial = SpatialRepository(
+        repository,
+    )
+
+    return spatial.map_months()
+
+
+@router.get(
     "/map/spi",
     tags=["Map"],
 )
