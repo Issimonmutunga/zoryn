@@ -11,8 +11,8 @@ import {
   ListTree,
 } from "lucide-react";
 
-// Fonts are loaded via <link> tags in index.html — see the note that
-// accompanies this file. No next/font here since this is a Vite app.
+// IBM Plex is self-hosted through the @fontsource imports in main.tsx;
+// the family names are referenced directly here.
 //
 // UI pass: matched to Home/Methodology's palette and type treatment —
 // dropped Fraunces for headings in favor of IBM Plex Sans (font-semibold,

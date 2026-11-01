@@ -1,9 +1,8 @@
 import type { ReactNode, ElementType } from "react";
 import { Waves, RefreshCw, SearchCheck, AlertTriangle, Sparkles } from "lucide-react";
 
-// Fonts are loaded via <link> tags in index.html (see the snippet in the
-// accompanying note) — Vite has no next/font equivalent, so we reference
-// the family names directly here.
+// IBM Plex is self-hosted through the @fontsource imports in main.tsx;
+// the family names are referenced directly here.
 //
 // UI pass: matched to the rest of the site — dropped Fraunces for headings
 // in favor of IBM Plex Sans (font-semibold, uppercase, normal tracking

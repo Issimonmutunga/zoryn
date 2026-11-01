@@ -8,8 +8,8 @@ import {
   Compass,
 } from "lucide-react";
 
-// Fonts are loaded via <link> tags in index.html — see the note that
-// accompanies this file. No next/font here since this is a Vite app.
+// IBM Plex is self-hosted through the @fontsource imports in main.tsx;
+// the family names are referenced directly here.
 //
 // Palette change: moved off the cream/olive scheme to a soft grayscale
 // black/white palette — pure black/white avoided in favor of near-black

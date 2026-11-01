@@ -43,7 +43,8 @@ html {
   color: var(--foreground);
 
   font-family:
-    Inter,
+    "IBM Plex Sans",
+    ui-sans-serif,
     system-ui,
     sans-serif;
 }

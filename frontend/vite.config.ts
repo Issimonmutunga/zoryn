@@ -31,5 +31,20 @@ export default defineConfig({
     sourcemap: false,
     outDir: "dist",
     emptyOutDir: true,
+
+    // MapLibre on its own is ~1,050 kB minified and can't be split
+    // further (it loads only with the explorer); app chunks stay far
+    // below this, so growth there still warns.
+    chunkSizeWarningLimit: 1100,
+
+    rollupOptions: {
+      output: {
+        // MapLibre rarely changes; keeping it in its own chunk lets
+        // browsers cache it across app releases.
+        manualChunks: {
+          maplibre: ["maplibre-gl"],
+        },
+      },
+    },
   },
 });
