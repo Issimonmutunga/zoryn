@@ -20,9 +20,15 @@ def test_spi_length() -> None:
 
 def test_spi_initial_nan() -> None:
 
-    rainfall = np.full(
-        24,
-        100.0,
+    # SPI is fitted per calendar month, so each month needs several
+    # distinct years of rainfall; a constant or two-year series cannot
+    # be fitted at all.
+    rng = np.random.default_rng(7)
+
+    rainfall = rng.gamma(
+        shape=2.0,
+        scale=50.0,
+        size=120,
     )
 
     spi = compute_spi(

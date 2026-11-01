@@ -86,10 +86,17 @@ class StubProvider(
         return ProviderResponse(
             provider=self.provider_name,
             model=self.model_name,
-            explanation=(
+            summary=(
                 "Explanation generation has not "
                 "yet been configured."
             ),
+            interpretation=(
+                "Set ZORYN_EXPLANATION_PROVIDER=groq and "
+                "GROQ_API_KEY to generate plain-language "
+                "explanations. The deterministic reasoning "
+                "above is unaffected."
+            ),
+            limitations=[],
             latency_ms=0.0,
             prompt_tokens=0,
             completion_tokens=0,
