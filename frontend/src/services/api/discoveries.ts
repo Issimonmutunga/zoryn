@@ -10,8 +10,8 @@ export interface DiscoverySummary {
   end: string;
 }
 
-export interface DiscoveryDetail
-  extends DiscoverySummary {}
+export type DiscoveryDetail =
+  DiscoverySummary;
 
 export interface DiscoveryHistoryItem {
   h3_id: string;

@@ -55,4 +55,6 @@ function Button({
   )
 }
 
+// shadcn convention: the variants are shared with link-styled buttons.
+// eslint-disable-next-line react-refresh/only-export-components
 export { Button, buttonVariants }
