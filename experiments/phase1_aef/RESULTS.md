@@ -1,5 +1,47 @@
 # Phase 1, step 2: do embeddings add to conventional covariates? (yield, Kenya 2018-2020)
 
+> **Current verdict (tightened re-run, `baseline_tight.py`): MIXED.** The v1 "SUCCESS" below is superseded.
+> Embeddings add a small, real spatial signal over a strong baseline, but **do not transfer to an unseen year**.
+
+## Tightened re-run (`baseline_tight.py`, results in `out/baseline_tight_results.json`)
+
+Baseline G1 = environment + **management** covariates; G2 = G1 + 64 embedding dims. HGB is the primary model (size test and
+nulls use the same model); 30 permutations per null (field-level shuffle and spatial-block shuffle). Out-of-fold R2.
+
+| Config | HGB G1 | HGB G2 | **dR2** | above field null / block null (p95) | Ridge dR2 |
+|---|---|---|---|---|---|
+| 0.25 deg blocks, all fields | 0.304 | 0.322 | **+0.017** | yes / yes (p95 -0.012 / -0.022) | +0.051 |
+| 1.0 deg blocks (~110 km), all fields | 0.219 | 0.258 | **+0.039** | yes / yes (p95 -0.022 / -0.006) | +0.030 |
+| Leave-one-year-out, all fields | 0.125 | 0.048 | **-0.077** | **no / no** (p95 -0.003 / -0.023) | -0.373 |
+| 0.25 deg blocks, excl. soil-missing | 0.299 | 0.322 | **+0.023** | yes / yes (p95 -0.008 / -0.005) | +0.044 |
+
+Pre-set rule: SUCCESS needs dR2 >= 0.02 and above both nulls in all four configs; KILL needs failure in all four. Neither
+holds, so **MIXED**.
+
+What it says:
+- **Spatial generalisation: real but small.** Over a strong management baseline the embeddings add +0.017 to +0.039 R2 on
+  held-out places, above both permutation nulls (the nulls are negative because scrambled features hurt the model).
+  The lift is largest on the harder 110 km blocks.
+- **Temporal generalisation: fails.** Holding out a whole year, adding embeddings makes predictions worse (HGB -0.077,
+  ridge -0.37), and embeddings alone are worse than the mean (-0.067). Plausible cause (not tested): the embeddings encode
+  year-specific conditions that do not transfer; with only 3 years each fold is also a different mix of sites
+  (1,180 / 1,755 / 2,291 fields), so this test mixes year and geography.
+- **Consequence for an insurance use:** a product must predict unseen seasons; on this evidence the embeddings help rank
+  sites within seasons already observed, not forecast a new one.
+- Management covariates matter far more than embeddings: they lift HGB from 0.153 to 0.304.
+- Unchanged risks: ~30% approximated survey locations (no flag), 3 years, one country, absolute R2 modest (<= 0.32).
+
+## Suggested next steps
+
+- Test whether the year failure is drift or composition: per-year standardise embeddings; check stable-land embedding
+  change across 2018-2020 (the proposal's drift calibration); try leave-one-year-out within a fixed set of sites.
+- Add more years (survey goes to 2022; AlphaEarth to 2025) so a temporal test has more than 3 folds.
+- Steps 3-4 of the proposal (candidate generators, surprise ranking) only if the spatial signal is worth pursuing.
+
+---
+
+## v1 (superseded): `baseline_vs_embedding.py`
+
 Script: `baseline_vs_embedding.py` · raw numbers: `out/baseline_results.json` · data: One Acre Fund maize survey
 (5,226 Kenya fields) + AlphaEarth level-4 (160 m) 7x7-pixel neighbourhood means (~1.1 km), `build_field_table.py`.
 
