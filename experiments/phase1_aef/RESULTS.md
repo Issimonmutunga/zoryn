@@ -3,7 +3,7 @@
 > **Current verdict (tightened re-run, `baseline_tight.py`): MIXED.** The v1 "SUCCESS" below is superseded.
 > Embeddings add a small, real spatial signal over a strong baseline, but **do not transfer to an unseen year**.
 > The drift test (below) attributes the failure to year-specific embedding values, not to which sites are surveyed;
-> with the imagery year held fixed the gain is about zero, not clearly positive. Stable-land calibration shows most of the
+> with the imagery year held fixed the gain is small but positive (full suite, last table below: +0.017 to +0.046, above both nulls in all four configs; just under the 0.02 size bar in leave-one-year-out). Stable-land calibration shows most of the
 > year shift is common to all land cover (cosine ~0.9 with the cropland shift) and removes ~80% of the loss, but not all of it.
 
 ## Tightened re-run (`baseline_tight.py`, results in `out/baseline_tight_results.json`)
@@ -93,6 +93,26 @@ Decision rules were fixed in the script before any result existed.
   tell the two apart; the class-specific shifts also differ (water vs tree cosine 0.30-0.67), and built-up has only 14 sites.
 - **What it means for use:** subtracting a stable-land reference per year is a workable partial fix. Even with it, there is no
   positive out-of-year gain from embeddings in this data, so they are not yet a forecasting input.
+
+## Full tightened suite with a fixed reference year and with stable-land calibration
+
+Same script, rules and nulls as the tightened re-run (`baseline_tight.py --emb ...`); only the embedding input changes.
+`ey2019` = every field sampled from 2019 imagery; `cal` = survey-year embeddings minus a per-year offset from stable land
+(`make_calibrated.py`). HGB dR2 over the env+management baseline; all runs above both nulls unless marked.
+
+| config | own year (original) | fixed 2019 imagery | stable-calibrated |
+|---|---|---|---|
+| block 0.25 deg | +0.017 | +0.027 | +0.020 |
+| block 1.0 deg | +0.039 | +0.046 | +0.053 |
+| leave-one-year-out | -0.077 (below nulls) | +0.017 (above both nulls) | -0.017 (below nulls) |
+| excl. missing soil, block 0.25 | +0.023 | +0.022 | +0.019 |
+| verdict (rule: all four >= 0.02 and above both nulls) | MIXED | MIXED | MIXED |
+
+- Fixed 2019 imagery is the only variant that passes the year-transfer test, and it is above both nulls in all four configs.
+  It misses the pre-set 0.02 size bar in one (leave-one-year-out, +0.017), so by the rule it stays MIXED. I did not relax the rule.
+- Stable-land calibration does not rescue year transfer here (still below nulls), consistent with the PARTIAL calibration result.
+- Caveat: fixed-year imagery means 2018 fields use imagery from a later year. It treats the embedding as a static site
+  descriptor, not a within-season signal. Gain sizes are small (+0.02 to +0.05 R2 on a 0.15-0.30 base).
 
 ## Suggested next steps
 
