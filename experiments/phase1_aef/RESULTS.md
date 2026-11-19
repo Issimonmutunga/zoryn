@@ -3,7 +3,8 @@
 > **Current verdict (tightened re-run, `baseline_tight.py`): MIXED.** The v1 "SUCCESS" below is superseded.
 > Embeddings add a small, real spatial signal over a strong baseline, but **do not transfer to an unseen year**.
 > The drift test (below) attributes the failure to year-specific embedding values, not to which sites are surveyed;
-> with the imagery year held fixed the gain is about zero, not clearly positive.
+> with the imagery year held fixed the gain is about zero, not clearly positive. Stable-land calibration shows most of the
+> year shift is common to all land cover (cosine ~0.9 with the cropland shift) and removes ~80% of the loss, but not all of it.
 
 ## Tightened re-run (`baseline_tight.py`, results in `out/baseline_tight_results.json`)
 
@@ -68,11 +69,36 @@ Every field was re-sampled from each of 2018, 2019 and 2020 imagery (`build_fiel
   embeddings to a model that must generalise across seasons. The spatial result above used survey-year embeddings; it has not
   been re-run with a fixed reference year.
 
+## Stable-land drift calibration (`select_stable_sites.py`, `stable_calibration.py`, `out/stable_calibration_results.json`)
+
+Question: is the year shift a product-level offset or real change? 99 homogeneous stable patches (43 tree, 42 open water,
+14 built-up; >= 95% / 80% class purity at 10 m) were picked from ESA WorldCover v200 (2021) and sampled from AlphaEarth for
+2018, 2019 and 2020 with the same 7x7 level-4 window as the fields. Assumption, not tested: these classes were unchanged 2018-2020.
+Decision rules were fixed in the script before any result existed.
+
+| Year pair | stable shift / field shift (magnitude) | cosine(stable shift, field shift) | same-site cosine: tree / water / built |
+|---|---|---|---|
+| 2018 -> 2019 | 0.64 | 0.93 | 0.95 / 0.98 / 0.95 |
+| 2019 -> 2020 | 0.64 | 0.90 | 0.91 / 0.97 / 0.90 |
+| 2018 -> 2020 | 0.59 | 0.89 | 0.94 / 0.98 / 0.93 |
+
+- **Stable land shifts too, and in the same direction as cropland.** Forest, open water and built-up move by 0.5-1.2x their
+  between-site spread, with a shift vector almost parallel to the cropland shift (cosine 0.89-0.93) and 60-64% of its size.
+  So most of the year shift is **common to all land cover**, not specific to crops.
+- **Calibration helps a lot but not enough.** Estimating a per-year offset from the stable sites only and subtracting it from the
+  survey-year embeddings lifts leave-one-year-out dR2 from -0.077 to **-0.016** (recovering about 80% of the loss), but that is
+  still below the block-null p95 (-0.008). **Rule outcome: PARTIAL** (PRODUCT_OFFSET needed it to clear the null).
+- **Not resolved:** a shift shared by every land cover is consistent with a product-level offset *or* a regional year effect
+  (e.g. rainfall changing vegetation and water appearance). Open water and forest are not perfectly "stable", so this test cannot
+  tell the two apart; the class-specific shifts also differ (water vs tree cosine 0.30-0.67), and built-up has only 14 sites.
+- **What it means for use:** subtracting a stable-land reference per year is a workable partial fix. Even with it, there is no
+  positive out-of-year gain from embeddings in this data, so they are not yet a forecasting input.
+
 ## Suggested next steps
 
-- Run the stable-land drift calibration (forest/urban/water pixels across years) to separate a real year effect from a product artefact.
-- Re-run the spatial block-CV experiment with a fixed reference year embedding.
-- Add more years (survey goes to 2022; AlphaEarth to 2025) so a temporal test has more than 3 folds.
+- Re-run the spatial block-CV experiment with a fixed reference year (or stable-land-calibrated) embedding.
+- Add more years (survey to 2022, AlphaEarth to 2025) so a temporal test has more than 3 folds and the year offset can be
+  modelled; check whether the offset tracks annual rainfall (a regional effect) or is constant per year (a product effect).
 - Steps 3-4 of the proposal (candidate generators, surprise ranking) only if the spatial signal is worth pursuing.
 
 ---

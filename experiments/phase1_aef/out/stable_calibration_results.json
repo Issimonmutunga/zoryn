@@ -1,0 +1,108 @@
+{
+ "n_sites": {
+  "tree": 43,
+  "water": 42,
+  "built": 14
+ },
+ "S1_S2": {
+  "2018_to_2019": {
+   "per_class": {
+    "tree": {
+     "n": 43,
+     "same_site_cos": 0.9547088742256165,
+     "shift_over_between_site_sd": 0.5471207499504089
+    },
+    "water": {
+     "n": 42,
+     "same_site_cos": 0.9762836694717407,
+     "shift_over_between_site_sd": 0.5238497257232666
+    },
+    "built": {
+     "n": 14,
+     "same_site_cos": 0.9509583711624146,
+     "shift_over_between_site_sd": 0.8622809052467346
+    }
+   },
+   "stable_shift_norm": 0.19231772422790527,
+   "field_shift_norm": 0.3011258840560913,
+   "magnitude_ratio_stable_over_field": 0.6386622190475464,
+   "cos_stable_vs_field_shift": 0.9269295334815979,
+   "cos_between_class_shifts": {
+    "0-1": 0.6656140089035034,
+    "0-2": 0.878087043762207,
+    "1-2": 0.591923713684082
+   }
+  },
+  "2019_to_2020": {
+   "per_class": {
+    "tree": {
+     "n": 43,
+     "same_site_cos": 0.9099302291870117,
+     "shift_over_between_site_sd": 0.8856872320175171
+    },
+    "water": {
+     "n": 42,
+     "same_site_cos": 0.9692235589027405,
+     "shift_over_between_site_sd": 0.6693819165229797
+    },
+    "built": {
+     "n": 14,
+     "same_site_cos": 0.9017454981803894,
+     "shift_over_between_site_sd": 1.24298894405365
+    }
+   },
+   "stable_shift_norm": 0.2794100344181061,
+   "field_shift_norm": 0.4373757243156433,
+   "magnitude_ratio_stable_over_field": 0.6388329863548279,
+   "cos_stable_vs_field_shift": 0.9019911289215088,
+   "cos_between_class_shifts": {
+    "0-1": 0.6528374552726746,
+    "0-2": 0.8574418425559998,
+    "1-2": 0.53416907787323
+   }
+  },
+  "2018_to_2020": {
+   "per_class": {
+    "tree": {
+     "n": 43,
+     "same_site_cos": 0.9366651773452759,
+     "shift_over_between_site_sd": 0.6802327036857605
+    },
+    "water": {
+     "n": 42,
+     "same_site_cos": 0.9759169816970825,
+     "shift_over_between_site_sd": 0.5631923079490662
+    },
+    "built": {
+     "n": 14,
+     "same_site_cos": 0.931820273399353,
+     "shift_over_between_site_sd": 1.0399340391159058
+    }
+   },
+   "stable_shift_norm": 0.2159191370010376,
+   "field_shift_norm": 0.365967333316803,
+   "magnitude_ratio_stable_over_field": 0.5899956822395325,
+   "cos_stable_vs_field_shift": 0.8904499411582947,
+   "cos_between_class_shifts": {
+    "0-1": 0.35963788628578186,
+    "0-2": 0.8377823233604431,
+    "1-2": 0.3005977272987366
+   }
+  }
+ },
+ "S3": {
+  "G1": 0.12483128556853806,
+  "dR2_uncalibrated": -0.0769496184569981,
+  "dR2_calibrated": -0.016422386527313093,
+  "null_p95": -0.007665467981537183,
+  "calibrated_above_null": false,
+  "year_offset_norms": {
+   "2018": 0.19231772422790527,
+   "2019": 0.0,
+   "2020": 0.2794100344181061
+  }
+ },
+ "mean_cos": 0.9064568678538004,
+ "mean_magnitude_ratio": 0.6224969625473022,
+ "verdict": "PARTIAL"
+}
