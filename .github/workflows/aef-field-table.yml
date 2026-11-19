@@ -1,0 +1,43 @@
+name: AEF field table (overview streaming)
+
+# Streams ~1 GB of public AlphaEarth COG overviews with HTTP range requests and
+# publishes only the compact per-field table (~1-2 MB). No tiles are stored.
+on:
+  workflow_dispatch:
+    inputs:
+      level:
+        description: "COG overview level (4 = 160 m, 5 = 320 m)"
+        default: "4"
+      radius_px:
+        description: "Neighbourhood radius in overview pixels"
+        default: "3"
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    defaults:
+      run:
+        working-directory: experiments/phase1_aef
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: pip install numpy zstandard pandas pyarrow
+      - name: Download survey (Zenodo 10.5281/zenodo.11122388, CC BY 4.0) and verify checksum
+        run: |
+          curl -sSL -o survey.csv "https://zenodo.org/api/records/11122388/files/One_Acre_Fund_MEL_maize_survey_data_2016-2022.csv/content"
+          echo "7856ff0693dce26817623bc73ac5fa7b  survey.csv" | md5sum -c -
+      - name: Build per-field embedding table
+        run: python build_field_table.py survey.csv --level "${{ inputs.level }}" --radius-px "${{ inputs.radius_px }}"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: field-embeddings
+          path: |
+            experiments/phase1_aef/out/field_embeddings.parquet
+            experiments/phase1_aef/out/field_embeddings.parquet.meta.json
