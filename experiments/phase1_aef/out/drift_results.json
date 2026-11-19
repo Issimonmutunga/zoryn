@@ -1,0 +1,71 @@
+{
+ "D1_drift": {
+  "2018_vs_2019": {
+   "same_site_cos": 0.9384034872055054,
+   "random_pair_cos_same_year": 0.8981660008430481,
+   "mean_shift_over_between_field_sd": 0.9705154299736023
+  },
+  "2019_vs_2020": {
+   "same_site_cos": 0.8871113657951355,
+   "random_pair_cos_same_year": 0.9086065888404846,
+   "mean_shift_over_between_field_sd": 1.4788798093795776
+  },
+  "2018_vs_2020": {
+   "same_site_cos": 0.9160332083702087,
+   "random_pair_cos_same_year": 0.8988757133483887,
+   "mean_shift_over_between_field_sd": 1.1794965267181396
+  }
+ },
+ "D2_year_identifiability": {
+  "majority_class": 0.4383849980864906,
+  "own": 1.0,
+  "r2018": 0.39054726368159204,
+  "r2019": 0.3813624186758515,
+  "r2020": 0.3723689246077306
+ },
+ "G1_hgb": 0.12483128556853806,
+ "LOYO": {
+  "own": {
+   "hgb_G2": 0.04788166711153996,
+   "hgb_dR2": -0.0769496184569981,
+   "ridge_dR2": -0.3734431172387648,
+   "null_p95": -0.030291816642611054,
+   "above_null": false,
+   "per_year_note": "LOYO, 3 folds"
+  },
+  "ref2018": {
+   "hgb_G2": 0.09444999117925801,
+   "hgb_dR2": -0.030381294389280056,
+   "ridge_dR2": 0.035181270174561075,
+   "null_p95": -0.00250892646482261,
+   "above_null": false,
+   "per_year_note": "LOYO, 3 folds"
+  },
+  "ref2019": {
+   "hgb_G2": 0.13457420325183322,
+   "hgb_dR2": 0.00974291768329516,
+   "ridge_dR2": 0.030944819772012133,
+   "null_p95": -0.0031028320583810923,
+   "above_null": true,
+   "per_year_note": "LOYO, 3 folds"
+  },
+  "ref2020": {
+   "hgb_G2": 0.1275402178287659,
+   "hgb_dR2": 0.0027089322602278365,
+   "ridge_dR2": 0.02980011044709341,
+   "null_p95": -0.0077933071893148565,
+   "above_null": true,
+   "per_year_note": "LOYO, 3 folds"
+  },
+  "own_centred": {
+   "hgb_G2": 0.11115608361090912,
+   "hgb_dR2": -0.013675201957628946,
+   "ridge_dR2": 0.03709295828795889,
+   "null_p95": -0.003475574609661052,
+   "above_null": false,
+   "per_year_note": "LOYO, 3 folds"
+  }
+ },
+ "verdict": "DRIFT",
+ "centring_alone_fixes": false
+}

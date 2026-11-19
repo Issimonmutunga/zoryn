@@ -2,6 +2,8 @@
 
 > **Current verdict (tightened re-run, `baseline_tight.py`): MIXED.** The v1 "SUCCESS" below is superseded.
 > Embeddings add a small, real spatial signal over a strong baseline, but **do not transfer to an unseen year**.
+> The drift test (below) attributes the failure to year-specific embedding values, not to which sites are surveyed;
+> with the imagery year held fixed the gain is about zero, not clearly positive.
 
 ## Tightened re-run (`baseline_tight.py`, results in `out/baseline_tight_results.json`)
 
@@ -31,10 +33,45 @@ What it says:
 - Management covariates matter far more than embeddings: they lift HGB from 0.153 to 0.304.
 - Unchanged risks: ~30% approximated survey locations (no flag), 3 years, one country, absolute R2 modest (<= 0.32).
 
+## Drift vs composition test (`drift_test.py`, results in `out/drift_results.json`)
+
+Question: why did embeddings fail leave-one-year-out (LOYO)? Rules were fixed before the run (see the script docstring):
+DRIFT if survey-year embeddings fail but >= 2 of 3 fixed-reference-year variants are positive and above the block null.
+Every field was re-sampled from each of 2018, 2019 and 2020 imagery (`build_field_table.py --embed-year`).
+
+**Diagnostics**
+- **Year is trivially identifiable from survey-year embeddings: 100% accuracy** (majority class 44%) under spatial block CV.
+  Embeddings of the *same sites* sampled from a fixed reference year predict the survey year at or below chance (37-39%).
+  So the year signal sits in the imagery year, not in which sites were surveyed.
+- The paired mean shift between years is **1.0-1.5x the between-field spread**, and the same site's embedding in two years is
+  **no more similar than two random fields in one year** (cosine 0.89-0.94 vs 0.90-0.91). Year offsets dominate site differences.
+
+**LOYO, HGB, gain over the environment + management baseline (G1 = 0.125)**
+
+| Embedding variant | HGB dR2 | above block-null p95? | Ridge dR2 |
+|---|---|---|---|
+| survey-year (as before) | -0.077 | no | -0.373 |
+| every field from 2018 imagery | -0.030 | no | +0.035 |
+| every field from 2019 imagery | +0.010 | yes | +0.031 |
+| every field from 2020 imagery | +0.003 | yes | +0.030 |
+| survey-year, standardised within each year | -0.014 | no | +0.037 |
+
+**Verdict under the pre-set rule: DRIFT** (2 of 3 fixed-year variants positive and above the null). Read it carefully:
+- **The failure is the year-specific embedding values.** Holding the imagery year fixed removes most of the damage (-0.077 -> about 0).
+- **But it does not turn into a positive result.** The recovered gains are tiny (+0.003, +0.010; 2018 is still negative) and
+  the nulls are themselves negative, so "above the null" is a low bar here. There is no evidence that embeddings forecast
+  an unseen season; at best they are neutral.
+- **Per-year standardising is not enough** (-0.014), so the year shift is more than a mean/scale offset.
+- A 100%-identifiable year offset this large is unusual; I have not ruled out a processing difference between the yearly
+  products. The proposal's stable-land drift calibration (sample forest/urban pixels across years) is the direct check.
+- **Practical reading:** use a single fixed-year embedding as a static site descriptor, and do not feed year-specific
+  embeddings to a model that must generalise across seasons. The spatial result above used survey-year embeddings; it has not
+  been re-run with a fixed reference year.
+
 ## Suggested next steps
 
-- Test whether the year failure is drift or composition: per-year standardise embeddings; check stable-land embedding
-  change across 2018-2020 (the proposal's drift calibration); try leave-one-year-out within a fixed set of sites.
+- Run the stable-land drift calibration (forest/urban/water pixels across years) to separate a real year effect from a product artefact.
+- Re-run the spatial block-CV experiment with a fixed reference year embedding.
 - Add more years (survey goes to 2022; AlphaEarth to 2025) so a temporal test has more than 3 folds.
 - Steps 3-4 of the proposal (candidate generators, surprise ranking) only if the spatial signal is worth pursuing.
 

@@ -14,6 +14,8 @@ from aef_overview import AefOverview, parse_ifds, neighbourhood_mean
 ap = argparse.ArgumentParser()
 ap.add_argument("csv"); ap.add_argument("--level", type=int, default=4); ap.add_argument("--radius-px", type=int, default=3)
 ap.add_argument("--years", type=int, nargs="+", default=[2018, 2019, 2020])
+ap.add_argument("--embed-year", type=int, default=None,
+                help="sample EVERY field from this year's embeddings instead of its own survey year (drift tests)")
 ap.add_argument("--out", default="out/field_embeddings.parquet"); ap.add_argument("--tile-workers", type=int, default=3)
 a = ap.parse_args()
 
@@ -24,17 +26,18 @@ print("Kenya fields in years", a.years, ":", len(df))
 
 # assign each field to a tile (per year)
 assign, unlocated = {}, []
-tiles_by_year = {y: json.load(open(f"tiles_{y}.json")) for y in a.years}
+tiles_by_year = {y: json.load(open(f"tiles_{y}.json")) for y in set(a.years) | ({a.embed_year} if a.embed_year else set())}
 for r in df.itertuples():
     zone = int((r.lon + 180) // 6) + 1
     south = r.lat < 0
     x, y = utm(r.lon, r.lat, zone, south)
     zk = f"{zone}{'S' if south else 'N'}"
-    hit = next((t for t in tiles_by_year[r.year].get(zk, [])
+    ey = a.embed_year or r.year
+    hit = next((t for t in tiles_by_year[ey].get(zk, [])
                 if t["x0"] <= x < t["x1"] and t["y_south"] <= y < t["y_north"]), None)
     if hit is None:
         unlocated.append(r.field_id); continue
-    assign.setdefault((r.year, hit["key"]), []).append((r.field_id, x, y))
+    assign.setdefault((ey, hit["key"]), []).append((r.field_id, x, y))
 print("unlocated (no covering tile):", len(unlocated), "| distinct (year,tile):", len(assign))
 
 def work(item):
