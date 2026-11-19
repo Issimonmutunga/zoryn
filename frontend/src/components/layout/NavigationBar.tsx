@@ -86,6 +86,18 @@ export default function NavigationBar() {
 
         {/* ---------------------------------------------------- Explorer CTA */}
         <div className="hidden items-center lg:flex">
+          <NavLink
+            to="/login"
+            className="ml-2 rounded-md px-3.5 py-2 text-sm text-[#6B6B6B] transition-colors duration-200 hover:bg-[#F2F2F2] hover:text-[#1A1A1A]"
+          >
+            Log in
+          </NavLink>
+          <NavLink
+            to="/signup"
+            className="rounded-md px-3.5 py-2 text-sm font-medium text-[#1A1A1A] transition-colors duration-200 hover:bg-[#F2F2F2]"
+          >
+            Sign up
+          </NavLink>
           {primaryNav && (
             <NavLink
               to={primaryNav.path}
@@ -126,7 +138,7 @@ export default function NavigationBar() {
       )}
 
       <div
-        className={`fixed left-0 top-0 z-50 h-screen w-72 border-r border-[#E5E5E5] bg-white shadow-xl transition-transform duration-300 lg:hidden ${
+        className={`fixed left-0 top-0 z-50 h-dvh w-72 max-w-[85vw] overflow-y-auto border-r border-[#E5E5E5] bg-white shadow-xl transition-transform duration-300 lg:hidden ${
           mobileOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
@@ -154,7 +166,7 @@ export default function NavigationBar() {
               to={item.path}
               className={({ isActive }) =>
                 [
-                  "rounded-md px-3 py-2.5 text-sm transition-colors duration-200",
+                  "rounded-md px-3 py-3 text-base transition-colors duration-200",
                   isActive
                     ? "bg-[#F2F2F2] font-medium text-[#1A1A1A]"
                     : "text-[#6B6B6B] hover:bg-[#F2F2F2] hover:text-[#1A1A1A]",
@@ -174,6 +186,21 @@ export default function NavigationBar() {
               <ArrowRight className="h-3.5 w-3.5" strokeWidth={1.75} />
             </NavLink>
           )}
+
+          <div className="mt-4 grid grid-cols-2 gap-2 border-t border-[#E5E5E5] pt-4">
+            <NavLink
+              to="/login"
+              className="flex min-h-11 items-center justify-center rounded-lg border border-[#E5E5E5] text-sm font-medium text-[#1A1A1A] hover:bg-[#F2F2F2]"
+            >
+              Log in
+            </NavLink>
+            <NavLink
+              to="/signup"
+              className="flex min-h-11 items-center justify-center rounded-lg border border-[#E5E5E5] text-sm font-medium text-[#1A1A1A] hover:bg-[#F2F2F2]"
+            >
+              Sign up
+            </NavLink>
+          </div>
         </nav>
       </div>
     </header>

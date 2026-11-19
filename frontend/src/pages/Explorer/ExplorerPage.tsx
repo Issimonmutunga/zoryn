@@ -31,7 +31,7 @@ export default function ExplorerPage() {
   }, [setAvailableDates]);
 
   return (
-    <main className="antialiased flex h-[calc(100vh-64px)] flex-col overflow-hidden bg-[#FAFAFA] lg:flex-row">
+    <main className="antialiased flex h-[calc(100dvh-4.8125rem)] flex-col overflow-hidden bg-[#FAFAFA] lg:flex-row">
       {/* --------------------------------------------------------- Map */}
       <section className="relative flex-1 overflow-hidden border-[#E5E5E5] lg:border-r">
         <MapCanvas />

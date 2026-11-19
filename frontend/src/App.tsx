@@ -5,12 +5,15 @@ import {
 } from "react-router-dom";
 
 import AppLayout from "./layouts/AppLayout";
+import AuthLayout from "./layouts/AuthLayout";
 
 import HomePage from "./pages/Home/HomePage";
 import ExplorerPage from "./pages/Explorer/ExplorerPage";
 import MethodologyPage from "./pages/Methodology/MethodologyPage";
 import StandardsPage from "./pages/Standards/StandardsPage";
 import AboutPage from "./pages/About/AboutPage";
+import LoginPage from "./pages/Auth/LoginPage";
+import SignupPage from "./pages/Auth/SignupPage";
 
 export default function App() {
   return (
@@ -40,6 +43,11 @@ export default function App() {
           path="about"
           element={<AboutPage />}
         />
+      </Route>
+
+      <Route element={<AuthLayout />}>
+        <Route path="login" element={<LoginPage />} />
+        <Route path="signup" element={<SignupPage />} />
       </Route>
 
       <Route
