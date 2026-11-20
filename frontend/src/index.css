@@ -36,7 +36,33 @@
   --hazard-compound: #7A4FA3;
 }
 
+/* ---------------------------------------------------- */
+/* LAYOUT                                                */
+/* ---------------------------------------------------- */
+
+:root {
+
+  /* Height of the top bar (including its 1px border) and of the phone tab
+     bar. Pages that must fit the viewport (the Explorer) subtract both. */
+  --nav-h: 3.5625rem;
+  --tabbar-h: calc(3.5rem + env(safe-area-inset-bottom, 0px));
+}
+
+@media (min-width: 64rem) {
+
+  :root {
+    --nav-h: 4.8125rem;
+    --tabbar-h: 0px;
+  }
+}
+
 html {
+
+  /* Keep text at the size we set when a phone is rotated. */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+
+  -webkit-tap-highlight-color: transparent;
 
   background: var(--background);
 
@@ -62,4 +88,32 @@ body {
 * {
 
   box-sizing: border-box;
+}
+
+/* Bottom sheet entrance (phone "More" menu). */
+@keyframes sheet-up {
+
+  from {
+    transform: translateY(1rem);
+    opacity: 0;
+  }
+
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+
+.sheet-in {
+
+  animation: sheet-up 180ms ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  .sheet-in,
+  .animate-pulse,
+  .animate-spin {
+    animation: none;
+  }
 }

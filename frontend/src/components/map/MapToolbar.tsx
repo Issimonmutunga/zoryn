@@ -39,6 +39,27 @@ function formatMonth(
 
 }
 
+/** "Aug 24" - the short form shown on the phone toolbar. */
+function formatMonthCompact(
+  value: string,
+): string {
+
+  const [
+    year,
+    month,
+  ] = value.split("-");
+
+  const date =
+    new Date(
+      Number(year),
+      Number(month) - 1,
+      1,
+    );
+
+  return `${date.toLocaleString("en", { month: "short" })} ${year.slice(2)}`;
+
+}
+
 export default function MapToolbar() {
   const searchQuery =
     useExplorerStore(
@@ -218,7 +239,7 @@ export default function MapToolbar() {
                 void handleSearch();
               }
             }}
-            className="h-10 w-full rounded-xl border border-[#D8CEB8] bg-[#F3EEE2] pl-9 pr-3 text-sm text-[#2B2417] outline-none transition-colors placeholder:text-[#8A7B5C] focus:border-[#5B6B45]"
+            className="h-11 w-full rounded-xl border border-[#D8CEB8] bg-[#F3EEE2] pl-9 pr-3 text-base text-[#2B2417] sm:h-10 sm:text-sm outline-none transition-colors placeholder:text-[#8A7B5C] focus:border-[#5B6B45]"
           />
 
         </div>
@@ -227,13 +248,22 @@ export default function MapToolbar() {
           type="button"
           aria-expanded={timelineOpen}
           aria-haspopup="listbox"
+          aria-label={
+            selectedDate
+              ? `Month: ${formatMonth(selectedDate)}, ${selectedCount} discoveries`
+              : "Choose month"
+          }
           onClick={() => {
             setTimelineOpen(!timelineOpen);
             setLayersOpen(false);
           }}
-          className="flex h-10 shrink-0 items-center gap-2 rounded-xl border border-[#D8CEB8] bg-[#F3EEE2] px-2.5 text-sm text-[#4A422F] transition-colors hover:bg-[#EDE6D3] sm:px-3"
+          className="flex h-11 shrink-0 items-center gap-2 rounded-xl border border-[#D8CEB8] bg-[#F3EEE2] px-2.5 text-sm text-[#4A422F] transition-colors hover:bg-[#EDE6D3] sm:h-10 sm:px-3"
         >
           <CalendarDays className="h-4 w-4" />
+          {/* Phones still need to see which month the map shows. */}
+          <span className="whitespace-nowrap sm:hidden">
+            {selectedDate ? formatMonthCompact(selectedDate) : "Time"}
+          </span>
           <span className="hidden sm:inline">
             {selectedDate
               ? `${formatMonth(selectedDate)} • ${selectedCount}`
@@ -252,20 +282,22 @@ export default function MapToolbar() {
 
         <button
           type="button"
+          aria-expanded={layersOpen}
+          aria-label="Map layers"
           onClick={() => {
             setLayersOpen(!layersOpen);
             setTimelineOpen(false);
           }}
-          className="hidden h-10 shrink-0 items-center gap-2 rounded-xl border border-[#D8CEB8] bg-[#F3EEE2] px-3 text-sm text-[#4A422F] transition-colors hover:bg-[#EDE6D3] md:flex"
+          className="flex h-11 w-11 shrink-0 items-center justify-center gap-2 rounded-xl border border-[#D8CEB8] bg-[#F3EEE2] text-sm text-[#4A422F] transition-colors hover:bg-[#EDE6D3] sm:h-10 sm:w-10 md:w-auto md:px-3"
         >
           <Layers className="h-4 w-4" />
-          Layers
+          <span className="hidden md:inline">Layers</span>
         </button>
 
       </div>
 
       {timelineOpen && (
-        <div className="absolute right-0 top-14 max-h-80 w-56 overflow-y-auto rounded-xl border border-[#D8CEB8] bg-[#FAF7EF] p-1.5 shadow-[0_8px_24px_rgba(43,36,23,0.12)]">
+        <div className="absolute right-0 top-14 max-h-[min(20rem,50dvh)] w-56 overflow-y-auto overscroll-contain rounded-xl border border-[#D8CEB8] bg-[#FAF7EF] p-1.5 shadow-[0_8px_24px_rgba(43,36,23,0.12)]">
 
           {availableDates.length === 0 && (
             <div className="p-2 text-sm text-[#8A7B5C]">
@@ -324,7 +356,7 @@ export default function MapToolbar() {
 
       {layersOpen && (
 
-        <div className="absolute right-0 top-14 w-72 animate-in fade-in zoom-in-95 slide-in-from-top-2 duration-200">
+        <div className="absolute right-0 top-14 w-72 max-w-full animate-in fade-in zoom-in-95 slide-in-from-top-2 duration-200">
 
           <LayerSelector />
 

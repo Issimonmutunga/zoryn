@@ -386,6 +386,34 @@ export default function MapCanvas() {
           },
         );
 
+        // Arriving from a link to one location (/explorer?h3=...): centre
+        // on that cell instead of the whole grid.
+        const requestedH3 =
+          useExplorerStore.getState().selectedH3;
+
+        const requestedCell =
+          requestedH3
+            ? geometry.features.find(
+                (feature) =>
+                  feature.properties?.h3_id === requestedH3,
+              )
+            : undefined;
+
+        if (requestedCell) {
+
+          const ring =
+            requestedCell.geometry.coordinates[0];
+
+          map.jumpTo({
+            center: [
+              ring.reduce((sum, point) => sum + point[0], 0) / ring.length,
+              ring.reduce((sum, point) => sum + point[1], 0) / ring.length,
+            ],
+            zoom: 16,
+          });
+
+        }
+
         map.on(
           "click",
           "discoveries-fill",
