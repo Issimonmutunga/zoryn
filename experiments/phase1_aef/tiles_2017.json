@@ -1,0 +1,234 @@
+{
+ "36N": [
+  {
+   "key": "tge-labs/aef/v1/annual/2017/36N/xcj2gegl81y69vm6q-0000000000-0000008192.tiff",
+   "x0": 581920.0,
+   "x1": 663840.0,
+   "y_south": 0.0,
+   "y_north": 81920.0
+  },
+  {
+   "key": "tge-labs/aef/v1/annual/2017/36N/xcj2gegl81y69vm6q-0000008192-0000008192.tiff",
+   "x0": 581920.0,
+   "x1": 663840.0,
+   "y_south": 81920.0,
+   "y_north": 163840.0
+  },
+  {
+   "key": "tge-labs/aef/v1/annual/2017/36N/xg1lag0hqewe0nln2-0000000000-0000000000.tiff",
+   "x0": 663840.0,
+   "x1": 745760.0,
+   "y_south": 0.0,
+   "y_north": 81920.0
+  },
+  {
+   "key": "tge-labs/aef/v1/annual/2017/36N/xg1lag0hqewe0nln2-0000000000-0000008192.tiff",
+   "x0": 745760.0,
+   "x1": 827680.0,
+   "y_south": 0.0,
+   "y_north": 81920.0
+  },
+  {
+   "key": "tge-labs/aef/v1/annual/2017/36N/xg1lag0hqewe0nln2-0000008192-0000000000.tiff",
+   "x0": 663840.0,
+   "x1": 745760.0,
+   "y_south": 81920.0,
+   "y_north": 163840.0
+  },
+  {
+   "key": "tge-labs/aef/v1/annual/2017/36N/xg1lag0hqewe0nln2-0000008192-0000008192.tiff",
+   "x0": 745760.0,
+   "x1": 827680.0,
+   "y_south": 81920.0,
+   "y_north": 163840.0
+  },
+  {
+   "key": "tge-labs/aef/v1/annual/2017/36N/xqld2h56a2zph7opy-0000000000-0000000000.tiff",
+   "x0": 827680.0,
+   "x1": 909600.0,
+   "y_south": 0.0,
+   "y_north": 81920.0
+  },
+  {
+   "key": "tge-labs/aef/v1/annual/2017/36N/xqld2h56a2zph7opy-0000008192-0000000000.tiff",
+   "x0": 827680.0,
+   "x1": 909600.0,
+   "y_south": 81920.0,
+   "y_north": 163840.0
+  }
+ ],
+ "37N": [
+  {
+   "key": "tge-labs/aef/v1/annual/2017/37N/xprc0u3am4o1rlbxs-0000000000-0000008192.tiff",
+   "x0": 90400.0,
+   "x1": 172320.0,
+   "y_south": 0.0,
+   "y_north": 81920.0
+  },
+  {
+   "key": "tge-labs/aef/v1/annual/2017/37N/xprc0u3am4o1rlbxs-0000008192-0000008192.tiff",
+   "x0": 90400.0,
+   "x1": 172320.0,
+   "y_south": 81920.0,
+   "y_north": 163840.0
+  },
+  {
+   "key": "tge-labs/aef/v1/annual/2017/37N/xrupu05o6lk2uoy28-0000000000-0000000000.tiff",
+   "x0": 336160.0,
+   "x1": 418080.0,
+   "y_south": 0.0,
+   "y_north": 81920.0
+  },
+  {
+   "key": "tge-labs/aef/v1/annual/2017/37N/xrupu05o6lk2uoy28-0000008192-0000000000.tiff",
+   "x0": 336160.0,
+   "x1": 418080.0,
+   "y_south": 81920.0,
+   "y_north": 163840.0
+  },
+  {
+   "key": "tge-labs/aef/v1/annual/2017/37N/xwoeg8vjd8uhyfiw2-0000000000-0000000000.tiff",
+   "x0": 172320.0,
+   "x1": 254240.0,
+   "y_south": 0.0,
+   "y_north": 81920.0
+  },
+  {
+   "key": "tge-labs/aef/v1/annual/2017/37N/xwoeg8vjd8uhyfiw2-0000000000-0000008192.tiff",
+   "x0": 254240.0,
+   "x1": 336160.0,
+   "y_south": 0.0,
+   "y_north": 81920.0
+  },
+  {
+   "key": "tge-labs/aef/v1/annual/2017/37N/xwoeg8vjd8uhyfiw2-0000008192-0000000000.tiff",
+   "x0": 172320.0,
+   "x1": 254240.0,
+   "y_south": 81920.0,
+   "y_north": 163840.0
+  },
+  {
+   "key": "tge-labs/aef/v1/annual/2017/37N/xwoeg8vjd8uhyfiw2-0000008192-0000008192.tiff",
+   "x0": 254240.0,
+   "x1": 336160.0,
+   "y_south": 81920.0,
+   "y_north": 163840.0
+  }
+ ],
+ "36S": [
+  {
+   "key": "tge-labs/aef/v1/annual/2017/36S/xk15jkz5pkkvs9qwl-0000000000-0000008192.tiff",
+   "x0": 581920.0,
+   "x1": 663840.0,
+   "y_south": 9836160.0,
+   "y_north": 9918080.0
+  },
+  {
+   "key": "tge-labs/aef/v1/annual/2017/36S/xk15jkz5pkkvs9qwl-0000008192-0000008192.tiff",
+   "x0": 581920.0,
+   "x1": 663840.0,
+   "y_south": 9918080.0,
+   "y_north": 10000000.0
+  },
+  {
+   "key": "tge-labs/aef/v1/annual/2017/36S/xrspeppn7oswpgdb4-0000000000-0000000000.tiff",
+   "x0": 827680.0,
+   "x1": 909600.0,
+   "y_south": 9836160.0,
+   "y_north": 9918080.0
+  },
+  {
+   "key": "tge-labs/aef/v1/annual/2017/36S/xrspeppn7oswpgdb4-0000008192-0000000000.tiff",
+   "x0": 827680.0,
+   "x1": 909600.0,
+   "y_south": 9918080.0,
+   "y_north": 10000000.0
+  },
+  {
+   "key": "tge-labs/aef/v1/annual/2017/36S/xtagbe4shzwj9pxm6-0000000000-0000000000.tiff",
+   "x0": 663840.0,
+   "x1": 745760.0,
+   "y_south": 9836160.0,
+   "y_north": 9918080.0
+  },
+  {
+   "key": "tge-labs/aef/v1/annual/2017/36S/xtagbe4shzwj9pxm6-0000000000-0000008192.tiff",
+   "x0": 745760.0,
+   "x1": 827680.0,
+   "y_south": 9836160.0,
+   "y_north": 9918080.0
+  },
+  {
+   "key": "tge-labs/aef/v1/annual/2017/36S/xtagbe4shzwj9pxm6-0000008192-0000000000.tiff",
+   "x0": 663840.0,
+   "x1": 745760.0,
+   "y_south": 9918080.0,
+   "y_north": 10000000.0
+  },
+  {
+   "key": "tge-labs/aef/v1/annual/2017/36S/xtagbe4shzwj9pxm6-0000008192-0000008192.tiff",
+   "x0": 745760.0,
+   "x1": 827680.0,
+   "y_south": 9918080.0,
+   "y_north": 10000000.0
+  }
+ ],
+ "37S": [
+  {
+   "key": "tge-labs/aef/v1/annual/2017/37S/xdfh15put9tmg8j6r-0000000000-0000000000.tiff",
+   "x0": 172320.0,
+   "x1": 254240.0,
+   "y_south": 9836160.0,
+   "y_north": 9918080.0
+  },
+  {
+   "key": "tge-labs/aef/v1/annual/2017/37S/xdfh15put9tmg8j6r-0000000000-0000008192.tiff",
+   "x0": 254240.0,
+   "x1": 336160.0,
+   "y_south": 9836160.0,
+   "y_north": 9918080.0
+  },
+  {
+   "key": "tge-labs/aef/v1/annual/2017/37S/xdfh15put9tmg8j6r-0000008192-0000000000.tiff",
+   "x0": 172320.0,
+   "x1": 254240.0,
+   "y_south": 9918080.0,
+   "y_north": 10000000.0
+  },
+  {
+   "key": "tge-labs/aef/v1/annual/2017/37S/xdfh15put9tmg8j6r-0000008192-0000008192.tiff",
+   "x0": 254240.0,
+   "x1": 336160.0,
+   "y_south": 9918080.0,
+   "y_north": 10000000.0
+  },
+  {
+   "key": "tge-labs/aef/v1/annual/2017/37S/xn1pqdc0j3jxh8r2b-0000000000-0000000000.tiff",
+   "x0": 336160.0,
+   "x1": 418080.0,
+   "y_south": 9836160.0,
+   "y_north": 9918080.0
+  },
+  {
+   "key": "tge-labs/aef/v1/annual/2017/37S/xn1pqdc0j3jxh8r2b-0000008192-0000000000.tiff",
+   "x0": 336160.0,
+   "x1": 418080.0,
+   "y_south": 9918080.0,
+   "y_north": 10000000.0
+  },
+  {
+   "key": "tge-labs/aef/v1/annual/2017/37S/xxuuu53c97qpvqd82-0000000000-0000008192.tiff",
+   "x0": 90400.0,
+   "x1": 172320.0,
+   "y_south": 9836160.0,
+   "y_north": 9918080.0
+  },
+  {
+   "key": "tge-labs/aef/v1/annual/2017/37S/xxuuu53c97qpvqd82-0000008192-0000008192.tiff",
+   "x0": 90400.0,
+   "x1": 172320.0,
+   "y_south": 9918080.0,
+   "y_north": 10000000.0
+  }
+ ]
+}

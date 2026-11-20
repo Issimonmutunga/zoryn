@@ -17,10 +17,11 @@ SUCCESS / KILL CRITERIA (fixed before running; written by the analyst, not yet r
   KILL    = in ALL four configs dR2 <= p95 of at least one HGB null
   MIXED   = anything else (e.g. above the nulls but under 0.02 somewhere)
 
-usage: python baseline_tight.py SURVEY_CSV [--perms 30]
+usage: python baseline_tight.py SURVEY_CSV [--perms 30] [--emb TABLE] [--out JSON]
+       --perms 0 gives point estimates only (no nulls, no verdict); used to compare embedding tables under one library version.
 """
 import argparse, json, warnings
-import numpy as np, pandas as pd
+import numpy as np, pandas as pd, sklearn
 from sklearn.compose import ColumnTransformer
 from sklearn.ensemble import HistGradientBoostingRegressor
 from sklearn.impute import SimpleImputer
@@ -101,6 +102,7 @@ for name, filt, gcol, use_year in CONFIGS:
             r[f"{fam}_{k}"] = oof_r2(fam, k, d, y, g, use_year, reps)
         r[f"{fam}_dR2_G2_minus_G1"] = r[f"{fam}_G2"] - r[f"{fam}_G1"]
     for tag, by_block in (("field", False), ("block", True)):
+        if not a.perms: break
         rng = np.random.RandomState(1); null = []
         for i in range(a.perms):
             null.append(oof_r2("hgb", "G2", permute(d, rng, by_block, "b025" if gcol == "year" else gcol), y, g, use_year, 1, seed=i) - r["hgb_G1"])
@@ -110,7 +112,11 @@ for name, filt, gcol, use_year in CONFIGS:
     print(name, json.dumps({k: (round(v, 4) if isinstance(v, float) else v) for k, v in r.items()}, indent=1), flush=True)
 
 cfg = [v for v in results.values()]
-succ = all(r["hgb_dR2_G2_minus_G1"] >= 0.02 and r["hgb_above_field_null"] and r["hgb_above_block_null"] for r in cfg)
-kill = all(not (r["hgb_above_field_null"] and r["hgb_above_block_null"]) for r in cfg)
-results["verdict"] = "SUCCESS" if succ else ("KILL" if kill else "MIXED")
+if a.perms:
+    succ = all(r["hgb_dR2_G2_minus_G1"] >= 0.02 and r["hgb_above_field_null"] and r["hgb_above_block_null"] for r in cfg)
+    kill = all(not (r["hgb_above_field_null"] and r["hgb_above_block_null"]) for r in cfg)
+    results["verdict"] = "SUCCESS" if succ else ("KILL" if kill else "MIXED")
+else:
+    results["verdict"] = "NOT_EVALUATED (point estimates only, --perms 0)"
+results["sklearn"] = sklearn.__version__
 print("VERDICT:", results["verdict"]); json.dump(results, open(a.out, "w"), indent=1)

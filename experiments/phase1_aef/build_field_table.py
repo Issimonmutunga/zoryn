@@ -26,7 +26,8 @@ print("Kenya fields in years", a.years, ":", len(df))
 
 # assign each field to a tile (per year)
 assign, unlocated = {}, []
-tiles_by_year = {y: json.load(open(f"tiles_{y}.json")) for y in set(a.years) | ({a.embed_year} if a.embed_year else set())}
+# only the imagery years actually sampled (with --embed-year the survey years need no tile list, e.g. 2016 has no imagery)
+tiles_by_year = {y: json.load(open(f"tiles_{y}.json")) for y in ({a.embed_year} if a.embed_year else set(a.years))}
 for r in df.itertuples():
     zone = int((r.lon + 180) // 6) + 1
     south = r.lat < 0
