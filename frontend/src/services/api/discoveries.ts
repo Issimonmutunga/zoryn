@@ -8,6 +8,9 @@ export interface DiscoverySummary {
   confidence: number;
   start: string;
   end: string;
+  spi3?: number | null;
+  spi6?: number | null;
+  spi12?: number | null;
 }
 
 export interface DiscoveryDetail

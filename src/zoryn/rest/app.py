@@ -29,7 +29,18 @@ app = FastAPI(
 #
 # Allowed frontend origins.
 #
+# FRONTEND_URL holds one origin, or several separated by
+# commas (for example a hosted site and a custom domain).
+#
+# FRONTEND_ORIGIN_REGEX optionally allows origins by
+# pattern. Hosts such as Render may add a suffix to a
+# site's address, which a fixed list cannot anticipate.
+#
 frontend_origin = os.getenv("FRONTEND_URL")
+
+frontend_origin_regex = (
+    os.getenv("FRONTEND_ORIGIN_REGEX") or None
+)
 
 allowed_origins = [
     "http://127.0.0.1:5173",
@@ -37,11 +48,16 @@ allowed_origins = [
 ]
 
 if frontend_origin:
-    allowed_origins.append(frontend_origin)
+    allowed_origins.extend(
+        origin.strip().rstrip("/")
+        for origin in frontend_origin.split(",")
+        if origin.strip()
+    )
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=allowed_origins,
+    allow_origin_regex=frontend_origin_regex,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

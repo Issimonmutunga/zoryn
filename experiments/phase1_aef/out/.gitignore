@@ -1,0 +1,3 @@
+out/field_embeddings_ey*.parquet*
+out/stable_ey*.parquet*
+field_embeddings_cal.parquet*

@@ -1,0 +1,110 @@
+# Render Blueprint for Zoryn: the API and the frontend, each redeployed
+# automatically on every push to the branch this Blueprint is connected to.
+#
+# One-time setup, in the Render Dashboard: New > Blueprint, choose this
+# repository and the branch to deploy, then enter the values it prompts for
+# (the entries marked "sync: false" below).
+#
+# Field reference: https://render.com/docs/blueprint-spec
+
+services:
+  # ------------------------------------------------------------------- API
+  - type: web
+    name: zoryn-api
+    runtime: python
+
+    # free = 0.1 CPU, 512 MB, and it sleeps after 15 minutes without traffic
+    # (the next request then takes about a minute). Measured locally, the API
+    # reaches about 520 MB once the map grid and a reasoning query have been
+    # served, so 512 MB is at the limit. If the service restarts with
+    # out-of-memory errors, change this to 1c-2g (1 CPU, 2 GB, paid).
+    plan: free
+
+    # Closest Render region to Nairobi. Cannot be changed after creation.
+    region: frankfurt
+
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn zoryn.rest.app:app --app-dir src --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+
+    autoDeployTrigger: commit
+
+    # Redeploy the API only when something it runs or reads has changed.
+    buildFilter:
+      paths:
+        - src/**
+        - data/processed/**
+        - requirements.txt
+        - render.yaml
+
+    envVars:
+      # The dependency pins in requirements.txt were tested on this version.
+      - key: PYTHON_VERSION
+        value: 3.12.9
+
+      # Browsers may call the API from the frontend below. Render adds a
+      # short suffix to a site's address when the plain name is taken, so the
+      # pattern accepts zoryn-frontend.onrender.com with or without one.
+      - key: FRONTEND_ORIGIN_REGEX
+        value: 'https://zoryn-frontend(-[a-z0-9]+)?\.onrender\.com'
+
+      # Optional: extra allowed origins, comma-separated, for example a
+      # custom domain such as https://zoryn.example.org. Leave blank if none.
+      - key: FRONTEND_URL
+        sync: false
+
+      # AI explanations. Without a key the explanation request fails; the
+      # discoveries and their evidence are unaffected.
+      - key: ZORYN_EXPLANATION_PROVIDER
+        value: groq
+      - key: GROQ_API_KEY
+        sync: false
+
+  # -------------------------------------------------------------- Frontend
+  - type: web
+    name: zoryn-frontend
+    runtime: static
+
+    buildCommand: cd frontend && npm ci && npm run build
+    staticPublishPath: ./frontend/dist
+
+    autoDeployTrigger: commit
+
+    buildFilter:
+      paths:
+        - frontend/**
+        - render.yaml
+
+    # The app routes in the browser (/discoveries, /timeline, ...), so any
+    # path that is not a real file must serve index.html. Render serves
+    # existing files first, so scripts and styles are not affected.
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+
+    # Built files under /assets carry a content hash in their names, so
+    # browsers can keep them indefinitely. This saves repeat downloads on
+    # phones.
+    headers:
+      - path: /assets/*
+        name: Cache-Control
+        value: public, max-age=31536000, immutable
+
+    envVars:
+      # The version the production build was tested with.
+      - key: NODE_VERSION
+        value: 24.15.0
+
+      # Where the browser calls the API. This is the address Render gives a
+      # service named zoryn-api when that address is free. If the dashboard
+      # shows a different address for zoryn-api, put it here and push.
+      # Read at build time, so a change needs a redeploy of the frontend.
+      - key: VITE_API_BASE_URL
+        value: https://zoryn-api.onrender.com
+
+      # Base map key. It is compiled into the public site, as every browser
+      # map key is; restrict it to this site's address in the MapTiler
+      # dashboard.
+      - key: VITE_MAPTILER_API_KEY
+        sync: false

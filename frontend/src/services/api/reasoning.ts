@@ -8,6 +8,10 @@ export interface Discovery {
   confidence: number;
   start: string;
   end: string;
+  timestamp?: string;
+  spi3?: number | null;
+  spi6?: number | null;
+  spi12?: number | null;
 }
 
 export interface Hypothesis {
@@ -63,6 +67,19 @@ export const reasoningApi = {
       `/reasoning/${encodeURIComponent(
         h3Id,
       )}${query}`,
+    );
+
+  },
+
+  /** Evidence items that support one detected pattern. */
+  getPatternEvidence(
+    patternId: string,
+  ) {
+
+    return apiClient.get<Evidence[]>(
+      `/evidence/${encodeURIComponent(
+        patternId,
+      )}`,
     );
 
   },

@@ -32,19 +32,19 @@ if __name__=="__main__":
         keys=[k for k in lst(f"tge-labs/aef/v1/annual/{year}/{z}/") if k.endswith('.vrt')]
         groups={}
         for k in keys:
-            m=re.match(r'(.*/[^/]+)-(\d{10})-(\d{10})\.vrt$',k); groups.setdefault(m.group(1),[]).append((int(m.group(2)),int(m.group(3)),k))
+            m=re.match(r'(.*/[^/]+)-(\d{10})-(\d{10})\.vrt$',k); groups.setdefault(m.group(1),[]).append((int(m.group(2)),int(m.group(3)),k))  # suffix is -<y>-<x> (verified against TIFF headers)
         def get(item):
-            pre,subs=item; dx,dy,k=min(subs)
+            pre,subs=item; fy,fx,k=min(subs)
             t=http(BASE+"/"+k)
             g=[float(v) for v in re.search(r'<GeoTransform>(.*?)</GeoTransform>',t).group(1).split(',')]
-            return pre,subs,dx,dy,g[0],g[3]   # top-left (north-up) of THIS sub-tile
+            return pre,subs,fy,fx,g[0],g[3]   # VRT top-left of THIS sub-tile; TIFF rows run south->north
         hits=[]
         with cf.ThreadPoolExecutor(4) as ex:
-            for pre,subs,dx,dy,xl,yt in ex.map(get,groups.items()):
-                gx0=xl-dx*10; gyt=yt+dy*10   # group top-left
-                for sx,sy,k in subs:
-                    x0=gx0+sx*10; ytop=gyt-sy*10; x1=x0+81920; ysouth=ytop-81920
-                    if x0<bx[1] and x1>bx[0] and ysouth<bx[3] and ytop>bx[2]:
-                        hits.append({"key":k[:-4]+".tiff","x0":x0,"x1":x1,"y_south":ysouth,"y_north":ytop})
+            for pre,subs,fy,fx,xl,yt in ex.map(get,groups.items()):
+                gx0=xl-fx*10; gys=(yt-81920)-fy*10   # group west edge, group south edge
+                for sy,sx,k in subs:
+                    x0=gx0+sx*10; ys=gys+sy*10; x1=x0+81920; yn=ys+81920
+                    if x0<bx[1] and x1>bx[0] and ys<bx[3] and yn>bx[2]:
+                        hits.append({"key":k[:-4]+".tiff","x0":x0,"x1":x1,"y_south":ys,"y_north":yn})
         out[z]=hits; print(year,z,"groups",len(groups),"tiles intersecting",len(hits),flush=True)
     json.dump(out,open(f"tiles_{year}.json","w"),indent=1)

@@ -370,6 +370,69 @@ class KnowledgeRepository:
             rows.to_dicts()
         )
 
+    def evidence_for_patterns(
+        self,
+        pattern_ids: list[str],
+    ) -> dict[str, list[dict]]:
+        """
+        Return the evidence for several patterns at once.
+
+        Gives the same rows, in the same order, as calling
+        evidence() for each pattern, but scans the
+        pattern_evidence and evidence files once instead of
+        once per pattern. Nothing is cached, so memory use
+        stays bounded by the rows returned.
+        """
+
+        if not pattern_ids:
+            return {}
+
+        links = (
+            pl.scan_parquet(
+                self._pattern_evidence_files()
+            )
+            .filter(
+                pl.col("pattern_id").is_in(pattern_ids)
+            )
+            .collect()
+        )
+
+        if links.is_empty():
+            return {
+                pattern_id: []
+                for pattern_id in pattern_ids
+            }
+
+        rows = (
+            pl.scan_parquet(
+                self._evidence_files()
+            )
+            .filter(
+                pl.col("id").is_in(
+                    links["evidence_id"]
+                    .unique()
+                    .to_list()
+                )
+            )
+            .collect()
+        )
+
+        result: dict[str, list[dict]] = {}
+
+        for pattern_id in pattern_ids:
+
+            ids = links.filter(
+                pl.col("pattern_id") == pattern_id
+            )["evidence_id"].to_list()
+
+            result[pattern_id] = self._sanitize(
+                rows.filter(
+                    pl.col("id").is_in(ids)
+                ).to_dicts()
+            )
+
+        return result
+
     def reasoning(
         self,
         h3_id: str,
@@ -403,14 +466,27 @@ class KnowledgeRepository:
             hypothesis["id"]
         )
 
+        #
+        # One pass over the evidence files for all patterns.
+        # Calling evidence() once per pattern rescans every
+        # file each time, which took 25-40 seconds for a
+        # typical discovery.
+        #
+        evidence_by_pattern = self.evidence_for_patterns(
+            [
+                pattern["id"]
+                for pattern in patterns
+            ]
+        )
+
         evidence: list[dict] = []
 
         for pattern in patterns:
 
             evidence.extend(
-                self.evidence(
+                evidence_by_pattern[
                     pattern["id"]
-                )
+                ]
             )
 
         return self._sanitize(
